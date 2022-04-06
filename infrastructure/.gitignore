@@ -1,0 +1,23 @@
+#  local .terraform directories
+**/.terraform/*
+.terraform
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+terraform.tfvars
+
+# keys
+*.pem
+*.key
+
+# k8s configuration
+azurek8s.conf
+
+# backend configurations
+backend.hcl
+
+# terrform dependencies hash
+.terraform.lock.hcl
