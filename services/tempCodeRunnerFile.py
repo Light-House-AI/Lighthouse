@@ -1,0 +1,1 @@
+get_blob_client_from_connection_string
