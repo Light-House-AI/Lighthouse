@@ -9,7 +9,7 @@ app = FastAPI()
 
 @ app.get("/")
 def root():
-    return {"Message":  environment_variables_dict['model_path']}
+    return {"Message":  environment_variables_dict['model_id']}
 
 
 @ app.post("/predict")

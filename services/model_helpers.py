@@ -9,11 +9,14 @@ def get_environment_variables():
     dotenv_path = join(folder_path, '.env')
     load_dotenv(dotenv_path)
 
-    model_path = os.getenv('MODEL_PATH')
+    model_id = os.getenv('MODEL_ID')
+    model_version = os.getenv('MODEL_VERSION')
     number_of_model_features = os.getenv('NUMBER_OF_MODEL_FEATURES')
 
     environment_variables_dict = {}
-    environment_variables_dict['model_path'] = model_path
+    environment_variables_dict['model_id'] = model_id
+    environment_variables_dict['model_version'] = float(
+        model_version)
     environment_variables_dict['number_of_model_features'] = int(
         number_of_model_features)
 
