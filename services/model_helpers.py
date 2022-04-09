@@ -4,6 +4,15 @@ from dotenv import load_dotenv
 import pickle
 
 
+def convert_str_to_list(features_str: str):
+    features_str = features_str.replace("[", "")
+    features_str = features_str.replace("]", "")
+    features_list = features_str.split(",")
+    features_list = [float(feature) for feature in features_list]
+
+    return features_list
+
+
 def get_environment_variables():
     folder_path = dirname(dirname(__file__))
     dotenv_path = join(folder_path, '.env')
@@ -15,6 +24,7 @@ def get_environment_variables():
     model_id = os.getenv('MODEL_ID')
     model_version = os.getenv('MODEL_VERSION')
     model_extension = os.getenv('MODEL_EXTENSION')
+    model_features_list = convert_str_to_list(os.getenv('MODEL_FEATURES_LIST'))
     number_of_model_features = os.getenv('NUMBER_OF_MODEL_FEATURES')
 
     environment_variables_dict = {}
@@ -24,6 +34,7 @@ def get_environment_variables():
     environment_variables_dict['model_version'] = float(
         model_version)
     environment_variables_dict['model_extension'] = model_extension
+    environment_variables_dict['model_features_list'] = model_features_list
     environment_variables_dict['number_of_model_features'] = int(
         number_of_model_features)
 
@@ -42,7 +53,7 @@ def generate_model_storage_path():
     return download_file_path
 
 
-def load_pkl_model(model_id):
+def load_pkl_model():
     try:
         model_path = generate_model_storage_path()
         pickle_in = open(model_path, 'rb')
@@ -53,6 +64,7 @@ def load_pkl_model(model_id):
         print("Extension may not .pkl")
         return None
 
+
 # if __name__ == "__main__":
-#     print(get_environment_variables())
-#     print(load_pkl_model("model_id"))
+    # print(get_environment_variables())
+    # print(load_pkl_model("model_id"))

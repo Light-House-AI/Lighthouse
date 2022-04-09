@@ -1,6 +1,6 @@
 from azure.storage.blob import BlobClient
 
-from model_helpers import get_environment_variables, generate_model_storage_path
+from services.model_helpers import get_environment_variables, generate_model_storage_path
 
 environment_variables_dict = get_environment_variables()
 

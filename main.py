@@ -1,34 +1,27 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 
-from services.model_helpers import load_pkl_model
-from services.generic_model import GenericModel, environment_variables_dict
+from services.model_helpers import get_environment_variables, load_pkl_model
+from services.azure_helpers import download_blob
 
 app = FastAPI()
+environment_variables_dict = get_environment_variables()
+download_blob()
 
 
 @ app.get("/")
 def root():
-    return {"Message":  environment_variables_dict['model_id']}
+    return {"Message":  "Welcome to the ML API"}
 
 
-@ app.post("/predict")
-def predict(data: GenericModel):
-    if len(data.features_list) != environment_variables_dict['number_of_model_features']:
-        raise HTTPException(status_code=400,
-                            detail=f"Mismatch between the sent and the required number of model features")
-
-    model_id = data.model_id
-    model_features_list = data.features_list
-    loaded_model = load_pkl_model(model_id)
-
-    if not loaded_model:
-        raise HTTPException(status_code=404,
-                            detail=f"Something went wring while loading the model, check the model id")
+@ app.get("/predict")
+def predict():
+    model_features_list = environment_variables_dict['model_features_list']
+    loaded_model = load_pkl_model()
 
     # ! REMOVE BRACKETS FROM LIST (ONLY FOR CLASSIFIER MODEL)
     prediction = loaded_model.predict([model_features_list])
-    #! FOR CLASSIFIER PREDICTION
+    # #! FOR CLASSIFIER PREDICTION
     if prediction[0] > 0.5:
         result = "True"
     else:
