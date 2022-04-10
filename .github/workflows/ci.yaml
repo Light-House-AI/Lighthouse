@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build_publish:
+    name: Build & Publish
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # get the commit sha
+      - name: Inject variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Docker build & tag images
+        run: >
+          docker build 
+          -t ghcr.io/light-house-ai/wrapper:latest
+          -t ghcr.io/light-house-ai/wrapper:${{env.GITHUB_SHA_SHORT}}
+          .
+
+      - name: Docker push images
+        run: |
+          echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+          docker push ghcr.io/light-house-ai/wrapper:latest
+          docker push ghcr.io/light-house-ai/wrapper:${{env.GITHUB_SHA_SHORT}}
