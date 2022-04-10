@@ -1,11 +1,9 @@
 from azure.storage.blob import BlobClient
 
-from services.model_helpers import get_environment_variables, generate_model_storage_path
-
-environment_variables_dict = get_environment_variables()
+from services.model_helpers import generate_model_storage_path
 
 
-def get_blob_client_from_connection_string(model_id):
+def get_blob_client_from_connection_string(environment_variables_dict, model_id):
     try:
         connection_string = environment_variables_dict['azure_storage_connection_string']
         container_name = environment_variables_dict['container_name']
@@ -19,12 +17,14 @@ def get_blob_client_from_connection_string(model_id):
         print("Check connection string and/or container name")
 
 
-def download_blob():
+def download_blob(environment_variables_dict):
     try:
         container_name = environment_variables_dict['container_name']
-        download_file_path = generate_model_storage_path()
+        download_file_path = generate_model_storage_path(
+            environment_variables_dict)
         blob_name = download_file_path.split('/')[-1]
-        blob_client = get_blob_client_from_connection_string(blob_name)
+        blob_client = get_blob_client_from_connection_string(
+            environment_variables_dict, blob_name)
 
         print(
             f"Downloading model {blob_name} from the {container_name} container...")
@@ -39,5 +39,6 @@ def download_blob():
         print(f"Blob ({blob_name}) was not found in the container")
 
 
-if __name__ == "__main__":
-    download_blob()
+# ? To run this main remove the services from model helpers and get "get env variables" fn
+# if __name__ == "__main__":
+#     download_blob(get_environment_variables())

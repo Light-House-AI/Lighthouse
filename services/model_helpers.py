@@ -41,8 +41,7 @@ def get_environment_variables():
     return environment_variables_dict
 
 
-def generate_model_storage_path():
-    environment_variables_dict = get_environment_variables()
+def generate_model_storage_path(environment_variables_dict):
     model_id = environment_variables_dict['model_id']
     model_version = environment_variables_dict['model_version']
     model_extension = environment_variables_dict['model_extension']
@@ -53,9 +52,9 @@ def generate_model_storage_path():
     return download_file_path
 
 
-def load_pkl_model():
+def load_pkl_model(environment_variables_dict):
     try:
-        model_path = generate_model_storage_path()
+        model_path = generate_model_storage_path(environment_variables_dict)
         pickle_in = open(model_path, 'rb')
         model = pickle.load(pickle_in)
         return model
