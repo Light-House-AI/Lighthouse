@@ -27,7 +27,18 @@ The versioning scheme we use is SemVer. Below is a summary of it.
 
 ### Commit message with scope
 
-`feat: add pedestrians feature extractor`
+our scopes are:
+
+- `data-cleaning`
+- `nn-generator`
+- `feat-sel`
+- `ml-projects`
+- `ml-serving`
+- `ml-monitoring`
+- `infra`
+- `client`
+
+example message: `feat(ml-serving): add blue/green deployments`
 
 ### Commit message with breaking changes
 
