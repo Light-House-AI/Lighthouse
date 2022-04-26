@@ -11,13 +11,13 @@ download_blob(environment_variables_dict)
 
 @ app.get("/")
 def root():
-    return {"Message":  "Welcome to the ML API"}
+    return {"Message":  "Welcome to the ML WRAPPER API"}
 
 
 @ app.get("/predict")
 def predict():
     model_features_list = environment_variables_dict['model_features_list']
-    loaded_model = load_pkl_model(environment_variables_dict)
+    loaded_model = load_pkl_model(environment_variables_dict["model_id"])
 
     # ! REMOVE BRACKETS FROM LIST (ONLY FOR CLASSIFIER MODEL)
     prediction = loaded_model.predict([model_features_list])
