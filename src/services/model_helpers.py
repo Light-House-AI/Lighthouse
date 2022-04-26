@@ -34,7 +34,10 @@ def get_environment_variables():
 
 
 def generate_model_storage_path(model_id: str):
-    models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
+    #! FOR RUNNING WITHOUT DOCKER
+    #models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
+    models_folder_path = dirname(
+        dirname(dirname(dirname(__file__)))) + "/models/"
     download_file_path = models_folder_path + model_id
 
     return download_file_path
