@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: model_id-cluster-ip-service
+spec:
+  type: clusterIP
+  selector:
+    model: model_id
+  ports:
+    - port: 8000
+      targetPort: 8000

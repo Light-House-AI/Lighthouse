@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model_id-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      model: model-id
+  template:
+    metadata:
+      labels:
+        model: model-id
+    spec:
+      imagePullSecrets:
+        - name: docker-registry-secret
+      containers:
+        - name: model_id-container
+          image: aayman1/wrapper:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
