@@ -1,9 +1,36 @@
-# Purpose
+# Wrapper
+
+## Functionality
 
 - The wrapper repo will be used to
+
   1. Download the model from the azure storage container named models
   2. Expose the ML model to interact with it.
-  - There is a predict router that retrieves the classification of the model.
+     - There is a predict router that retrieves the classification of the model.
   3. Dockerize the service
-- All the parameters will be passed from the .env file
-  - azure_storage_connection, model parameters and model_features_list
+  4. Parameters
+
+     - AZURE_STORAGE_CONNECTION_STRING & MODEL_ID must be passed to docker
+     - CONTAINER_NAME is optional with default value of "models"
+     - model_features_list is taken from .env file (to be removed)
+
+  5.
+
+## How to run
+
+- Run Docker file
+
+  ```bash
+  docker build -t wrapper/fastapi .
+  docker run -p 8000:8000 \
+  --env AZURE_STORAGE_CONNECTION_STRING="value"\
+  --env CONTAINER_NAME=value\
+  --MODEL_ID=value\
+  wrapper/fastapi
+  ```
+
+- Run Docker Compose
+
+  ```bash
+  docker-compose up --build
+  ```
