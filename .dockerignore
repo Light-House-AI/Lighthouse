@@ -1,0 +1,8 @@
+.github
+.gitignore
+*.md
+*/__pycache__*
+*/*/__pycache__*
+*/temp*
+*/*/temp*
+/models/*
