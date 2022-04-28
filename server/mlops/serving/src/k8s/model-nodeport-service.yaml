@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: model_id-node-port-service
+  name: classifier1-node-port-service
 spec:
   type: NodePort
   selector:
-    model: model_id
+    model: classifier1
   ports:
     - port: 8080
       targetPort: 8000

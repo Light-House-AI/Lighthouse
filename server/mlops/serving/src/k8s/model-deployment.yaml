@@ -1,22 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: model_id-deployment
+  name: classifier1-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      model: model-id
+      model: classifier1
   template:
     metadata:
       labels:
-        model: model-id
+        model: classifier1
     spec:
       imagePullSecrets:
         - name: docker-registry-secret
       containers:
-        - name: model_id-container
+        - name: classifier1-container
           image: aayman1/wrapper:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
+          env:
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              value:
+            - name: AZURE_CONTAINER_NAME
+              value:
+            - name: AZURE_BLOB_NAME
+              value:

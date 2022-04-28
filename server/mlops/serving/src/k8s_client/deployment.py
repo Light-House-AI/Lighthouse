@@ -16,6 +16,7 @@ class Deployment:
             self.container = None
             self.template = None
             self.spec = None
+            print(self.env_vars)
         except Exception as e:
             print(f"Error in creating the {model_id}-deployment")
             print(e)
@@ -26,19 +27,23 @@ class Deployment:
             image=self.image,
             image_pull_policy="Always",
             ports=[client.V1ContainerPort(container_port=8000)],
+            env=[
+                client.V1EnvVar(
+                    name=key, value=value
+                ) for key, value in self.env_vars.items()
+            ]
         )
 
         self.container = container
 
     def __create_template_section__(self):
-        # TODO: Send environment variables to container
         template = client.V1PodTemplateSpec(
             metadata=client.V1ObjectMeta(labels={"model": self.model_id}),
             spec=client.V1PodSpec(
                 containers=[self.container], image_pull_secrets=[
                     client.V1LocalObjectReference(
-                        name=self.secret_name)
-                ]),
+                        name=self.secret_name)],
+            ),
         )
 
         self.template = template

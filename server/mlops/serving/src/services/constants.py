@@ -1,0 +1,2 @@
+PKL_EXTENTION = ".pkl"
+CONTAINER_NAME = "models"
