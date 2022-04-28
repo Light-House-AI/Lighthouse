@@ -24,10 +24,10 @@
   ```bash
   docker build -t wrapper/fastapi .
   docker run -p 8000:8000 \
-  --env AZURE_STORAGE_CONNECTION_STRING="value"\
-  --env AZURE_CONTAINER_NAME=value\
-  --AZURE_BLOB_NAME=value\
-  wrapper/fastapi
+   --env AZURE_STORAGE_CONNECTION_STRING="value"\
+   --env AZURE_CONTAINER_NAME=value\
+   --AZURE_BLOB_NAME=value\
+   wrapper/fastapi
   ```
 
 - Run Docker Compose
