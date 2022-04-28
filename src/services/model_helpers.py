@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import pickle
 
 # TODO: Delete this function when there is no need for model_features_list
+
+
 def convert_str_to_list(features_str: str):
     features_str = features_str.replace("[", "")
     features_str = features_str.replace("]", "")
@@ -17,12 +19,12 @@ def get_environment_variables():
     try:
         azure_storage_connection_string = os.environ.get(
             "AZURE_STORAGE_CONNECTION_STRING")
-        container_name = os.environ.get("CONTAINER_NAME")
-        model_id = os.environ.get('MODEL_ID')
+        azure_container_name = os.environ.get("AZURE_CONTAINER_NAME")
+        azure_blob_name = os.environ.get('AZURE_BLOB_NAME')
         environment_variables_dict = {}
         environment_variables_dict['azure_storage_connection_string'] = azure_storage_connection_string
-        environment_variables_dict['container_name'] = container_name
-        environment_variables_dict['model_id'] = model_id
+        environment_variables_dict['azure_container_name'] = azure_container_name
+        environment_variables_dict['azure_blob_name'] = azure_blob_name
 
         get_environment_variables_from_file(environment_variables_dict)
 
@@ -44,20 +46,20 @@ def get_environment_variables_from_file(environment_variables_dict):
     environment_variables_dict['model_features_list'] = model_features_list
 
 
-def generate_model_storage_path(model_id: str):
+def generate_model_storage_path(azure_blob_name: str):
     #! FOR RUNNING WITHOUT DOCKER
     # models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
     #! FOR RUNNING WITH DOCKER
     models_folder_path = dirname(
         dirname(dirname(dirname(__file__)))) + "/models/"
-    download_file_path = models_folder_path + model_id
+    download_file_path = models_folder_path + azure_blob_name
 
     return download_file_path
 
 
-def load_pkl_model(model_id: str):
+def load_pkl_model(azure_blob_name: str):
     try:
-        model_path = generate_model_storage_path(model_id)
+        model_path = generate_model_storage_path(azure_blob_name)
         pickle_in = open(model_path, 'rb')
         model = pickle.load(pickle_in)
         return model
