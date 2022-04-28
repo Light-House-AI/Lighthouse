@@ -6,10 +6,10 @@ from services.model_helpers import generate_model_storage_path
 def get_blob_client_from_connection_string(environment_variables_dict: dict):
     try:
         connection_string = environment_variables_dict['azure_storage_connection_string']
-        container_name = environment_variables_dict['container_name']
-        model_id = environment_variables_dict['model_id']
+        azure_container_name = environment_variables_dict['azure_container_name']
+        azure_blob_name = environment_variables_dict['azure_blob_name']
         blob_client = BlobClient.from_connection_string(
-            connection_string, container_name, model_id)
+            connection_string, azure_container_name, azure_blob_name)
 
         return blob_client
 
@@ -20,16 +20,16 @@ def get_blob_client_from_connection_string(environment_variables_dict: dict):
 
 def download_blob(environment_variables_dict: dict):
     try:
-        container_name = environment_variables_dict['container_name']
-        model_id = environment_variables_dict['model_id']
+        azure_container_name = environment_variables_dict['azure_container_name']
+        azure_blob_name = environment_variables_dict['azure_blob_name']
         download_file_path = generate_model_storage_path(
-            model_id)
+            azure_blob_name)
         blob_name = download_file_path.split('/')[-1]
         blob_client = get_blob_client_from_connection_string(
             environment_variables_dict)
 
         print(
-            f"Downloading model {blob_name} from the {container_name} container...")
+            f"Downloading model {blob_name} from the {azure_container_name} container...")
 
         with open(download_file_path, "wb") as download_file:
             download_file.write(blob_client.download_blob().readall())

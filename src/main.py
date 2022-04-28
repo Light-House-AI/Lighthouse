@@ -17,7 +17,8 @@ def root():
 @ app.get("/predict")
 def predict():
     model_features_list = environment_variables_dict['model_features_list']
-    loaded_model = load_pkl_model(environment_variables_dict["model_id"])
+    loaded_model = load_pkl_model(
+        environment_variables_dict["azure_blob_name"])
 
     # ! REMOVE BRACKETS FROM LIST (ONLY FOR CLASSIFIER MODEL)
     prediction = loaded_model.predict([model_features_list])
