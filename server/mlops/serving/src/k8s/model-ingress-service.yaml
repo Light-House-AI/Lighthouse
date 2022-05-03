@@ -15,6 +15,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: classifier1-cluster-ip-service
+                name: classifier1-cluster-ip
                 port:
                   number: 8000
