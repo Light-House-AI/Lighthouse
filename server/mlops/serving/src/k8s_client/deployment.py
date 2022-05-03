@@ -79,23 +79,22 @@ class Deployment:
             print(f"Error in creating the {self.name} deployment")
             print(e)
 
-    def delete_deployment(self):
+    @staticmethod
+    def delete_deployment(api_client: client.AppsV1Api(), name: str, namespace: str):
         try:
-            _ = self.api.delete_namespaced_deployment(
-                name=self.name, namespace=self.namespace, propagation_policy="Foreground", grace_period_seconds=20)
+            api_client.delete_namespaced_deployment(
+                name=name, namespace=namespace, propagation_policy="Foreground", grace_period_seconds=10)
             print(
-                f"Deployment {self.name} is deleted with all its coressponding pods")
-
+                f"Deployment {name} is deleted with all its coressponding pods")
             return True
 
         except Exception as e:
-            print(f"Error in deleting the {self.name} deployment")
+            print(f"Error in deleting the {name} deployment")
             print(e)
-
             return False
 
     @staticmethod
-    def get_deployments(api_client, namespace):
+    def get_deployments(api_client: client.AppsV1Api(), namespace: str):
         try:
             resp = api_client.list_namespaced_deployment(
                 namespace=namespace, pretty=True)
@@ -104,30 +103,29 @@ class Deployment:
             for deployment in resp.items:
                 print(f"{deployment.metadata.name}")
 
-            return True
+            return resp.items
 
         except Exception as e:
             print(f"Error in getting the deployments")
             print(e)
 
-            return False
-
-    def get_pods(self, api_client: client.CoreV1Api):
+    @staticmethod
+    def get_pods(api_client: client.CoreV1Api, model_id: str, namespace: str):
+        # deployment_name = model_id+"-deployment"
         try:
             resp = api_client.list_namespaced_pod(pretty=True,
-                                                  namespace=self.namespace, label_selector=f"model={self.model_id}")
+                                                  namespace=namespace, label_selector=f"model={model_id}")
             pods_counter = 1
 
-            print(f"Pods in deployment {self.name}")
+            print(f"Pods in deployment {model_id}-deployment")
             for pod in resp.items:
                 print(
-                    f"Pod number {pods_counter} with name {pod.metadata.name} in deployment {self.name}")
+                    f"Pod number {pods_counter} with name {pod.metadata.name} in deployment {model_id}-deployment")
                 pods_counter += 1
 
             return True
 
         except Exception as e:
-            print(f"Error in getting the pods of {self.name} deployment")
+            print(f"Error in getting the pods of {model_id}-deployment")
             print(e)
-
             return False
