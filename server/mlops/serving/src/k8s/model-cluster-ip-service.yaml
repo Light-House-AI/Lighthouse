@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: classifier1-cluster-ip
+  labels:
+    status: user-created-cluster-ip
 spec:
   type: ClusterIP
   selector:
