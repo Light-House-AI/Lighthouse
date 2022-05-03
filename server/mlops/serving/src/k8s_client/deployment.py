@@ -78,3 +78,56 @@ class Deployment:
         except Exception as e:
             print(f"Error in creating the {self.name} deployment")
             print(e)
+
+    def delete_deployment(self):
+        try:
+            _ = self.api.delete_namespaced_deployment(
+                name=self.name, namespace=self.namespace, propagation_policy="Foreground", grace_period_seconds=20)
+            print(
+                f"Deployment {self.name} is deleted with all its coressponding pods")
+
+            return True
+
+        except Exception as e:
+            print(f"Error in deleting the {self.name} deployment")
+            print(e)
+
+            return False
+
+    @staticmethod
+    def get_deployments(api_client, namespace):
+        try:
+            resp = api_client.list_namespaced_deployment(
+                namespace=namespace, pretty=True)
+
+            print(f"Deployments in {namespace} namespace")
+            for deployment in resp.items:
+                print(f"{deployment.metadata.name}")
+
+            return True
+
+        except Exception as e:
+            print(f"Error in getting the deployments")
+            print(e)
+
+            return False
+
+    def get_pods(self, api_client: client.CoreV1Api):
+        try:
+            resp = api_client.list_namespaced_pod(pretty=True,
+                                                  namespace=self.namespace, label_selector=f"model={self.model_id}")
+            pods_counter = 1
+
+            print(f"Pods in deployment {self.name}")
+            for pod in resp.items:
+                print(
+                    f"Pod number {pods_counter} with name {pod.metadata.name} in deployment {self.name}")
+                pods_counter += 1
+
+            return True
+
+        except Exception as e:
+            print(f"Error in getting the pods of {self.name} deployment")
+            print(e)
+
+            return False
