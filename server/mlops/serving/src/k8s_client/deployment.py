@@ -75,9 +75,12 @@ class Deployment:
 
             print(
                 f"Deployment {resp.metadata.name} is created with status {resp.status}")
+            return True
+            
         except Exception as e:
             print(f"Error in creating the {self.name} deployment")
             print(e)
+            return False
 
     @staticmethod
     def delete_deployment(api_client: client.AppsV1Api(), name: str, namespace: str):
