@@ -4,11 +4,13 @@ from kubernetes import client
 class Ingress:
     paths_list = []
 
-    def __init__(self, api_client: client.NetworkingV1Api(), name: str, namespace: str, ingress_class: str):
+    def __init__(self, api_client: client.NetworkingV1Api(), name: str, namespace: str, ingress_class: str, default_service_name: str, default_port_number: int):
         self.api_client = api_client
         self.name = name
         self.namespace = namespace
         self.ingress_class = ingress_class
+        self.default_service_name = default_service_name+"-cluster-ip"
+        self.default_port_number = default_port_number
 
     def create_ingress(self):
         try:
@@ -27,9 +29,9 @@ class Ingress:
                     default_backend=client.V1IngressBackend(
                         # TODO Create a deployment and cluster-ip for the default backend service
                         service=client.V1IngressServiceBackend(
-                            name="classifier1-cluster-ip",
+                            name=self.default_service_name,
                             port=client.V1ServiceBackendPort(
-                                number=8000
+                                number=self.default_port_number
                             )
                         ),
                     )
