@@ -21,6 +21,32 @@ class Deployment:
             print(f"Error in creating the {model_id}-deployment")
             print(e)
 
+    def create_deployment(self):
+        try:
+            self.__create_pod_template_container__()
+            self.__create_template_section__()
+            self.__create_spec_section__()
+
+            deployment_object = client.V1Deployment(
+                api_version="apps/v1",
+                kind="Deployment",
+                metadata=client.V1ObjectMeta(name=self.name),
+                spec=self.spec,
+            )
+
+            resp = self.api.create_namespaced_deployment(
+                body=deployment_object, namespace=self.namespace
+            )
+
+            print(
+                f"Deployment {resp.metadata.name} is created with status {resp.status}")
+            return True
+
+        except Exception as e:
+            print(f"Error in creating the {self.name} deployment")
+            print(e)
+            return False
+
     def __create_pod_template_container__(self):
         container = client.V1Container(
             name=self.container_name,
@@ -55,32 +81,6 @@ class Deployment:
                 {"model": self.model_id}})
 
         self.spec = spec
-
-    def create_deployment(self):
-        try:
-            self.__create_pod_template_container__()
-            self.__create_template_section__()
-            self.__create_spec_section__()
-
-            deployment_object = client.V1Deployment(
-                api_version="apps/v1",
-                kind="Deployment",
-                metadata=client.V1ObjectMeta(name=self.name),
-                spec=self.spec,
-            )
-
-            resp = self.api.create_namespaced_deployment(
-                body=deployment_object, namespace=self.namespace
-            )
-
-            print(
-                f"Deployment {resp.metadata.name} is created with status {resp.status}")
-            return True
-            
-        except Exception as e:
-            print(f"Error in creating the {self.name} deployment")
-            print(e)
-            return False
 
     @staticmethod
     def delete_deployment(api_client: client.AppsV1Api(), name: str, namespace: str):
