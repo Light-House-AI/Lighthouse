@@ -3,21 +3,6 @@ from azure.storage.blob import BlobClient
 from services.model_helpers import generate_model_storage_path
 
 
-def get_blob_client_from_connection_string(environment_variables_dict: dict):
-    try:
-        connection_string = environment_variables_dict['azure_storage_connection_string']
-        azure_container_name = environment_variables_dict['azure_container_name']
-        azure_blob_name = environment_variables_dict['azure_blob_name']
-        blob_client = BlobClient.from_connection_string(
-            connection_string, azure_container_name, azure_blob_name)
-
-        return blob_client
-
-    except Exception as ex:
-        print(ex)
-        print("Check connection string and/or container name")
-
-
 def download_blob(environment_variables_dict: dict):
     try:
         azure_container_name = environment_variables_dict['azure_container_name']
@@ -39,6 +24,21 @@ def download_blob(environment_variables_dict: dict):
     except Exception as ex:
         print(ex)
         print(f"Blob ({blob_name}) was not found in the container")
+
+
+def get_blob_client_from_connection_string(environment_variables_dict: dict):
+    try:
+        connection_string = environment_variables_dict['azure_storage_connection_string']
+        azure_container_name = environment_variables_dict['azure_container_name']
+        azure_blob_name = environment_variables_dict['azure_blob_name']
+        blob_client = BlobClient.from_connection_string(
+            connection_string, azure_container_name, azure_blob_name)
+
+        return blob_client
+
+    except Exception as ex:
+        print(ex)
+        print("Check connection string and/or container name")
 
 
 # ? To run this main remove the services from model helpers and get "get env variables" fn

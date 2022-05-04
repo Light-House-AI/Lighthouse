@@ -46,17 +46,6 @@ def get_environment_variables_from_file(environment_variables_dict):
     environment_variables_dict['model_features_list'] = model_features_list
 
 
-def generate_model_storage_path(azure_blob_name: str):
-    #! FOR RUNNING WITHOUT DOCKER
-    # models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
-    #! FOR RUNNING WITH DOCKER
-    models_folder_path = dirname(
-        dirname(dirname(dirname(__file__)))) + "/models/"
-    download_file_path = models_folder_path + azure_blob_name
-
-    return download_file_path
-
-
 def load_pkl_model(azure_blob_name: str):
     try:
         model_path = generate_model_storage_path(azure_blob_name)
@@ -67,6 +56,17 @@ def load_pkl_model(azure_blob_name: str):
         print(ex)
         print("Extension may not .pkl")
         return None
+
+
+def generate_model_storage_path(azure_blob_name: str):
+    #! FOR RUNNING WITHOUT DOCKER
+    # models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
+    #! FOR RUNNING WITH DOCKER
+    models_folder_path = dirname(
+        dirname(dirname(dirname(__file__)))) + "/models/"
+    download_file_path = models_folder_path + azure_blob_name
+
+    return download_file_path
 
 
 # if __name__ == "__main__":
