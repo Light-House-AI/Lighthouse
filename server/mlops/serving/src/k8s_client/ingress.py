@@ -97,3 +97,41 @@ class Ingress:
             print(f"Error in creating the path {path}")
             print(e)
             return False
+
+    @staticmethod
+    def get_ingresses(api_client: client.NetworkingV1Api(), namespace: str):
+        try:
+            ingresses_list = api_client.list_namespaced_ingress(
+                namespace=namespace,
+                pretty=True,
+            )
+            print(f"The ingresses in the {namespace} namespace are:")
+
+            for ingress in ingresses_list.items:
+                print(ingress.metadata.name)
+
+            return ingresses_list.items
+
+        except Exception as e:
+            print(f"Error in getting the ingresses")
+            print(e)
+            return None
+
+    @staticmethod
+    def delete_ingress(api_client: client.NetworkingV1Api(), namespace: str, name: str):
+        try:
+            api_client.delete_namespaced_ingress(
+                name=name,
+                namespace=namespace,
+                body=client.V1DeleteOptions(
+                    propagation_policy="Foreground", grace_period_seconds=20
+                ),
+                pretty=True,
+            )
+            print(f"Ingress {name} is deleted successfully")
+            return True
+
+        except Exception as e:
+            print(f"Error in deleting the ingress")
+            print(e)
+            return False
