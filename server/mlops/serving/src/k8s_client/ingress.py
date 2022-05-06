@@ -27,7 +27,6 @@ class Ingress:
                 ),
                 spec=client.V1IngressSpec(
                     default_backend=client.V1IngressBackend(
-                        # TODO Create a deployment and cluster-ip for the default backend service
                         service=client.V1IngressServiceBackend(
                             name=self.default_service_name,
                             port=client.V1ServiceBackendPort(
@@ -35,7 +34,6 @@ class Ingress:
                             )
                         ),
                     )
-
                 )
             )
             self.api_client.create_namespaced_ingress(
@@ -51,18 +49,13 @@ class Ingress:
             return False
 
     @staticmethod
-    def update_ingress_rules(api_client: client.NetworkingV1Api(), name: str, namespace: str, host_name: str, path: str, service_name: str, service_port: int):
-        """
-        This method will cause a downtime as all the previous services routes will be re-created along with the new one.
-        If a request is made in-between this time, the request will fall back to the default backend service.
-        """
+    def update_ingress_rules(api_client: client.NetworkingV1Api(), name: str, namespace: str, path: str, service_name: str, service_port: int):
         Ingress.__create_ingress_path__(path, service_name, service_port)
         try:
             body = client.V1Ingress(
                 spec=client.V1IngressSpec(
                     rules=[
                         client.V1IngressRule(
-                            host=host_name,
                             http=client.V1HTTPIngressRuleValue(
                                 paths=Ingress.paths_list
                             )

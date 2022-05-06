@@ -20,7 +20,7 @@ deployment_class_arguments = {
     "model_id": "label",
     "namespace": CLUSTER_NAMESPACE,
     "replicas": 1,
-    "image": "image link",
+    "image": IMAGE_NAME,
     "env_vars": deployment_envs_dict,
     "secret_name": "leave as is. DO NOT CHANGE"
 }
@@ -28,7 +28,7 @@ deployment_class_arguments = {
 cluster_ip_class_arguments_dict = {
     "model_id": deployment_class_arguments["model_id"],
     "namespace": CLUSTER_NAMESPACE,
-    "port": "int -> to be specified",
+    "port": DEFAULT_CLUSTER_IP_PORT,
     "target_port": DEFAULT_CLUSTER_IP_TARGET_PORT
 }
 
@@ -43,7 +43,7 @@ default_deployment_class_arguments = {
 default_cluster_ip_class_arguments_dict = {
     "model_id": DEFAULT_DEPLOYMENT_NAME,
     "namespace": CLUSTER_NAMESPACE,
-    "port": 2138,
+    "port": DEFAULT_CLUSTER_IP_PORT,
     "target_port": DEFAULT_CLUSTER_IP_TARGET_PORT
 
 }
