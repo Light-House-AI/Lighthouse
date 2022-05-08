@@ -16,7 +16,6 @@ class Deployment:
             self.container = None
             self.template = None
             self.spec = None
-            print(self.env_vars)
         except Exception as e:
             print(f"Error in creating the {model_id}-deployment")
             print(e)
@@ -39,7 +38,7 @@ class Deployment:
             )
 
             print(
-                f"Deployment {resp.metadata.name} is created with status {resp.status}")
+                f"Deployment {resp.metadata.name} is created.")
             return True
 
         except Exception as e:

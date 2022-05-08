@@ -51,6 +51,7 @@ class Ingress:
     @staticmethod
     def update_ingress_rules(api_client: client.NetworkingV1Api(), name: str, namespace: str, path: str, service_name: str, service_port: int):
         Ingress.__create_ingress_path__(path, service_name, service_port)
+        # print(Ingress.paths_list)
         try:
             body = client.V1Ingress(
                 spec=client.V1IngressSpec(
@@ -63,7 +64,6 @@ class Ingress:
             )
             api_response = api_client.patch_namespaced_ingress(
                 name, namespace, body, pretty=True,)
-            # print(api_response)
             return True
 
         except Exception as e:
