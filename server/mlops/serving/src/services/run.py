@@ -54,5 +54,3 @@ def recreate_ingress_rules(models_list: list, startup_config_dict: dict):
         }
         add_to_ingress(
             startup_config_dict["networking_v1_api"], model_id, service_info)
-
-    print(Ingress.paths_list)
