@@ -1,7 +1,0 @@
-{
-	"auths": {
-		"docker.io": {
-			"auth": ""
-		}
-	}
-}
