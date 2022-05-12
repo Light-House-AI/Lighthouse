@@ -34,9 +34,9 @@ class Secret:
                 namespace=self.namespace, body=secret_object)
 
             print(f"Secret '{resp.metadata.name}' is created")
-
-            return resp.metadata.name
+            return True
 
         except Exception as e:
             print(f"Error in creating secret '{self.name}'")
             print(e)
+            return False

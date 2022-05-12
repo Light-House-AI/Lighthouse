@@ -4,13 +4,11 @@ from kubernetes import client
 class Ingress:
     paths_list = []
 
-    def __init__(self, api_client: client.NetworkingV1Api(), name: str, namespace: str, ingress_class: str, default_service_name: str, default_port_number: int):
+    def __init__(self, api_client: client.NetworkingV1Api(), name: str, namespace: str, ingress_class: str):
         self.api_client = api_client
         self.name = name
         self.namespace = namespace
         self.ingress_class = ingress_class
-        self.default_service_name = default_service_name+"-cluster-ip"
-        self.default_port_number = default_port_number
 
     def create_ingress(self):
         try:
@@ -26,15 +24,12 @@ class Ingress:
                     },
                 ),
                 spec=client.V1IngressSpec(
-                    default_backend=client.V1IngressBackend(
-                        service=client.V1IngressServiceBackend(
-                            name=self.default_service_name,
-                            port=client.V1ServiceBackendPort(
-                                number=self.default_port_number
+                    rules=[
+                        client.V1IngressRule(
+                            http=client.V1HTTPIngressRuleValue(
+                                paths=Ingress.paths_list
                             )
-                        ),
-                    )
-                )
+                        )])
             )
             self.api_client.create_namespaced_ingress(
                 namespace=self.namespace,
@@ -49,9 +44,7 @@ class Ingress:
             return False
 
     @staticmethod
-    def update_ingress_rules(api_client: client.NetworkingV1Api(), name: str, namespace: str, path: str, service_name: str, service_port: int):
-        Ingress.__create_ingress_path__(path, service_name, service_port)
-        # print(Ingress.paths_list)
+    def update_ingress_rules(api_client: client.NetworkingV1Api(), name: str, namespace: str):
         try:
             body = client.V1Ingress(
                 spec=client.V1IngressSpec(
@@ -72,7 +65,7 @@ class Ingress:
             return False
 
     @staticmethod
-    def __create_ingress_path__(path: str, service_name: str, service_port: int):
+    def create_ingress_path(path: str, service_name: str, service_port: int):
         try:
             created_path = client.V1HTTPIngressPath(
                 path=path,
@@ -86,12 +79,11 @@ class Ingress:
                     )
                 )
             )
-            Ingress.paths_list.append(created_path)
-            return True
+            return created_path
         except Exception as e:
             print(f"Error in creating the path {path}")
             print(e)
-            return False
+            return None
 
     @staticmethod
     def get_ingresses(api_client: client.NetworkingV1Api(), namespace: str):
