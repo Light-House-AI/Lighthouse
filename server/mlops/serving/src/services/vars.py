@@ -3,8 +3,8 @@ from services.constants import *
 # TODO username & password
 secret_class_arguments_dict = {
     "name": IMAGE_SECRET_NAME,
-    "username": "aayman1",
-    "password": "7da4dd14-c250-4e74-9791-a827d9f909c9",
+    "username": "username",
+    "password": "password",
     "server": IMAGE_SERVER,
     "namespace": CLUSTER_NAMESPACE
 }
