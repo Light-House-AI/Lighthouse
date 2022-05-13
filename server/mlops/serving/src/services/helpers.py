@@ -59,7 +59,7 @@ def create_ingress(networking_v1_api: client.NetworkingV1Api()):
 
 
 def add_to_ingress(networking_v1_api: client.NetworkingV1Api(), model_id: str, service_info: dict):
-    model_path = "/" + model_id
+    model_path = "/" + model_id + "/?(.*)"
     created_path_object = Ingress.create_ingress_path(
         model_path, service_info["service_name"], service_info["service_port"])
     Ingress.paths_list.append(created_path_object)
@@ -68,7 +68,7 @@ def add_to_ingress(networking_v1_api: client.NetworkingV1Api(), model_id: str, s
 
 
 def remove_from_ingress(networking_v1_api: client.NetworkingV1Api(), model_id: str, service_info: dict):
-    model_path = "/" + model_id
+    model_path = "/" + model_id + "/?(.*)"
     created_path_object = Ingress.create_ingress_path(
         model_path,  service_info["service_name"], service_info["service_port"])
     if (created_path_object in Ingress.paths_list):

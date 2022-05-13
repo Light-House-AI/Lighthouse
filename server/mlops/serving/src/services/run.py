@@ -6,7 +6,7 @@ from k8s_client.ingress import Ingress
 def add_main_ingress_path():
     if len(Ingress.paths_list) == 0:
         main_path_object = Ingress.create_ingress_path(
-            path="/", service_name=DEFAULT_MODEL_ID+"-cluster-ip", service_port=DEFAULT_CLUSTER_IP_PORT)
+            path="/?(.*)", service_name=DEFAULT_MODEL_ID+"-cluster-ip", service_port=DEFAULT_CLUSTER_IP_PORT)
         Ingress.paths_list.append(main_path_object)
 
 

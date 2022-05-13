@@ -3,19 +3,19 @@ from services.constants import *
 # TODO username & password
 secret_class_arguments_dict = {
     "name": IMAGE_SECRET_NAME,
-    "username": "username",
-    "password": "password",
+    "username": "aayman1",
+    "password": "7da4dd14-c250-4e74-9791-a827d9f909c9",
     "server": IMAGE_SERVER,
     "namespace": CLUSTER_NAMESPACE
 }
 # TODO azure_connection_string
 deployment_envs_dict = {
-    "AZURE_STORAGE_CONNECTION_STRING": "connection string",
+    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=csb1003200131b382e1;AccountKey=Dlq6mPf8KfGnuSIAyq3uGWWFFXqGMcJMKPNS0jVRq8KLmC/tNrBUuiglpLaWlmCWnQLL0MKfRdS3YPuRbkoUnw==;EndpointSuffix=core.windows.net",
     "AZURE_CONTAINER_NAME": CONTAINER_NAME,
-    "AZURE_BLOB_NAME": "To be edited" + PKL_EXTENTION,
+    "AZURE_BLOB_NAME": "leave as is" + PKL_EXTENTION,
 }
 deployment_class_arguments = {
-    "model_id": "To be edited",
+    "model_id": "=leave as it",
     "namespace": CLUSTER_NAMESPACE,
     "replicas": 1,
     "image": IMAGE_NAME,
