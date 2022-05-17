@@ -16,4 +16,4 @@ ENV AZURE_CONTAINER_NAME=models
 
 ENV AZURE_BLOB_NAME=${AZURE_BLOB_NAME}
 
-CMD ["uvicorn", "main:app", "--host=0.0.0.0", "--reload"]
+CMD ["uvicorn", "main:app", "--host=0.0.0.0"]

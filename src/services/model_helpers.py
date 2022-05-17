@@ -1,18 +1,6 @@
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
+from os.path import dirname
 import pickle
-
-# TODO: Delete this function when there is no need for model_features_list
-
-
-def convert_str_to_list(features_str: str):
-    features_str = features_str.replace("[", "")
-    features_str = features_str.replace("]", "")
-    features_list = features_str.split(",")
-    features_list = [float(feature) for feature in features_list]
-
-    return features_list
 
 
 def get_environment_variables():
@@ -25,25 +13,14 @@ def get_environment_variables():
         environment_variables_dict['azure_storage_connection_string'] = azure_storage_connection_string
         environment_variables_dict['azure_container_name'] = azure_container_name
         environment_variables_dict['azure_blob_name'] = azure_blob_name
-
-        get_environment_variables_from_file(environment_variables_dict)
-
+        # TODO: To be removed
+        environment_variables_dict['model_features_list'] = [1, 2, 4, 5]
         return environment_variables_dict
 
     except Exception as ex:
         print("Missing one of the 3 required environment variables")
         print(ex)
         return None
-
-
-# TODO: Delete this function when there is no need for model_features_list
-def get_environment_variables_from_file(environment_variables_dict):
-    folder_path = dirname(dirname(__file__))
-    dotenv_path = join(folder_path, '.env')
-    load_dotenv(dotenv_path)
-
-    model_features_list = convert_str_to_list(os.getenv('MODEL_FEATURES_LIST'))
-    environment_variables_dict['model_features_list'] = model_features_list
 
 
 def load_pkl_model(azure_blob_name: str):

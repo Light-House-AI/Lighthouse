@@ -1,5 +1,7 @@
 .github
 .gitignore
+.env
+.env.example
 *.md
 */__pycache__*
 */*/__pycache__*
