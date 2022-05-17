@@ -4,8 +4,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+    restart: "no"
     ports:
       - "8000:8000"
+    env_file:
+      - .env
+    container_name: wrapper-dev-container
     volumes:
+      # - ./usr/app/models
       - .:/usr/app

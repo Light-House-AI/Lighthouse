@@ -2,7 +2,8 @@
 .gitignore
 .env
 .env.example
-*.md
+README.md
+CONTRIBUTING.md
 */__pycache__*
 */*/__pycache__*
 */temp*

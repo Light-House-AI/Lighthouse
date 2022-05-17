@@ -1,34 +1,26 @@
 import uvicorn
 from fastapi import FastAPI
 
-from services.model_helpers import get_environment_variables, load_pkl_model
-from services.azure_helpers import download_blob
+from services.model_helpers import get_environment_variables
+from services.route_helpers import *
 
 app = FastAPI()
+
 environment_variables_dict = get_environment_variables()
-download_blob(environment_variables_dict)
+if environment_variables_dict is None:
+    print("Error in generating environment variables dictionary")
+    exit(0)
 
 
 @ app.get("/")
 def root():
-    return {"Message":  "Welcome to the ML WRAPPER API"}
+    return greeting_fn()
 
 
 @ app.get("/predict")
 def predict():
-    model_features_list = environment_variables_dict['model_features_list']
-    loaded_model = load_pkl_model(
-        environment_variables_dict["azure_blob_name"])
-
-    # ! REMOVE BRACKETS FROM LIST (ONLY FOR CLASSIFIER MODEL)
-    prediction = loaded_model.predict([model_features_list])
-    # #! FOR CLASSIFIER PREDICTION
-    if prediction[0] > 0.5:
-        result = "True"
-    else:
-        result = "False"
-
-    return {"message": f"{prediction[0], result}"}
+    prediction = predict_for_deployment_type(environment_variables_dict)
+    return {"Prediction": f"{prediction}"}
 
 
 if __name__ == "__main__":
