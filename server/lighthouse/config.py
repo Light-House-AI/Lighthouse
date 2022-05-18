@@ -9,6 +9,9 @@ ENV_FILE_PATH = '.env'
 
 
 class Config(BaseSettings):
+    # Application environment
+    ENVIRONMENT: str = 'prod'
+
     # Enable debug mode.
     DEBUG: bool = False
 
@@ -41,7 +44,7 @@ class Config(BaseSettings):
     RELOAD: bool = False
 
     # Host for uvicorn
-    HOST: str = "127.0.0.1"
+    HOST: str = "0.0.0.0"
 
     # Port for uvicorn
     PORT: int = 8000

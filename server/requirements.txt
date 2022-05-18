@@ -1,1 +1,13 @@
--r lighthouse/mlops/serving/requirements.txt
+# mlops
+## serving
+kubernetes 
+
+# ml_projects
+psycopg2-binary
+pydantic
+coloredlogs
+sqlalchemy
+alembic
+fastapi
+uvicorn
+ujson

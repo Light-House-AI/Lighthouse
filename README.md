@@ -4,13 +4,20 @@ An end-to-end platform for creating and shipping machine learning models to prod
 
 ## Getting started
 
-### Client
+### Docker environment
+
+1. Add `.env` file in the `server` directory.
+2. Run the docker-compose up command: `docker-compose -f ./deploy/docker-compose.yml -d up`
+
+### Without docker
+
+#### Client
 
 ```bash
 TODO
 ```
 
-### Server
+#### Server
 
 Install the required dependencies:
 
@@ -18,6 +25,8 @@ Install the required dependencies:
 cd server
 pip install -r requirements.txt
 ```
+
+Add the `.env` file in the `server` directory.
 
 Run the server:
 
