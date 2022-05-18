@@ -1,8 +1,10 @@
-name: CI
+name: Wrapper-CI
 
 on:
   push:
     branches: [master]
+    paths:
+      - wrapper/**
 
 env:
     APP_NAME: wrapper
