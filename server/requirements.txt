@@ -1,1 +1,1 @@
--r mlops/serving/requirements.txt
+-r lighthouse/mlops/serving/requirements.txt
