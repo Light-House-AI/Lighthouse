@@ -1,1 +1,1 @@
-"""WEB API for lighthouse."""
+"""API for lighthouse."""
