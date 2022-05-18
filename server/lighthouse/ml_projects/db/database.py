@@ -5,8 +5,9 @@ Contains the configuration for the database.
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import Engine
 
-from config import config
+from lighthouse.config import config
 
 
 def get_engine():
@@ -25,29 +26,36 @@ def get_engine():
     return engine
 
 
-SessionLocal = sessionmaker(autocommit=False,
-                            autoflush=False,
-                            bind=get_engine())
+def get_session_factory(engine: Engine):
+    """
+    Returns a session factory instance.
+    """
+    session_factory = sessionmaker(autocommit=False,
+                                   autoflush=False,
+                                   bind=engine)
+
+    return session_factory
 
 
-def get_session():
+def get_session(session_factory: sessionmaker):
     """
     Returns a session instance.
     """
-    session = SessionLocal()
+    session = session_factory()
     try:
         yield session
     finally:
         session.close()
 
 
-def check_db_connection(logger: logging.Logger):
+def check_db_connection(session_factory: sessionmaker, logger: logging.Logger):
     """
     Tests the database connection.
     """
     try:
-        db = SessionLocal()
+        db = session_factory()
         db.execute("SELECT 1")
+        logger.info("Database connection successful!")
     except Exception as e:
         logger.error(e)
         raise e
