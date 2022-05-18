@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run migrations
-# alembic -c ml_projects/db/alembic.ini upgrade head
+alembic -c lighthouse/ml_projects/db/migrations/alembic.ini upgrade head
 
 # Run lighthouse server
 python -m lighthouse
