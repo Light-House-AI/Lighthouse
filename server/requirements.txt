@@ -11,3 +11,4 @@ alembic
 fastapi
 uvicorn
 ujson
+fire
