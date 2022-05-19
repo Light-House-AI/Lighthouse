@@ -17,6 +17,7 @@ class NeuralNetwork:
     def predict(self, input_data):
         # sample dimension first
         samples = len(input_data)
+        input_data = input_data.reshape(input_data.shape[0], 1, input_data.shape[1])
         result = []
 
         # run network over all samples
@@ -25,7 +26,7 @@ class NeuralNetwork:
             output = input_data[i]
             for layer in self.layers:
                 output = layer.forward_propagation(output)
-            result.append(output)
+            result.append(output[0])
 
         return result
     
@@ -33,7 +34,7 @@ class NeuralNetwork:
     def fit(self, x_train, y_train, epochs, learning_rate):
         # sample dimension first
         samples = len(x_train)
-
+        
         # training loop
         for i in range(epochs):
             err = 0
