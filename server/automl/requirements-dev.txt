@@ -1,4 +1,0 @@
-# Core deps.
--r requirements.txt
-
-# Tools for static checking.
