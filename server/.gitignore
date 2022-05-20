@@ -1,2 +1,15 @@
 .env
-__pycache__
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+.vscode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+
+# Environments
+venv/

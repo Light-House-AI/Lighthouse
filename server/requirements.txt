@@ -1,4 +1,4 @@
-# mlops
+# MLOps
 ## serving
 kubernetes 
 
@@ -13,3 +13,9 @@ uvicorn
 ujson
 fire
 uuid
+
+# AutoML
+keras
+ray
+sklearn
+numpy
