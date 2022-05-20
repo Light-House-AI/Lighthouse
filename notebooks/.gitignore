@@ -1,5 +1,3 @@
-.env
-
 ### Python ###
 # Byte-compiled / optimized / DLL files
 .vscode
@@ -13,3 +11,11 @@ dist/
 
 # Environments
 venv/
+
+### JupyterNotebooks ###
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
