@@ -27,7 +27,8 @@ def add_projects(session):
     projects = [{
         "name": "Project 1",
         "id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "user_id": "50555621-7791-4ca0-9f95-ff351bcec788"
+        "user_id": "50555621-7791-4ca0-9f95-ff351bcec788",
+        "type": "classification"
     }]
 
     for project in projects:

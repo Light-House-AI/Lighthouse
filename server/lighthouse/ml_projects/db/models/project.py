@@ -1,10 +1,17 @@
-from sqlalchemy import Column, String, ForeignKey
+import enum
+
+from sqlalchemy import Column, String, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .base import Base
 from .user import User
+
+
+class ProjectType(enum.Enum):
+    classification = 'classification'
+    regression = 'regression'
 
 
 class Project(Base):
@@ -14,6 +21,7 @@ class Project(Base):
                 default=func.uuid_generate_v4())
 
     name = Column(String, nullable=False)
+    type = Column(Enum(ProjectType), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey(User.id), nullable=False)
 
     # relationships
@@ -23,8 +31,8 @@ class Project(Base):
     deployments = relationship("Deployment", back_populates="project")
 
     def __repr__(self):
-        return "<Project(id={}, name={}, user_id={})>".format(
-            self.id, self.name, self.user_id)
+        return "<Project(id={}, name={}, type={}, user_id={})>".format(
+            self.id, self.name, self.type, self.user_id)
 
     def __str__(self):
         return self.__repr__()

@@ -79,4 +79,10 @@ def downgrade():
     op.drop_table('project')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
+    
+    user_role = postgresql.ENUM('admin', 'user', name='userrole')
+    user_role.drop(op.get_bind())
+    
+    deployment_type = postgresql.ENUM('champion_challenger', 'single_model', 'fallback', name='deploymenttype')
+    deployment_type.drop(op.get_bind())
     # ### end Alembic commands ###
