@@ -26,3 +26,9 @@ def relu(x):
 
 def relu_derivative(x):
     return 1. * (x > 0)
+
+def identity(x):
+    return x
+
+def identity_derivative(x):
+    return 1.
