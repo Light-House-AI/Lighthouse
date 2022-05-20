@@ -12,3 +12,4 @@ fastapi
 uvicorn
 ujson
 fire
+uuid

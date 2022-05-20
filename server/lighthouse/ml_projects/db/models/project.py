@@ -1,14 +1,20 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from .base import Base
 from .user import User
 
 
 class Project(Base):
-    id = Column(Integer, primary_key=True)
+
+    id = Column(UUID(as_uuid=True),
+                primary_key=True,
+                default=func.uuid_generate_v4())
+
     name = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(User.id), nullable=False)
 
     # relationships
     user = relationship("User", back_populates="projects")

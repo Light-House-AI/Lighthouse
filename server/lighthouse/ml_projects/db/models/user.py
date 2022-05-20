@@ -1,5 +1,6 @@
 import enum
-from sqlalchemy import Column, Integer, String, Enum, DateTime
+from sqlalchemy import Column, String, Enum, DateTime
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -12,12 +13,17 @@ class UserRole(enum.Enum):
 
 
 class User(Base):
-    id = Column(Integer, primary_key=True)
+
+    id = Column(UUID(as_uuid=True),
+                primary_key=True,
+                default=func.uuid_generate_v4())
+
     email = Column(String, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    role = Column(Enum(UserRole), nullable=False, default=UserRole.user)
+
+    role = Column(Enum(UserRole), nullable=False, default=UserRole.user.value)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     projects = relationship("Project", back_populates="user")

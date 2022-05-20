@@ -9,7 +9,7 @@ from lighthouse.ml_projects.db.database import get_session, get_session_factory,
 
 def add_users(session):
     users = [{
-        "id": 1,
+        "id": "50555621-7791-4ca0-9f95-ff351bcec788",
         "first_name": "John",
         "last_name": "Doe",
         "email": "johndoe@gmail.com",
@@ -17,18 +17,33 @@ def add_users(session):
     }]
 
     for user in users:
-        session.add(User(**user))
+        # session.add(User(**user))
+        db_user = User(**user)
+        print(db_user)
+        session.add(db_user)
 
 
 def add_projects(session):
-    projects = [{"id": 1, "name": "Project 1", "user_id": 1}]
+    projects = [{
+        "name": "Project 1",
+        "id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "user_id": "50555621-7791-4ca0-9f95-ff351bcec788"
+    }]
 
     for project in projects:
         session.add(Project(**project))
 
 
 def add_data(session):
-    data = [{"project_id": 1, "version": 1}, {"project_id": 1, "version": 2}]
+    data = [{
+        "name": "Data 1",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
+    }, {
+        "name": "Data 2",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
+    }]
 
     for d in data:
         session.add(Data(**d))
@@ -36,13 +51,15 @@ def add_data(session):
 
 def add_models(session):
     models = [{
-        "version": 1,
-        "project_id": 1,
-        "data_version": 1
+        "name": "Model 1",
+        "id": "7388516b-3501-4a66-8f79-b872cd926b7c",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "data_id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
     }, {
-        "version": 2,
-        "project_id": 1,
-        "data_version": 2
+        "name": "Model 2",
+        "id": "1c5e3b26-503f-4f01-b5ce-564515104ded",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "data_id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
     }]
 
     for model in models:
@@ -51,15 +68,17 @@ def add_models(session):
 
 def add_deployments(session):
     deployments = [{
-        "project_id": 1,
-        "id": 1,
-        "primary_model_version": 1
+        "name": "Deployment 1",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "id": "a8711a7d-252f-4a96-a387-35380e38bba8",
+        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c"
     }, {
-        "project_id": 1,
-        "id": 2,
+        "name": "Deployment 2",
+        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
+        "id": "ce5ab1f5-cf35-41c2-906f-57e1abcee725",
         "deployment_type": DeploymentType.champion_challenger,
-        "primary_model_version": 1,
-        "secondary_model_version": 2
+        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c",
+        "secondary_model_id": "1c5e3b26-503f-4f01-b5ce-564515104ded"
     }]
 
     for deployment in deployments:
