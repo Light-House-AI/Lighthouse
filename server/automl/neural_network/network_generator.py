@@ -10,6 +10,7 @@ from activation_functions import sigmoid, sigmoid_derivative, identity, identity
 from loss_functions import mse, mse_derivative
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
+import pickle
 
 class NetworkGenerator:
     def __init__(self, X_train, y_train, X_test, y_test, type):
@@ -135,3 +136,14 @@ class NetworkGenerator:
         config = best_result["config"]
         network = best_result["network"]
         return network, accuracy, config
+    
+    def import_model(self, filepath):
+        with open(filepath, 'rb') as f:
+            res = pickle.load(f, encoding='bytes')
+        if not isinstance(res, NeuralNetwork):
+            raise TypeError('File does not exist or is corrupted')
+        return res
+
+    def export_model(self, filepath, network):
+        with open(filepath, 'wb') as f:
+            pickle.dump(network, f)
