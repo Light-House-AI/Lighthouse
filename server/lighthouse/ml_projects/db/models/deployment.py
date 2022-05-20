@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, Enum, Boolean, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, Enum, Boolean, ForeignKeyConstraint, Sequence
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -25,18 +25,26 @@ class Deployment(Base):
             name='deployment_project_id_secondary_model_version_fkey'),
     )
 
-    id = Column(Integer, primary_key=True)
+    # sequences
+    id_seq = Sequence('deployment_id_seq')
+
+    # columns
+    id = Column(Integer,
+                id_seq,
+                primary_key=True,
+                server_default=id_seq.next_value())
+
     project_id = Column(Integer, ForeignKey(Project.id), primary_key=True)
 
     deployment_type = Column(Enum(DeploymentType),
                              nullable=False,
                              default=DeploymentType.single_model)
 
-    # The model version that is deployed
+    ## The model version that is deployed
     primary_model_version = Column(Integer, nullable=False)
     secondary_model_version = Column(Integer, nullable=True)
 
-    # deployment metadata
+    ## deployment metadata
     date_created = Column(DateTime(timezone=True), server_default=func.now())
     is_running = Column(Boolean, nullable=False, default=False)
 

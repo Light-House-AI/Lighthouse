@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, ForeignKeyConstraint
-from sqlalchemy.orm import relationship, column_property
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, ForeignKeyConstraint, Sequence
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .base import Base
@@ -12,7 +12,15 @@ class Model(Base):
         refcolumns=['data.project_id', 'data.version'],
         name='model_project_id_data_version_fkey'), )
 
-    version = Column(Integer, primary_key=True)
+    # sequences
+    version_seq = Sequence('model_version_seq')
+
+    # columns
+    version = Column(Integer,
+                     version_seq,
+                     primary_key=True,
+                     server_default=version_seq.next_value())
+
     project_id = Column(Integer, ForeignKey(Project.id), primary_key=True)
     data_version = Column(Integer, nullable=False)
     date_created = Column(DateTime(timezone=True), server_default=func.now())
@@ -36,7 +44,7 @@ class Model(Base):
     )
 
     def get_data_cleaning_pipeline_id(self):
-        return str(self.project_id) + "-" + str(self.version)
+        return str(self.project_id) + "-" + str(self.data_version)
 
     def __repr__(self):
         return "<Model(version={}, project_id={}, data_version={}, date_created={}, data_cleaning_pipeline_id={})>".format(
