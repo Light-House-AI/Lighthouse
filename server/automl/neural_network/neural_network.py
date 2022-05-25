@@ -1,3 +1,4 @@
+import numpy as np
 class NeuralNetwork:
     def __init__(self):
         self.layers = []
@@ -35,13 +36,20 @@ class NeuralNetwork:
         # sample dimension first
         #samples = 
         self.learning_rate = learning_rate
-        batch_size = 8
+        batch_size = 16
         prev_error = 1
         stopper = 0
+        data_size = len(x_train)
         # training loop wth mini-batch gradient descent
         for i in range(epochs):
             err = 0
-            for k in range(0, len(x_train), batch_size):
+            # shuffle data
+            indices = np.arange(data_size)
+            np.random.shuffle(indices)
+            x_train = x_train[indices]
+            y_train = y_train[indices]
+            # mini-batch gradient descent
+            for k in range(0, data_size, batch_size):
                 batch_error = 0
                 # forward propagation
                 samples = x_train[k:k+batch_size]
@@ -58,23 +66,17 @@ class NeuralNetwork:
                 batch_error /= batch_size
                 for layer in reversed(self.layers):
                     batch_error = layer.backward_propagation(batch_error, self.learning_rate)
-            
-                
-                
-            
-                
-            
             # calculate average error on all samples
-            err /= len(x_train)
+            err /= data_size
             # stop epochs if error is not decreasing
-            if err > prev_error:
-                self.learning_rate /= 2
-            if err == prev_error:
-                stopper += 1
-            if stopper == 10:
-                break
+            #if err > prev_error:
+            #    self.learning_rate /= 2
+            #if err == prev_error:
+            #    stopper += 1
+            #if stopper == 10:
+            #    break
             #if(prev_error < err):
                 #self.learning_rate *= 0.9
                 #self.learning_rate /= 2
-            prev_error = err
+            #prev_error = err
             print('epoch %d/%d   error=%f' % (i+1, epochs, err))
