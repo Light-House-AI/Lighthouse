@@ -1,8 +1,4 @@
-from layer import Layer
-import numpy as np
-
-
-
+from .layer import Layer
 
 class ActivationLayer(Layer):
     def __init__(self, activation_function, activation_function_derivative):

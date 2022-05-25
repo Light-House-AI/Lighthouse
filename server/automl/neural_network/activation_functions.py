@@ -27,6 +27,12 @@ def relu(x):
 def relu_derivative(x):
     return 1. * (x > 0)
 
+def leaky_relu(x):
+    return np.maximum(0.01*x,x)
+
+def leaky_relu_derivative(x):
+    return np.maximum(0.01,x)
+
 def identity(x):
     return x
 
