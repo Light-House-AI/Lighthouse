@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - server/**
+      - .github/workflows/server.yml
 
 env:
     APP_NAME: lighthouse-server
@@ -27,7 +28,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ env.GHCR_USERNAME }} --password-stdin
 
       - name: Docker build image
-        run: docker build -t ${{env.PACKAGE_NAME}} .
+        run: docker build -t ${{env.PACKAGE_NAME}} ./server
 
       - name: Docker tag images
         run: |
