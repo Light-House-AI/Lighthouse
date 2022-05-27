@@ -8,7 +8,7 @@ on:
 
 env:
     APP_NAME: wrapper
-    PACKAGE_NAME: light-house-ai/wrapper
+    PACKAGE_NAME: light-house-ai/model-wrapper
     GHCR_USERNAME: light-house-ai
 
 jobs:
