@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - wrapper/**
+      - .github/workflows/wrapper.yaml
 
 env:
     APP_NAME: wrapper
