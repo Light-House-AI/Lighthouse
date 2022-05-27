@@ -33,25 +33,48 @@ class NeuralNetwork:
     # train the network
     def fit(self, x_train, y_train, epochs, learning_rate):
         # sample dimension first
-        samples = len(x_train)
-        
-        # training loop
+        #samples = 
+        self.learning_rate = learning_rate
+        batch_size = 8
+        prev_error = 1
+        stopper = 0
+        # training loop wth mini-batch gradient descent
         for i in range(epochs):
             err = 0
-            for j in range(samples):
+            for k in range(0, len(x_train), batch_size):
+                batch_error = 0
                 # forward propagation
-                output = x_train[j]
-                for layer in self.layers:
-                    output = layer.forward_propagation(output)
-
-                # compute loss (for display purpose only)
-                err += self.loss(y_train[j], output)
-
-                # backward propagation
-                error = self.loss_derivative(y_train[j], output)
+                samples = x_train[k:k+batch_size]
+                true_outputs = y_train[k:k+batch_size]
+                for j in range(len(samples)):
+                    output = samples[j]
+                    for layer in self.layers:
+                        output = layer.forward_propagation(output)
+                    # compute loss (for display purpose only)
+                    err += self.loss(true_outputs[j], output)
+                    # backward propagation
+                    batch_error += self.loss_derivative(true_outputs[j], output)
+                # update weights and biases
+                batch_error /= batch_size
                 for layer in reversed(self.layers):
-                    error = layer.backward_propagation(error, learning_rate)
-
+                    batch_error = layer.backward_propagation(batch_error, self.learning_rate)
+            
+                
+                
+            
+                
+            
             # calculate average error on all samples
-            err /= samples
-            #print('epoch %d/%d   error=%f' % (i+1, epochs, err))
+            err /= len(x_train)
+            # stop epochs if error is not decreasing
+            if err > prev_error:
+                self.learning_rate /= 2
+            if err == prev_error:
+                stopper += 1
+            if stopper == 10:
+                break
+            #if(prev_error < err):
+                #self.learning_rate *= 0.9
+                #self.learning_rate /= 2
+            prev_error = err
+            print('epoch %d/%d   error=%f' % (i+1, epochs, err))
