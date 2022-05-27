@@ -5,10 +5,13 @@ Contains the configuration for the application.
 import os
 from pydantic import BaseSettings
 
-ENV_FILE_PATH = 'ml_projects/.env'
+ENV_FILE_PATH = '.env'
 
 
 class Config(BaseSettings):
+    # Application environment
+    ENVIRONMENT: str = 'prod'
+
     # Enable debug mode.
     DEBUG: bool = False
 
@@ -33,6 +36,18 @@ class Config(BaseSettings):
 
     # Backend CORS origin.
     CORS_ORIGIN: str = "*"
+
+    # Quantity of workers for uvicorn
+    WORKERS_COUNT: int = 1
+
+    # Enable uvicorn reloading
+    RELOAD: bool = False
+
+    # Host for uvicorn
+    HOST: str = "0.0.0.0"
+
+    # Port for uvicorn
+    PORT: int = 8000
 
 
 config = Config(_env_file=ENV_FILE_PATH)
