@@ -27,7 +27,7 @@ class Project(Base):
     # relationships
     user = relationship("User", back_populates="projects")
     models = relationship("Model", back_populates="project")
-    data = relationship("Data", back_populates="project")
+    datasets = relationship("Dataset", back_populates="project")
     deployments = relationship("Deployment", back_populates="project")
 
     def __repr__(self):
@@ -41,5 +41,6 @@ class Project(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "type": self.type,
             "user_id": self.user_id,
         }

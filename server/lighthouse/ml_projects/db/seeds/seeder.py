@@ -2,9 +2,9 @@ from lighthouse.ml_projects.db.models.user import User
 from lighthouse.ml_projects.db.models.project import Project
 from lighthouse.ml_projects.db.models.model import Model
 from lighthouse.ml_projects.db.models.deployment import Deployment, DeploymentType
-from lighthouse.ml_projects.db.models.data import Data
+from lighthouse.ml_projects.db.models.dataset import Dataset
 
-from lighthouse.ml_projects.db.database import get_session, get_session_factory, get_engine
+from lighthouse.ml_projects.db.database import get_session_factory, get_engine
 
 
 def add_users(session):
@@ -35,8 +35,8 @@ def add_projects(session):
         session.add(Project(**project))
 
 
-def add_data(session):
-    data = [{
+def add_datasets(session):
+    datasets = [{
         "name": "Data 1",
         "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
         "id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
@@ -46,8 +46,8 @@ def add_data(session):
         "id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
     }]
 
-    for d in data:
-        session.add(Data(**d))
+    for dataset in datasets:
+        session.add(Dataset(**dataset))
 
 
 def add_models(session):
@@ -55,12 +55,12 @@ def add_models(session):
         "name": "Model 1",
         "id": "7388516b-3501-4a66-8f79-b872cd926b7c",
         "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "data_id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
+        "dataset_id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
     }, {
         "name": "Model 2",
         "id": "1c5e3b26-503f-4f01-b5ce-564515104ded",
         "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "data_id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
+        "dataset_id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
     }]
 
     for model in models:
@@ -96,7 +96,7 @@ def seed(force=False, verbose=True):
     if force:
         session.query(Deployment).delete()
         session.query(Model).delete()
-        session.query(Data).delete()
+        session.query(Dataset).delete()
         session.query(Project).delete()
         session.query(User).delete()
 
@@ -108,7 +108,7 @@ def seed(force=False, verbose=True):
     # seed tables
     add_users(session)
     add_projects(session)
-    add_data(session)
+    add_datasets(session)
     add_models(session)
     add_deployments(session)
     session.commit()

@@ -7,7 +7,7 @@ from .base import Base
 from .project import Project
 
 
-class Data(Base):
+class Dataset(Base):
 
     id = Column(UUID(as_uuid=True),
                 primary_key=True,
@@ -22,8 +22,8 @@ class Data(Base):
     date_created = Column(DateTime(timezone=True), server_default=func.now())
 
     # relationships
-    project = relationship("Project", back_populates="data")
-    models = relationship("Model", back_populates="data")
+    project = relationship("Project", back_populates="datasets")
+    models = relationship("Model", back_populates="dataset")
 
     # methods
     def get_data_cleaning_pipeline_id(self):
