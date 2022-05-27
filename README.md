@@ -45,6 +45,8 @@ start.sh # or start.bat for windows
 │
 ├── client          <- Client code.
 │
+├── datasets        <- Datasets used for testing.
+│
 ├── deploy
 │   ├── k8s                 <- k8s manifests for deployment.
 │   └── docker-compose.yml  <- Docker compose file for development.
@@ -52,6 +54,8 @@ start.sh # or start.bat for windows
 ├── docs            <- Documentation and examples.
 │
 ├── infrastructure  <- Infrastructure code.
+│
+├── notebooks       <- Development code.
 │
 ├── server          <- Server code.
 │   │
