@@ -27,7 +27,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ env.GHCR_USERNAME }} --password-stdin
 
       - name: Docker build image
-        run: docker build -t ${{env.PACKAGE_NAME}} .
+        run: docker build -t ${{env.PACKAGE_NAME}} ./wrapper
 
       - name: Docker tag images
         run: |
