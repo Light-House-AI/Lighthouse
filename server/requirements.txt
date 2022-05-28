@@ -1,0 +1,23 @@
+# MLOps
+## serving
+kubernetes 
+
+# ml_projects
+psycopg2-binary
+pydantic
+coloredlogs
+sqlalchemy
+alembic
+fastapi
+uvicorn
+ujson
+fire
+uuid
+
+# AutoML
+keras
+ray
+sklearn
+numpy
+pandas
+fuzzywuzzy

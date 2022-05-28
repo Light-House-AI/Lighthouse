@@ -1,0 +1,40 @@
+name: Server-CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - server/**
+      - .github/workflows/server.yaml
+
+env:
+    APP_NAME: lighthouse-server
+    PACKAGE_NAME: light-house-ai/lighthouse-server
+    GHCR_USERNAME: light-house-ai
+
+jobs:
+  build_publish:
+    name: Build & Publish
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Inject variables
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ env.GHCR_USERNAME }} --password-stdin
+
+      - name: Docker build image
+        run: docker build -t ${{env.PACKAGE_NAME}} ./server
+
+      - name: Docker tag images
+        run: |
+          docker tag ${{env.PACKAGE_NAME}} ghcr.io/${{env.PACKAGE_NAME}}:latest
+          docker tag ${{env.PACKAGE_NAME}} ghcr.io/${{env.PACKAGE_NAME}}:${{ steps.vars.outputs.sha_short }}
+      - name: Docker push images
+        run: |
+          docker push ghcr.io/${{env.PACKAGE_NAME}}:latest
+          docker push ghcr.io/${{env.PACKAGE_NAME}}:${{ steps.vars.outputs.sha_short }}

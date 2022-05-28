@@ -1,0 +1,78 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: lighthouse
+  name: lighthouse-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lighthouse-app
+  template:
+    metadata:
+      labels:
+        app: lighthouse-app
+    spec:
+      containers:
+        - name: app
+          image: lighthouse:latest
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: api-port
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+            - name: LIGHTHOUSE_HOST
+              value: "0.0.0.0"
+            - name: LIGHTHOUSE_WORKERS_COUNT
+              value: "10"
+            - name: LIGHTHOUSE_DB_HOST
+              value: "lighthouse-db-service"
+            - name: LIGHTHOUSE_REDIS_HOST
+              value: "lighthouse-redis-service"
+          resources:
+            limits:
+              memory: "300Mi"
+              cpu: "200m"
+          ports:
+            - containerPort: 8000
+              name: api-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lighthouse
+  name: lighthouse-app-service
+spec:
+  selector:
+    app: lighthouse-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: api-port
+      name: api-port
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lighthouse-app
+  namespace: lighthouse
+  labels:
+    name: lighthouse-app
+spec:
+  rules:
+    - host: lighthouse.local
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: lighthouse-app-service
+                port:
+                  name: api-port
+
+---
