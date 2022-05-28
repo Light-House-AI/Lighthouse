@@ -250,8 +250,9 @@ def knn_impute(df, column, is_numeric):
         df.loc[df[column].isna(), column] = y_predict
 
 
-def knn_impute_test(raw_df, column, is_numeric, shadow_df):
+def knn_impute_test(raw_df, column, is_numeric, shadow_df, output_column):
     x_train = raw_df[~raw_df[column].isna()].copy()
+    x_train = x_train[x_train.columns[x_train.columns != output_column]]
     x_train.dropna(inplace=True)
 
     y_train = x_train[column]
