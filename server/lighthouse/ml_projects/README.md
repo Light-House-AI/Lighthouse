@@ -20,10 +20,10 @@ The seeder module helps you seed the database with data.
 
 ```bash
 cd server
-python -m lighthouse.ml_projects.db.seeds
+python -m lighthouse.ml_projects.db.seeder
 
 # you can force the seeder to run by passing the --force flag
 # this will delete all data in the database and seed it again
 # use this with caution
-python -m lighthouse.ml_projects.db.seeds --force=True
+python -m lighthouse.ml_projects.db.seeder --force=True
 ```
