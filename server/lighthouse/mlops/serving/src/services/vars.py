@@ -10,7 +10,7 @@ secret_class_arguments_dict = {
 }
 # TODO azure_connection_string
 deployment_envs_dict = {
-    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=csb1003200131b382e1;AccountKey=Dlq6mPf8KfGnuSIAyq3uGWWFFXqGMcJMKPNS0jVRq8KLmC/tNrBUuiglpLaWlmCWnQLL0MKfRdS3YPuRbkoUnw==;EndpointSuffix=core.windows.net",
+    "AZURE_STORAGE_CONNECTION_STRING": "",
     "AZURE_CONTAINER_NAME": CONTAINER_NAME,
     "AZURE_BLOB_NAME": "leave as is" + PKL_EXTENTION,
 }
