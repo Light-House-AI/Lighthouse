@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -6,18 +6,22 @@ import "bootstrap";
 import './scss/icons.scss';
 import './scss/structure.scss';
 import Homepage from './pages/Homepage';
-
+import Loginpage from './pages/Loginpage';
+import Sample from './pages/Sample'
 function App() {
-  axios.defaults.baseURL = "http://localhost:3000/api";
+
+  useEffect(() => {
+    axios.defaults.baseURL = "http://localhost:3000/api";
+  }, []);
 
   return (
-    <div id='wrapper'>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Loginpage />} />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/sample" element={<Sample />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

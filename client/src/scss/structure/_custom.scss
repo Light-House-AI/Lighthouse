@@ -66,3 +66,24 @@ body[data-sidebar-size='default'] {
         }
     }
 }
+
+.content-page {
+    .content {
+        .container-fluid {
+            margin-top: 30px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            height: calc(100vh - 130px);
+        }
+    }
+}
+
+.overflow-y-scroll {
+    overflow-y: scroll;
+}
+
+.homepage {
+    &.container-fluid {
+        padding: 100px 0 0 0;
+    }
+}

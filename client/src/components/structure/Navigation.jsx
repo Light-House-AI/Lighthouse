@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Navigation() {
+
+    const [location] = useState(window.location.pathname);
 
     function openFullscreen() {
         if (document.documentElement.requestFullscreen) {
@@ -149,10 +151,22 @@ function Navigation() {
 
                 {/* SIDE MENU */}
                 <ul className="list-unstyled topnav-menu topnav-menu-left m-0">
-                    <li>
-                        <button className="button-menu-mobile waves-effect waves-light" onClick={minimizeSidebar}>
-                            <i className="fe-menu"></i>
-                        </button>
+                    {location !== '/' ?
+                        <li>
+                            <button className="button-menu-mobile waves-effect waves-light" onClick={minimizeSidebar}>
+                                <i className="fe-menu"></i>
+                            </button>
+                        </li> : null
+                    }
+                    <li className="dropdown d-none d-md-block">
+                        <a className="nav-link waves-effect waves-light" href="/" role="button">
+                            Create New Project
+                        </a>
+                    </li>
+                    <li className="dropdown d-block d-md-none">
+                        <a className="nav-link waves-effect waves-light" href="/" role="button">
+                            <i className="fe-plus"></i>
+                        </a>
                     </li>
                 </ul>
             </div>
