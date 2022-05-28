@@ -1,12 +1,14 @@
 import React from "react";
 
-import Login from "../components/Login";
+import Navigation from "../components/structure/Navigation";
+import SideBar from "../components/structure/SideBar";
 
 function Homepage() {
     return (
-        <div>
-            <title>Login | Lighthouse AI</title>
-            <Login />
+        <div id='homepage'>
+            <title>Home | Lighthouse AI</title>
+            <Navigation />
+            <SideBar />
         </div>
     );
 }
