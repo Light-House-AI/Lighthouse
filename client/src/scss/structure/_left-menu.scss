@@ -114,7 +114,7 @@
     }
 
     .menuitem-active {
-        > a {
+        >a {
             color: $menu-item-active;
         }
 
@@ -170,15 +170,16 @@
     }
 }
 
-li{
+li {
     >a[aria-expanded="true"] {
-        > span.menu-arrow {
+        >span.menu-arrow {
             transform: rotate(90deg);
         }
     }
+
     &.menuitem-active {
-        > a:not(.collapsed) {
-            > span.menu-arrow {
+        >a:not(.collapsed) {
+            >span.menu-arrow {
                 transform: rotate(90deg);
             }
         }
@@ -204,7 +205,7 @@ body[data-sidebar-size="condensed"] {
 
     // Side menu
     .left-side-menu {
-        position: absolute;
+        position: fixed;
         padding-top: 0;
         width: $leftbar-width-condensed !important;
         z-index: 5;
@@ -290,30 +291,30 @@ body[data-sidebar-size="condensed"] {
                             }
                         }
 
-                        > .collapse,
-                        > .collapsing {
+                        >.collapse,
+                        >.collapsing {
                             display: block !important;
                             height: auto !important;
                             transition: none !important;
 
-                            > ul {
+                            >ul {
                                 display: block !important;
                                 left: $leftbar-width-condensed;
                                 position: absolute;
                                 width: 190px;
                                 box-shadow: $box-shadow-condensed;
-    
+
                                 ul {
                                     box-shadow: $box-shadow-condensed;
                                 }
-    
+
                                 a {
                                     box-shadow: none;
                                     padding: 8px 20px;
                                     position: relative;
                                     width: 190px;
                                     z-index: 6;
-    
+
                                     &:hover {
                                         color: $menu-item-hover;
                                     }
@@ -332,8 +333,8 @@ body[data-sidebar-size="condensed"] {
                     li {
                         &:hover {
 
-                            > .collapse,
-                            > .collapsing {
+                            >.collapse,
+                            >.collapsing {
                                 display: block !important;
                                 height: auto !important;
                                 transition: none !important;
@@ -433,7 +434,7 @@ body[data-sidebar-size="condensed"] {
   Small Menu
 ============= */
 
-body[data-sidebar-size="compact"]:not([data-sidebar-size="condensed"]){
+body[data-sidebar-size="compact"]:not([data-sidebar-size="condensed"]) {
     .logo-box {
         width: $leftbar-width-sm !important;
     }
@@ -533,12 +534,12 @@ body[data-sidebar-color="dark"] {
             .menu-title {
                 color: $gray-500;
             }
-            
+
             .menuitem-active {
-                > a {
+                >a {
                     color: $menu-item-active;
                 }
-        
+
                 .active {
                     color: $menu-item-active;
                 }
@@ -567,7 +568,7 @@ body[data-sidebar-color="dark"] {
         }
 
         .user-box {
-            .dropdown > a {
+            .dropdown>a {
                 color: $white !important;
             }
         }
@@ -623,7 +624,7 @@ body[data-sidebar-color="gradient"] {
         }
     }
 
-    .menuitem-active > a {
+    .menuitem-active>a {
         color: $white !important;
     }
 
@@ -684,7 +685,7 @@ body[data-sidebar-color="gradient"] {
         }
 
         .user-box {
-            .dropdown > a {
+            .dropdown>a {
                 color: $white !important;
             }
         }
@@ -722,6 +723,7 @@ body[data-sidebar-color="gradient"] {
             }
         }
     }
+
     &[data-sidebar-size="compact"] {
         #wrapper {
             .left-side-menu {
@@ -847,6 +849,7 @@ body[data-sidebar-icon="twotones"] {
                     i {
                         color: $blue;
                     }
+
                     svg {
                         width: 18px;
                         height: 18px;

@@ -12,6 +12,13 @@ function Navigation() {
         }
     }
 
+    function minimizeSidebar() {
+        if (document.body.attributes['data-sidebar-size'].value === 'condensed')
+            document.body.attributes['data-sidebar-size'].value = 'default';
+        else
+            document.body.attributes['data-sidebar-size'].value = 'condensed';
+    }
+
     return (
         <div className="navbar-custom">
             <div className="container-fluid">
@@ -143,7 +150,7 @@ function Navigation() {
                 {/* SIDE MENU */}
                 <ul className="list-unstyled topnav-menu topnav-menu-left m-0">
                     <li>
-                        <button className="button-menu-mobile waves-effect waves-light">
+                        <button className="button-menu-mobile waves-effect waves-light" onClick={minimizeSidebar}>
                             <i className="fe-menu"></i>
                         </button>
                     </li>
