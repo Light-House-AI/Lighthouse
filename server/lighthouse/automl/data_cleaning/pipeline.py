@@ -128,7 +128,7 @@ def clean_train(df, output_column, operations):
     return df
 
 
-def clean_test(df, operations):
+def clean_test(df, operations, raw_df, output_column):
     for col_json in operations:
         # Column name
         col = col_json['column_name']
@@ -163,23 +163,21 @@ def clean_test(df, operations):
                 df[col][outliers] = col_json['mode']
 
         # Fill missing data
-        # if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
-        #     p_score = col_json['p_score']
-        #     if p_score >= -0.5 and p_score <= 0.5:
-        #         if not is_numeric:
-        #             df[col].fillna(col_json['mode'], inplace=True)
-        #         else:
-        #             df[col].fillna(col_json['mean'], inplace=True)
-        #     else:
-        #         knn_impute(df, col, is_numeric)
-        # if col_json['fill_method'] == 'average':
-        #     fill_average_mode(df, col, is_numeric)
-        # elif col_json['fill_method'] == 'knn':
-        #     knn_impute(df, col, is_numeric)
-        if not is_numeric:
-            df[col].fillna(col_json['mode'], inplace=True)
-        else:
-            df[col].fillna(col_json['mean'], inplace=True)
+        if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
+            
+            p_score = col_json['p_score']
+            if p_score >= -0.5 and p_score <= 0.5:
+                if not is_numeric:
+                    df[col].fillna(col_json['mode'], inplace=True)
+                else:
+                    df[col].fillna(col_json['mean'], inplace=True)
+            else:
+                knn_impute_test(raw_df, col, is_numeric, df)
+                
+        elif col_json['fill_method'] == 'average':
+            fill_average_mode(df, col, is_numeric)
+        elif col_json['fill_method'] == 'knn':
+            knn_impute_test(raw_df, col, is_numeric, df)
 
         # Convert Nominal/Ordinal
         if df[col].dtype == 'object':

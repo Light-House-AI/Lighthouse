@@ -5,6 +5,7 @@ from fuzzywuzzy import process
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 
+
 def read_data(file_name, header=0, sep=','):
     """
     Reads a csv file and returns a pandas dataframe
@@ -249,6 +250,34 @@ def knn_impute(df, column, is_numeric):
         df.loc[df[column].isna(), column] = y_predict
 
 
+def knn_impute_test(raw_df, column, is_numeric, shadow_df):
+    x_train = raw_df[~raw_df[column].isna()].copy()
+    x_train.dropna(inplace=True)
+
+    y_train = x_train[column]
+    x_train = x_train[x_train.columns[x_train.columns != column]]
+    x_train = x_train[x_train.columns[x_train.dtypes != 'object']]
+
+    x_predict = shadow_df[shadow_df.columns[shadow_df.columns != column]].copy()
+    x_predict = x_predict[x_predict.columns[x_predict.dtypes != 'object']]
+
+    if x_predict.shape[0] == 0:
+        return
+
+    if is_numeric:
+        # REGRESSION
+        knn_regressor = KNeighborsRegressor()
+        knn_regressor.fit(x_train, y_train)
+        y_predict = knn_regressor.predict(x_predict)
+        shadow_df.loc[shadow_df[column].isna(), column] = y_predict
+    else:
+        # CLASSIFICATION
+        knn_classifier = KNeighborsClassifier()
+        knn_classifier.fit(x_train, y_train)
+        y_predict = knn_classifier.predict(x_predict)
+        shadow_df.loc[shadow_df[column].isna(), column] = y_predict
+
+
 def pearson_score(df, column, output_column):
     df_temp = df.copy()
     drop_missing_values(df_temp, column)
@@ -290,4 +319,3 @@ def automatic_data_filler(df, column, output_column, is_numeric, no_corr=0.01, l
         # print(column, p_score, "High correlation")
         knn_impute(df, column, is_numeric)
         return 'knn', p_score
-
