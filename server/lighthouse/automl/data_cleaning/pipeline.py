@@ -172,12 +172,12 @@ def clean_test(df, operations, raw_df, output_column):
                 else:
                     df[col].fillna(col_json['mean'], inplace=True)
             else:
-                knn_impute_test(raw_df, col, is_numeric, df)
+                knn_impute_test(raw_df, col, is_numeric, df, output_column)
                 
         elif col_json['fill_method'] == 'average':
             fill_average_mode(df, col, is_numeric)
         elif col_json['fill_method'] == 'knn':
-            knn_impute_test(raw_df, col, is_numeric, df)
+            knn_impute_test(raw_df, col, is_numeric, df, output_column)
 
         # Convert Nominal/Ordinal
         if df[col].dtype == 'object':
