@@ -19,3 +19,5 @@ keras
 ray
 sklearn
 numpy
+pandas
+fuzzywuzzy
