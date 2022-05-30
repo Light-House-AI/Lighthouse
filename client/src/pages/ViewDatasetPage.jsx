@@ -4,9 +4,10 @@ import Navigation from "../components/structure/Navigation";
 import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
 import PageTitle from "../components/structure/PageTitle";
-import Datasets from "../components/Datasets";
 
-function DatasetsPage() {
+import ViewDataset from "../components/ViewDataset";
+
+function ViewDatasetPage() {
     return (
         <div id='wrapper'>
             <title>Datasets - Project 1 | Lighthouse AI</title>
@@ -15,9 +16,9 @@ function DatasetsPage() {
             <div className="content-page">
                 <div className="content">
                     <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Datasets"} view={null} projectid={"asdasd"} />
+                        <PageTitle project={"Project 1"} type={"Datasets"} view={"Dataset 1"} projectid={"asdasd"} />
                         <div className="mb-2">
-                            <Datasets />
+                            <ViewDataset />
                         </div>
                         <Footer />
                     </div>
@@ -27,4 +28,4 @@ function DatasetsPage() {
     );
 }
 
-export default DatasetsPage;
+export default ViewDatasetPage;

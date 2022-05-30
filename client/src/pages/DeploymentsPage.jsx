@@ -9,13 +9,13 @@ import Deployments from "../components/Deployments";
 function DeploymentsPage() {
     return (
         <div id='wrapper'>
-            <title>Models - Project 1 | Lighthouse AI</title>
+            <title>Deployments - Project 1 | Lighthouse AI</title>
             <Navigation />
             <SideBar />
             <div className="content-page">
                 <div className="content">
                     <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Deployments"} />
+                        <PageTitle project={"Project 1"} type={"Deployments"} view={null} projectid={"asdasd"} />
                         <div className="mb-2">
                             <Deployments />
                         </div>
