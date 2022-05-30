@@ -151,7 +151,7 @@ function Navigation() {
 
                 {/* SIDE MENU */}
                 <ul className="list-unstyled topnav-menu topnav-menu-left m-0">
-                    {location !== '/' ?
+                    {location !== '/' && location !== '/newproject' ?
                         <li>
                             <button className="button-menu-mobile waves-effect waves-light" onClick={minimizeSidebar}>
                                 <i className="fe-menu"></i>
@@ -159,12 +159,12 @@ function Navigation() {
                         </li> : null
                     }
                     <li className="dropdown d-none d-md-block">
-                        <a className="nav-link waves-effect waves-light" href="/" role="button">
+                        <a className="nav-link waves-effect waves-light" href="/newproject">
                             Create New Project
                         </a>
                     </li>
                     <li className="dropdown d-block d-md-none">
-                        <a className="nav-link waves-effect waves-light" href="/" role="button">
+                        <a className="nav-link waves-effect waves-light" href="/newproject">
                             <i className="fe-plus"></i>
                         </a>
                     </li>

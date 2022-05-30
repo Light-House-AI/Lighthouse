@@ -12,6 +12,7 @@ import Sample from './pages/Sample'
 import DatasetsPage from './pages/DatasetsPage';
 import ModelsPage from './pages/ModelsPage';
 import DeploymentsPage from './pages/DeploymentsPage';
+import CreateProjectPage from './pages/CreateProjectPage';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/newproject" element={<CreateProjectPage />} />
         <Route path="/:projectid" element={<DatasetsPage />} />
         <Route path="/:projectid/datasets" element={<DatasetsPage />} />
         <Route path="/:projectid/models" element={<ModelsPage />} />
