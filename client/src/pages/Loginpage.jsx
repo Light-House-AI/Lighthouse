@@ -1,13 +1,14 @@
 import React from "react";
 
+import Login from "../components/Login";
+
 function LoginPage() {
     return (
-        <div id='loginpage'>
+        <div id='loginpage' className="scroll">
             <title>Login | Lighthouse AI</title>
             <div className="container-fluid">
-                <h1>hi</h1>
+                <Login />
             </div>
-
         </div>
     );
 }

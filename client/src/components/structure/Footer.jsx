@@ -6,7 +6,7 @@ function Footer() {
         <div className="footer">
             <div className="row">
                 <div className="col-md-6">
-                    {year} &copy; UBold theme by <a href="/">Lighthouse AI</a>
+                    {year} &copy; <a href="/">Lighthouse AI</a>
                 </div>
                 <div className="col-md-6">
                     <div className="text-md-end footer-links d-none d-sm-block">
