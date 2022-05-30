@@ -5,9 +5,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import "bootstrap";
 import './scss/icons.scss';
 import './scss/structure.scss';
-import Homepage from './pages/Homepage';
-import Loginpage from './pages/Loginpage';
+
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 import Sample from './pages/Sample'
+import DatasetsPage from './pages/DatasetsPage';
+import ModelsPage from './pages/ModelsPage';
+import DeploymentsPage from './pages/DeploymentsPage';
+
 function App() {
 
   useEffect(() => {
@@ -17,8 +22,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Loginpage />} />
-        <Route path="/" element={<Homepage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/:projectid" element={<DatasetsPage />} />
+        <Route path="/:projectid/datasets" element={<DatasetsPage />} />
+        <Route path="/:projectid/models" element={<ModelsPage />} />
+        <Route path="/:projectid/deployments" element={<DeploymentsPage />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>
     </BrowserRouter>

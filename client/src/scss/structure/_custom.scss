@@ -71,9 +71,12 @@ body[data-sidebar-size='default'] {
     .content {
         .container-fluid {
             margin-top: 30px;
-            overflow-y: scroll;
-            overflow-x: hidden;
             height: calc(100vh - 130px);
+
+            &.scroll {
+                overflow-y: scroll;
+                overflow-x: hidden;
+            }
         }
     }
 }
@@ -86,4 +89,8 @@ body[data-sidebar-size='default'] {
     &.container-fluid {
         padding: 100px 0 0 0;
     }
+}
+
+.text-color {
+    color: $text-color-h;
 }

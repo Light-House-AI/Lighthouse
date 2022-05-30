@@ -118,7 +118,7 @@ function Navigation() {
                     {/* User */}
                     <li className="dropdown notification-list topbar-dropdown">
                         <button className="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light arrow-none button-no-style" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                            <img src="user.jpg" className="rounded-circle" alt='' />
+                            <img src="/user.jpg" className="rounded-circle" alt='' />
                             <span className="pro-user-name ms-1">
                                 Stanley <i className="mdi mdi-chevron-down"></i>
                             </span>
@@ -141,10 +141,10 @@ function Navigation() {
                 <div className="logo-box">
                     <a href="/" className="logo logo-light text-center">
                         <span className="logo-sm">
-                            <img src="logo-sm.png" alt="" height="22" />
+                            <img src="/logo-sm.png" alt="" height="22" />
                         </span>
                         <span className="logo-lg">
-                            <img src="logo-light.png" alt="" height="20" />
+                            <img src="/logo-light.png" alt="" height="20" />
                         </span>
                     </a>
                 </div>

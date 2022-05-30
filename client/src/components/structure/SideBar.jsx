@@ -5,7 +5,7 @@ function SideBar() {
         <div className="left-side-menu">
             <div className="h-100 scroll-bar">
                 <div className="user-box text-center">
-                    <img src="user.jpg" alt="user-img" title="Mat Helme"
+                    <img src="/user.jpg" alt="user-img" title="Mat Helme"
                         className="rounded-circle avatar-md" />
                     <div className="dropdown">
                         <a href="/" className="text-dark dropdown-toggle h5 mt-2 mb-1 d-block"

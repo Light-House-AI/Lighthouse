@@ -1,6 +1,6 @@
 import React from "react";
 
-function Loginpage() {
+function LoginPage() {
     return (
         <div id='loginpage'>
             <title>Login | Lighthouse AI</title>
@@ -12,4 +12,4 @@ function Loginpage() {
     );
 }
 
-export default Loginpage;
+export default LoginPage;
