@@ -25,7 +25,7 @@ def get_user(db: Session = Depends(get_session),
     Return the current user.
     """
 
-    user = auth_service.get_user_by_id(user_id=user_data.id, db=db)
+    user = auth_service.get_user_by_id(user_id=user_data.user_id, db=db)
     return user
 
 
