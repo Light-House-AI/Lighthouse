@@ -23,14 +23,14 @@ function ColumnRules() {
                 </div>
                 {/* CATEGORICAL */}
                 <div className="mb-2">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" defaultChecked />
-                        <label class="form-check-label">Categorical</label>
+                    <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" role="switch" defaultChecked />
+                        <label className="form-check-label">Categorical</label>
                     </div>
                 </div>
                 {/* COLUMN TYPE */}
                 <div className="mb-2">
-                    <label class="form-label">Column Type:</label>
+                    <label className="form-label">Column Type:</label>
                     <select ref={columnType}>
                         <option value="">Select column type</option>
                         <option value="AL">Alabama</option>
@@ -64,7 +64,7 @@ function ColumnRules() {
                 </div>
                 {/* FILL METHOD */}
                 <div className="mb-2">
-                    <label class="form-label">Fill Method:</label>
+                    <label className="form-label">Fill Method:</label>
                     <select ref={columnFill}>
                         <option value="">Select a fill method</option>
                         <option value="automatic">Automatic</option>
@@ -76,9 +76,9 @@ function ColumnRules() {
                 </div>
                 {/* NOMINAL OR ORDINAL */}
                 <div className="mb-2">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" />
-                        <label class="form-check-label">Nominal</label>
+                    <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" role="switch" />
+                        <label className="form-check-label">Nominal</label>
                     </div>
                 </div>
                 {/* ORDERLIST VALUES */}
