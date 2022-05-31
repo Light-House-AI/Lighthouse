@@ -27,3 +27,15 @@ python -m lighthouse.ml_projects.db.seeder
 # use this with caution
 python -m lighthouse.ml_projects.db.seeder --force=True
 ```
+
+## Running the server
+
+```bash
+cd server
+python -m lighthouse
+```
+
+## Checking the documentation
+
+Go to http://localhost:8000/api/v1/docs, and you should see the documentation.
+You can also check the _redoc_ documentation in the browser by going to http://localhost:8000/api/v1/redoc/
