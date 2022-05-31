@@ -118,7 +118,7 @@ def _decode_access_token(token: str):
     payload = jwt.decode(
         token,
         config.ACCESS_TOKEN_SECRET_KEY,
-        algorithms=[config.ACCESS_TOKEN_ALGORITHM],
+        algorithms=[config.JWT_ALGORITHM],
         options={"verify_aud": False},
     )
 

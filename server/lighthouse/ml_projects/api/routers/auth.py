@@ -51,9 +51,8 @@ def login(*, db: Session = Depends(get_session), login_data: Login):
     """
     Get the JWT for a user with data from OAuth2 request form body.
     """
-
     try:
-        token = auth_service.login(email=login_data.username,
+        token = auth_service.login(email=login_data.email,
                                    password=login_data.password,
                                    db=db)
     except Exception as e:

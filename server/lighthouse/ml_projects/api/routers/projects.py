@@ -20,7 +20,7 @@ def get_projects(*,
     """
     Returns current user projects.
     """
-    return projects_service.get_user_projects(user_id=user_data.id,
+    return projects_service.get_user_projects(user_id=user_data.user_id,
                                               db=db,
                                               skip=skip,
                                               limit=limit)
