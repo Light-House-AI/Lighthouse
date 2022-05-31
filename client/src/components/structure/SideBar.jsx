@@ -31,16 +31,35 @@ function SideBar() {
                             <div className="collapse" id="datasets">
                                 <ul className="nav-second-level">
                                     <li>
-                                        <a href="/">Dataset 1</a>
+                                        <a href="#rawdata" data-bs-toggle="collapse">
+                                            Raw Datasets <span className="menu-arrow"></span>
+                                        </a>
+                                        <div className="collapse" id="rawdata">
+                                            <ul className="nav-second-level">
+                                                <li>
+                                                    <a href="/">Datasets 1</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/">Datasets 2</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </li>
+
                                     <li>
-                                        <a href="/">Dataset 2</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Dataset 3</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Dataset 4</a>
+                                        <a href="#cleaneddatasets" data-bs-toggle="collapse">
+                                            Cleaned Datasets <span className="menu-arrow"></span>
+                                        </a>
+                                        <div className="collapse" id="cleaneddatasets">
+                                            <ul className="nav-second-level">
+                                                <li>
+                                                    <a href="/">Datasets 1</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/">Datasets 2</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>

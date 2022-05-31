@@ -11,7 +11,7 @@ function Sample() {
             <SideBar />
             <div className="content-page">
                 <div className="content">
-                    <div className="container-fluid scroll mt-0">
+                    <div className="container-fluid scroll">
                         <h1>hi</h1>
                         <h1>hi</h1>
                         <h1>hi</h1>
