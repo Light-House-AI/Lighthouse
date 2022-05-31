@@ -16,6 +16,7 @@ import CreateProjectPage from './pages/CreateProjectPage';
 import CreateModelPage from './pages/CreateModelPage';
 import CreateDeploymentPage from './pages/CreateDeploymentPage';
 import ViewDatasetPage from './pages/ViewDatasetPage';
+import CleanDataPage from './pages/CleanDataPage';
 
 function App() {
 
@@ -26,8 +27,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/newproject" element={<CreateProjectPage />} />
         <Route path="/:projectid" element={<DatasetsPage />} />
         <Route path="/:projectid/datasets" element={<DatasetsPage />} />
@@ -36,6 +37,7 @@ function App() {
         <Route path="/:projectid/models/create" element={<CreateModelPage />} />
         <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
+        <Route path="/:projectid/datasets/:datasetid/clean" element={<CleanDataPage />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>
     </BrowserRouter>
