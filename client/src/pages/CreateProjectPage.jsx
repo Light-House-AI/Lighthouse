@@ -23,7 +23,6 @@ function CreateProjectPage() {
                     </div>
                 </div>
             </div>
-
         </div >
     );
 }

@@ -16,7 +16,7 @@ function CreateDeploymentPage() {
             <div className="content-page">
                 <div className="content">
                     <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Deployments"} view={"Create Deployment"} projectid={"asdasd"} />
+                        <PageTitle project={"Project 1"} type={"Deployments"} view={"Create Deployment"} execution={null} projectid={"asdasd"} />
                         <div className="mb-2">
                             <CreateDeployment />
                         </div>

@@ -15,7 +15,7 @@ function DatasetsPage() {
             <div className="content-page">
                 <div className="content">
                     <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Datasets"} view={null} projectid={"asdasd"} />
+                        <PageTitle project={"Project 1"} type={"Datasets"} view={null} execution={null} projectid={"asdasd"} />
                         <div className="mb-2">
                             <Datasets />
                         </div>

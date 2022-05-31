@@ -15,7 +15,7 @@ function CreateModelPage() {
             <div className="content-page">
                 <div className="content">
                     <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Models"} view={"Create Model"} projectid={"asdasd"} />
+                        <PageTitle project={"Project 1"} type={"Models"} view={"Create Model"} execution={null} projectid={"asdasd"} />
                         <div className="mb-2">
                             <CreateModel />
                         </div>
