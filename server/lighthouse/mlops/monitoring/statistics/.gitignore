@@ -1,0 +1,6 @@
+data/*.csv
+*/*/__pycache__
+*/expectations/*.json
+*/checkpoints/*.yml
+great_expectations/uncommitted/
+tempCodeRunnerFile.py
