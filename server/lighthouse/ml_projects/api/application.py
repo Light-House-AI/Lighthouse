@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from .routers import api_router
@@ -16,18 +17,35 @@ def get_app() -> FastAPI:
     """
     app = FastAPI(
         **METADATA,
-        docs_url="/api/docs",
-        redoc_url="/api/redoc",
-        openapi_url="/api/openapi.json",
+        docs_url=config.API_PREFIX + "/docs",
+        redoc_url=config.API_PREFIX + "/redoc",
+        openapi_url=config.API_PREFIX + "/openapi.json",
         default_response_class=UJSONResponse,
     )
 
+    # setup lifecycle hooks
     app.on_event("startup")(startup(app))
     app.on_event("shutdown")(shutdown(app))
 
-    app.include_router(router=api_router, prefix="/api")
+    # add CORS middleware
+    add_cors_middleware(app)
 
+    # add routers
+    app.include_router(router=api_router)
     return app
+
+
+def add_cors_middleware(app):
+    """
+    Add CORS middleware to the application.
+    """
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=config.CORS_ORIGIN,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 def get_uvicorn_log_config():

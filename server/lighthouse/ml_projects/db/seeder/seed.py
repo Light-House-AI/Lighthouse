@@ -1,8 +1,8 @@
-from lighthouse.ml_projects.db.models.user import User
-from lighthouse.ml_projects.db.models.project import Project
-from lighthouse.ml_projects.db.models.model import Model
-from lighthouse.ml_projects.db.models.deployment import Deployment, DeploymentType
-from lighthouse.ml_projects.db.models.dataset import Dataset
+from lighthouse.ml_projects.db import User
+from lighthouse.ml_projects.db import Project
+from lighthouse.ml_projects.db import Model
+from lighthouse.ml_projects.db import Deployment, DeploymentType
+from lighthouse.ml_projects.db import Dataset
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
 

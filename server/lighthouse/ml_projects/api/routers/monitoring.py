@@ -1,7 +1,17 @@
+"""Router for checking lighthouse status."""
+
 from fastapi import APIRouter
-from .schema import HealthCheck
+from pydantic import BaseModel
 
 router = APIRouter()
+
+
+class HealthCheck(BaseModel):
+    """
+    HealthCheck schema
+    """
+
+    status: str
 
 
 @router.get('/health', response_model=HealthCheck)

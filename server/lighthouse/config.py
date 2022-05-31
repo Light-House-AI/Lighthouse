@@ -35,7 +35,7 @@ class Config(BaseSettings):
     JWT_ALGORITHM: str = 'HS256'
 
     # Backend CORS origin.
-    CORS_ORIGIN: str = "*"
+    CORS_ORIGIN = ["http://localhost:8000"]
 
     # Quantity of workers for uvicorn
     WORKERS_COUNT: int = 1
@@ -48,6 +48,12 @@ class Config(BaseSettings):
 
     # Port for uvicorn
     PORT: int = 8000
+
+    # Base URL for API
+    API_PREFIX: str = "/api/v1"
+
+    # Login route
+    LOGIN_ROUTE: str = "/api/v1/auth/login"
 
 
 config = Config(_env_file=ENV_FILE_PATH)

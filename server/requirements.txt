@@ -13,6 +13,10 @@ uvicorn
 ujson
 fire
 uuid
+passlib
+python-jose
+pydantic[email]
+python-multipart
 
 # AutoML
 keras

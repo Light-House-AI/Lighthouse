@@ -20,10 +20,22 @@ The seeder module helps you seed the database with data.
 
 ```bash
 cd server
-python -m lighthouse.ml_projects.db.seeds
+python -m lighthouse.ml_projects.db.seeder
 
 # you can force the seeder to run by passing the --force flag
 # this will delete all data in the database and seed it again
 # use this with caution
-python -m lighthouse.ml_projects.db.seeds --force=True
+python -m lighthouse.ml_projects.db.seeder --force=True
 ```
+
+## Running the server
+
+```bash
+cd server
+python -m lighthouse
+```
+
+## Checking the documentation
+
+Go to http://localhost:8000/api/v1/docs, and you should see the documentation.
+You can also check the _redoc_ documentation in the browser by going to http://localhost:8000/api/v1/redoc/
