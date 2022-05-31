@@ -49,5 +49,11 @@ class Config(BaseSettings):
     # Port for uvicorn
     PORT: int = 8000
 
+    # Base URL for API
+    API_PREFIX: str = "/api/v1"
+
+    # Login route
+    LOGIN_ROUTE: str = "/api/v1/auth/login"
+
 
 config = Config(_env_file=ENV_FILE_PATH)

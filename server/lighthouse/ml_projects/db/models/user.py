@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
+from uuid import uuid4
 from .base import Base
 
 
@@ -15,10 +16,7 @@ class UserRole(enum.Enum):
 
 class User(Base):
 
-    id = Column(UUID(as_uuid=True),
-                primary_key=True,
-                default=func.uuid_generate_v4())
-
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
