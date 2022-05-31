@@ -1,6 +1,9 @@
 from fastapi import FastAPI
-from lighthouse.ml_projects.db.database import get_session_factory, get_engine, check_db_connection
+
 from lighthouse.logger import logger
+from lighthouse.ml_projects.db.database import (get_session_factory,
+                                                get_engine,
+                                                check_db_connection)
 
 
 def _setup_db(app: FastAPI):

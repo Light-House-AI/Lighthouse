@@ -16,17 +16,16 @@ def get_app() -> FastAPI:
     """
     app = FastAPI(
         **METADATA,
-        docs_url="/api/docs",
-        redoc_url="/api/redoc",
-        openapi_url="/api/openapi.json",
+        docs_url=config.API_PREFIX + "/docs",
+        redoc_url=config.API_PREFIX + "/redoc",
+        openapi_url=config.API_PREFIX + "/openapi.json",
         default_response_class=UJSONResponse,
     )
 
     app.on_event("startup")(startup(app))
     app.on_event("shutdown")(shutdown(app))
 
-    app.include_router(router=api_router, prefix="/api")
-
+    app.include_router(router=api_router)
     return app
 
 
