@@ -9,7 +9,7 @@ function Datasets() {
                         <h4 className="header-title mb-0 h-100 d-flex align-items-center">Raw Datasets</h4>
                     </div>
                     <div className="col-6">
-                        <button className="button-no-style float-end">
+                        <button className="button-no-style float-end" title="View/Add Shadow Data" data-plugin="tippy">
                             <i className="fe-plus noti-icon text-color btn-link"></i>
                         </button>
                     </div>
@@ -50,7 +50,7 @@ function Datasets() {
                         <h4 className="header-title mb-0 h-100 d-flex align-items-center">Cleaned Datasets</h4>
                     </div>
                     <div className="col-6">
-                        <button className="button-no-style float-end">
+                        <button className="button-no-style float-end" title="Clean Raw Dataset" data-plugin="tippy">
                             <i className="fe-plus noti-icon text-color btn-link"></i>
                         </button>
                     </div>
