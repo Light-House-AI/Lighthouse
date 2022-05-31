@@ -5,12 +5,23 @@ function Navigation() {
     const [location] = useState(window.location.pathname);
 
     function openFullscreen() {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
-            document.documentElement.msRequestFullscreen();
+        window.$('body').toggleClass('fullscreen-enable');
+        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
         }
     }
 
