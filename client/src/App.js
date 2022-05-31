@@ -13,6 +13,8 @@ import DatasetsPage from './pages/DatasetsPage';
 import ModelsPage from './pages/ModelsPage';
 import DeploymentsPage from './pages/DeploymentsPage';
 import CreateProjectPage from './pages/CreateProjectPage';
+import CreateModelPage from './pages/CreateModelPage';
+import CreateDeploymentPage from './pages/CreateDeploymentPage';
 import ViewDatasetPage from './pages/ViewDatasetPage';
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
         <Route path="/:projectid/datasets" element={<DatasetsPage />} />
         <Route path="/:projectid/models" element={<ModelsPage />} />
         <Route path="/:projectid/deployments" element={<DeploymentsPage />} />
+        <Route path="/:projectid/models/create" element={<CreateModelPage />} />
+        <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>

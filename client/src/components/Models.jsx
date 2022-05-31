@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 function Models() {
+    const tableRef = useRef(null);
     useEffect(() => {
-        window.$("#testing").footable();
+        window.$(tableRef.current).footable();
     }, []);
     return (
         <div className="row">
@@ -18,7 +19,7 @@ function Models() {
                     </div>
                 </div>
                 <div className="table-responsive pt-3">
-                    <table id="testing" className="table table-centered table-nowrap table-borderless mb-0" data-sort="false">
+                    <table ref={tableRef} className="table table-centered table-nowrap table-borderless mb-0" data-sort="false">
                         <thead className="table-light">
                             <tr>
                                 <th data-toggle="true">Name</th>
