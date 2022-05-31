@@ -11,6 +11,18 @@ services:
     volumes: 
       - db:/var/lib/postgresql/data
 
+  mongo:
+    image: mongo:4.0.4
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+      - MONGO_INITDB_DATABASE=lighthouse
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo:/data/db
+  
   lighthouse_server:
     build:
       context: ../server/
@@ -21,7 +33,10 @@ services:
     env_file: ../server/.env
     depends_on:
       - db
+      - mongo
 
 volumes:
   db:
+    driver: local
+  mongo:
     driver: local
