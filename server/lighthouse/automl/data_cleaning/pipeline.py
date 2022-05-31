@@ -1,5 +1,6 @@
 from server.lighthouse.automl.data_cleaning.data_cleaning import *
 
+
 def data_cleaning_suggestions(df, output_column):
     df_jsons = []
     for col in df.columns[df.columns != output_column]:
@@ -74,7 +75,7 @@ def data_cleaning_suggestions(df, output_column):
 
         df_jsons.append(col_json)
 
-    return df_jsons, df
+    return df_jsons
 
 
 def clean_train(df, output_column, operations):
@@ -164,7 +165,7 @@ def clean_test(df, operations, raw_df, output_column):
 
         # Fill missing data
         if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
-            
+
             p_score = col_json['p_score']
             if p_score >= -0.5 and p_score <= 0.5:
                 if not is_numeric:
@@ -173,7 +174,7 @@ def clean_test(df, operations, raw_df, output_column):
                     df[col].fillna(col_json['mean'], inplace=True)
             else:
                 knn_impute_test(raw_df, col, is_numeric, df, output_column)
-                
+
         elif col_json['fill_method'] == 'average':
             fill_average_mode(df, col, is_numeric)
         elif col_json['fill_method'] == 'knn':
