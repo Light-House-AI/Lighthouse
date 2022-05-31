@@ -37,23 +37,26 @@ class Config(BaseSettings):
     # Backend CORS origin.
     CORS_ORIGIN = ["http://localhost:8000"]
 
-    # Quantity of workers for uvicorn
+    # Quantity of workers for uvicorn.
     WORKERS_COUNT: int = 1
 
-    # Enable uvicorn reloading
+    # Enable uvicorn reloading.
     RELOAD: bool = False
 
-    # Host for uvicorn
+    # Host for uvicorn.
     HOST: str = "0.0.0.0"
 
-    # Port for uvicorn
+    # Port for uvicorn.
     PORT: int = 8000
 
-    # Base URL for API
+    # Base URL for API.
     API_PREFIX: str = "/api/v1"
 
-    # Login route
+    # Login route.
     LOGIN_ROUTE: str = "/api/v1/auth/login"
+
+    # MongoDB URL.
+    MONGO_URI: str = "mongodb://localhost:27017/"
 
 
 config = Config(_env_file=ENV_FILE_PATH)

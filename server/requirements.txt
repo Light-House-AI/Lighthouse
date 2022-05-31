@@ -17,6 +17,7 @@ passlib
 python-jose
 pydantic[email]
 python-multipart
+mongoengine
 
 # AutoML
 keras
