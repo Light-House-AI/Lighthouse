@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from mongoengine import (Document, 
+from mongoengine import (DynamicDocument, 
                          EmbeddedDocument, 
                          EmbeddedDocumentField, 
                          DateTimeField,
@@ -15,14 +15,13 @@ class InputMetadata(EmbeddedDocument):
     created_at = DateTimeField(required=True, default=datetime.utcnow)
     primary_model_prediction = StringField(required=True)
     secondary_model_prediction = StringField()
-    
-    # create index on deployment_id
-    meta = {'indexes':['deployment_id']}
 
 
-class DeploymentInput(Document):
+class DeploymentInput(DynamicDocument):
     """
     Class to store the input parameters for a deployment.
     """
-    input_params = ListField(required=True)
     _metadata = EmbeddedDocumentField(InputMetadata)
+
+    # create index on deployment_id
+    meta = {'indexes':['_metadata.deployment_id']}
