@@ -7,6 +7,7 @@ def generate_data_statistics(dataset_name: str, expectation_suite_name: str):
     expectations_suite, batch_request = generate_expectations_for_data(
         dataset_name, expectation_suite_name)
     delete_suite_expectations_file(expectation_suite_name)
+    delete_csv_data_file(dataset_name)
     return expectations_suite
 
 
@@ -17,5 +18,7 @@ def validate_original_data_with_new(new_dataset_name: str, expectations_suite,
     validate_data(expectation_suite_name, new_dataset_name)
     html_content = retrieve_html_validation_report(expectation_suite_name)
     delete_suite_expectations_file(expectation_suite_name)
+    delete_yml_checkpoint_file(CHECKPOINT_NAME+".yml")
     delete_uncommitted_folder()
+    delete_csv_data_file(new_dataset_name)
     return html_content
