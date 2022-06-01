@@ -1,4 +1,8 @@
 # MLOps
+
+## monitoring
+great-expectations
+
 ## serving
 kubernetes 
 
