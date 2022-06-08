@@ -1,14 +1,18 @@
 """Router for authenticating users."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import auth as auth_service
 from lighthouse.ml_projects.schemas import UserCreate, User, Token, Login
 from lighthouse.ml_projects.api import get_session, get_current_user_data
-from lighthouse.ml_projects.api.responses import (not_authenticated_response,
-                                                  bad_request_response,
-                                                  not_found_response)
+
+from lighthouse.ml_projects.exceptions import (
+    BadRequestException,
+    NotFoundException,
+    UnauthenticatedException,
+    AppException,
+)
 
 router = APIRouter(prefix="/auth")
 
@@ -16,8 +20,8 @@ router = APIRouter(prefix="/auth")
 @router.get("/me",
             response_model=User,
             responses={
-                **not_authenticated_response,
-                **not_found_response
+                **UnauthenticatedException.get_example_response(),
+                **NotFoundException.get_example_response(),
             })
 def get_user(db: Session = Depends(get_session),
              user_data=Depends(get_current_user_data)):
@@ -25,14 +29,18 @@ def get_user(db: Session = Depends(get_session),
     Return the current user.
     """
 
-    user = auth_service.get_user_by_id(user_id=user_data.user_id, db=db)
+    try:
+        user = auth_service.get_user_by_id(user_id=user_data.user_id, db=db)
+    except AppException as e:
+        raise e.to_http_exception()
+
     return user
 
 
 @router.post("/signup",
              response_model=User,
              status_code=201,
-             responses=bad_request_response)
+             responses=BadRequestException.get_example_response())
 def signup(*, db: Session = Depends(get_session), user_in: UserCreate):
     """
     Create a new user.
@@ -40,13 +48,15 @@ def signup(*, db: Session = Depends(get_session), user_in: UserCreate):
 
     try:
         user = auth_service.signup(db=db, user_in=user_in)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except AppException as e:
+        raise e.to_http_exception
 
     return user
 
 
-@router.post("/login", responses=bad_request_response, response_model=Token)
+@router.post("/login",
+             responses=BadRequestException.get_example_response(),
+             response_model=Token)
 def login(*, db: Session = Depends(get_session), login_data: Login):
     """
     Get the JWT for a user with data from OAuth2 request form body.
@@ -55,7 +65,7 @@ def login(*, db: Session = Depends(get_session), login_data: Login):
         token = auth_service.login(email=login_data.email,
                                    password=login_data.password,
                                    db=db)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except AppException as e:
+        raise e.to_http_exception()
 
     return token

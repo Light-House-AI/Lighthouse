@@ -9,19 +9,25 @@ from lighthouse.ml_projects.db import User, UserRole
 from lighthouse.ml_projects.schemas import UserCreate, TokenData, Token
 from lighthouse.ml_projects.services.security import _get_password_hash, _verify_password
 
+from lighthouse.ml_projects.exceptions import (
+    NotFoundException,
+    BadRequestException,
+    UnauthenticatedException,
+)
+
 
 def get_user_by_id(*, db: Session, user_id: str) -> User:
     """
     Get a user by its id.
     
     :return: The user.
-    :raises Exception: If the user is not found.
+    :raises NotFoundException: If the user is not found.
     """
 
     user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
-        raise Exception("User not found")
+        raise NotFoundException("User not found")
 
     return user
 
@@ -31,13 +37,13 @@ def login(*, email: str, password: str, db: Session):
     Authenticate a user and return its access token.
     
     :return: The access token.
-    :raises Exception: If the user is not found or the password is incorrect.
+    :raises BadRequestException: If the user is not found or the password is incorrect.
     """
 
     user = _authenticate(email=email, password=password, db=db)
 
     if not user:
-        raise Exception("Invalid username or password")
+        raise BadRequestException("Invalid username or password")
 
     token_data = TokenData(user_id=str(user.id), role=user.role.value)
     token = Token(access_token=_create_access_token(token_data=token_data),
@@ -51,20 +57,19 @@ def signup(*, db: Session, user_in: UserCreate) -> User:
     Create a new user.
     
     :return: The created user.
-    :raises Exception: If the user already exists.
-    :raises Exception: If the the role is admin.
+    :raises BadRequestException: If the user already exists or the the role is admin.
     """
 
     # check if user already exists
     user = db.query(User).filter(User.email == user_in.email).first()
     if user:
-        raise Exception("User already exists")
+        raise BadRequestException("User already exists")
 
     # check for user role
     user_data = user_in.dict()
 
     if user_data.get("role") is UserRole.admin:
-        raise Exception("Admin user creation is not allowed")
+        raise BadRequestException("Admin user creation is not allowed")
 
     # hash password
     user_data.pop("password")
@@ -85,14 +90,14 @@ def get_current_user_data(token: str):
     
     :param token: The JWT token to decode.
     :return: The token data.
-    :raises JWTError: If the token is invalid.
+    :raises UnauthenticatedException: If the token is invalid.
     """
 
     try:
         token_data = _decode_access_token(token=token)
 
-    except JWTError as e:
-        raise e
+    except JWTError:
+        raise UnauthenticatedException("Invalid token, please login again")
 
     return token_data
 

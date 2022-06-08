@@ -4,12 +4,19 @@ from sqlalchemy.orm import Session
 from lighthouse.ml_projects.db import Deployment, Project
 from lighthouse.mlops.monitoring import log_prediction
 
+from lighthouse.ml_projects.exceptions import (
+    NotFoundException,
+    BadRequestException,
+)
+
 
 def get_prediction(*, user_id: str, deployment_id: str, input_data: dict,
                    db: Session):
     """
     Proxies to the deployed model to get predictions.
     Saves the request to the database.
+    
+    :raises: NotFoundException, BadRequestException
     """
 
     # Get the deployment.
@@ -18,10 +25,10 @@ def get_prediction(*, user_id: str, deployment_id: str, input_data: dict,
             Project, Project.user_id == user_id).first()
 
     if not deployment:
-        raise Exception("Deployment not found!")
+        raise NotFoundException("Deployment not found!")
 
     if not deployment.is_running:
-        raise Exception("Deployment is not running!")
+        raise BadRequestException("Deployment is not running!")
 
     # Get the predictions from the deployed model.
     url = deployment_id + "/predict"
