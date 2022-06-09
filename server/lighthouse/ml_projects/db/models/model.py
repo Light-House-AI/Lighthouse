@@ -10,8 +10,10 @@ from .project import Project
 class Model(Base):
     id = Column(Integer, primary_key=True)
 
-    project_id = Column(ForeignKey(Project.id), nullable=False)
-    dataset_id = Column(ForeignKey(CleanedDataset.id), nullable=False)
+    project_id = Column(ForeignKey(Project.id), index=True, nullable=False)
+    dataset_id = Column(ForeignKey(CleanedDataset.id),
+                        index=True,
+                        nullable=False)
 
     name = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

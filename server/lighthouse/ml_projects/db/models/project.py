@@ -16,7 +16,7 @@ class ProjectType(enum.Enum):
 class Project(Base):
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey(User.id), nullable=False)
+    user_id = Column(ForeignKey(User.id), index=True, nullable=False)
 
     name = Column(String, nullable=False)
     predicted_column = Column(String, nullable=False)

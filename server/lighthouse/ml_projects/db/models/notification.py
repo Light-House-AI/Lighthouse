@@ -11,7 +11,7 @@ from .user import User
 class Notification(Base):
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey(User.id), nullable=False)
+    user_id = Column(ForeignKey(User.id), index=True, nullable=False)
     description = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

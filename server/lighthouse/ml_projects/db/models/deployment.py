@@ -20,9 +20,11 @@ class Deployment(Base):
 
     id = Column(Integer, primary_key=True)
 
-    project_id = Column(ForeignKey(Project.id), nullable=False)
-    primary_model_id = Column(ForeignKey(Model.id), nullable=False)
-    secondary_model_id = Column(ForeignKey(Model.id), nullable=True)
+    project_id = Column(ForeignKey(Project.id), index=True, nullable=False)
+    primary_model_id = Column(ForeignKey(Model.id), index=True, nullable=False)
+    secondary_model_id = Column(ForeignKey(Model.id),
+                                index=True,
+                                nullable=True)
 
     name = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -16,7 +16,7 @@ class RawDatasetCreationMethod(enum.Enum):
 class RawDataset(Base):
 
     id = Column(Integer, primary_key=True, default=func.uuid_generate_v4())
-    project_id = Column(ForeignKey(Project.id), nullable=False)
+    project_id = Column(ForeignKey(Project.id), index=True, nullable=False)
 
     name = Column(String, nullable=False)
     creation_method = Column(Enum(RawDatasetCreationMethod),
