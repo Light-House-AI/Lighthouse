@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import auth as auth_service
-from lighthouse.ml_projects.schemas import UserCreate, User, Token, Login
+from lighthouse.ml_projects.schemas import UserCreate, User, AccessToken, Login
 from lighthouse.ml_projects.api import get_session, get_current_user_data
 
 from lighthouse.ml_projects.exceptions import (
@@ -47,16 +47,16 @@ def signup(*, db: Session = Depends(get_session), user_in: UserCreate):
     """
 
     try:
-        user = auth_service.signup(db=db, user_in=user_in)
+        user = auth_service.signup(user_in=user_in, db=db)
     except AppException as e:
-        raise e.to_http_exception
+        raise e.to_http_exception()
 
     return user
 
 
 @router.post("/login",
              responses=BadRequestException.get_example_response(),
-             response_model=Token)
+             response_model=AccessToken)
 def login(*, db: Session = Depends(get_session), login_data: Login):
     """
     Get the JWT for a user with data from OAuth2 request form body.
