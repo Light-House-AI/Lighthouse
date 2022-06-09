@@ -51,7 +51,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('project_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('creation_method', sa.Enum('uploaded', 'captured', name='rawdatasetcreationmethod'), nullable=False),
+    sa.Column('creation_method', sa.Enum('upload', 'capture', name='rawdatasetcreationmethod'), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.ForeignKeyConstraint(['project_id'], ['project.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -109,6 +109,6 @@ def downgrade():
     deployment_type = postgresql.ENUM('champion_challenger', 'single_model', 'fallback', name='deploymenttype')
     deployment_type.drop(op.get_bind())
     
-    raw_dataset_creation_method = postgresql.ENUM('uploaded', 'captured', name='rawdatasetcreationmethod')
+    raw_dataset_creation_method = postgresql.ENUM('upload', 'capture', name='rawdatasetcreationmethod')
     raw_dataset_creation_method.drop(op.get_bind())
     # ### end Alembic commands ###

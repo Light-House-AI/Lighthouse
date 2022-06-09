@@ -1,33 +1,28 @@
-from lighthouse.ml_projects.db import User
-from lighthouse.ml_projects.db import Project
-from lighthouse.ml_projects.db import Model
-from lighthouse.ml_projects.db import Deployment, DeploymentType
-from lighthouse.ml_projects.db import Dataset
+from lighthouse.ml_projects.db import (User, Project, Model, Deployment,
+                                       DeploymentType, RawDataset,
+                                       CleanedDataset, CleanedDatasetSource)
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
 
 
 def add_users(session):
     users = [{
-        "id": "50555621-7791-4ca0-9f95-ff351bcec788",
+        "id": 1,
+        "email": "johndoe@gmail.com",
         "first_name": "John",
         "last_name": "Doe",
-        "email": "johndoe@gmail.com",
         "hashed_password": "password"
     }]
 
     for user in users:
-        # session.add(User(**user))
-        db_user = User(**user)
-        print(db_user)
-        session.add(db_user)
+        session.add(User(**user))
 
 
 def add_projects(session):
     projects = [{
+        "id": 1,
+        "user_id": 1,
         "name": "Project 1",
-        "id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "user_id": "50555621-7791-4ca0-9f95-ff351bcec788",
         "type": "classification"
     }]
 
@@ -35,32 +30,63 @@ def add_projects(session):
         session.add(Project(**project))
 
 
-def add_datasets(session):
+def add_raw_datasets(session):
     datasets = [{
-        "name": "Data 1",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
+        "id": 1,
+        "name": "Raw dataset 1",
+        "project_id": 1,
+        "creation_method": "upload",
     }, {
-        "name": "Data 2",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
+        "id": 2,
+        "name": "Raw dataset 2",
+        "project_id": 1,
+        "creation_method": "upload",
     }]
 
     for dataset in datasets:
-        session.add(Dataset(**dataset))
+        session.add(RawDataset(**dataset))
+
+
+def add_cleaned_datasets(session):
+    datasets = [{
+        "id": 1,
+        "name": "Cleaned dataset 1",
+        "project_id": 1
+    }, {
+        "id": 2,
+        "name": "Cleaned dataset 2",
+        "project_id": 1
+    }]
+
+    for dataset in datasets:
+        session.add(CleanedDataset(**dataset))
+
+    sources = [{
+        "cleaned_dataset_id": 1,
+        "raw_dataset_id": 1
+    }, {
+        "cleaned_dataset_id": 2,
+        "raw_dataset_id": 1
+    }, {
+        "cleaned_dataset_id": 2,
+        "raw_dataset_id": 2
+    }]
+
+    for source in sources:
+        session.add(CleanedDatasetSource(**source))
 
 
 def add_models(session):
     models = [{
+        "id": "1",
+        "project_id": 1,
+        "dataset_id": 1,
         "name": "Model 1",
-        "id": "7388516b-3501-4a66-8f79-b872cd926b7c",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "dataset_id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
     }, {
+        "id": 2,
+        "project_id": 1,
+        "dataset_id": 2,
         "name": "Model 2",
-        "id": "1c5e3b26-503f-4f01-b5ce-564515104ded",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "dataset_id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
     }]
 
     for model in models:
@@ -69,17 +95,17 @@ def add_models(session):
 
 def add_deployments(session):
     deployments = [{
+        "id": 1,
+        "project_id": 1,
+        "primary_model_id": 1,
         "name": "Deployment 1",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "a8711a7d-252f-4a96-a387-35380e38bba8",
-        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c"
     }, {
+        "id": 2,
+        "project_id": 1,
+        "primary_model_id": 1,
+        "secondary_model_id": 2,
         "name": "Deployment 2",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "ce5ab1f5-cf35-41c2-906f-57e1abcee725",
         "deployment_type": DeploymentType.champion_challenger,
-        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c",
-        "secondary_model_id": "1c5e3b26-503f-4f01-b5ce-564515104ded"
     }]
 
     for deployment in deployments:
@@ -96,7 +122,9 @@ def seed(force=False, verbose=True):
     if force:
         session.query(Deployment).delete()
         session.query(Model).delete()
-        session.query(Dataset).delete()
+        session.query(CleanedDatasetSource).delete()
+        session.query(CleanedDataset).delete()
+        session.query(RawDataset).delete()
         session.query(Project).delete()
         session.query(User).delete()
 
@@ -108,7 +136,8 @@ def seed(force=False, verbose=True):
     # seed tables
     add_users(session)
     add_projects(session)
-    add_datasets(session)
+    add_raw_datasets(session)
+    add_cleaned_datasets(session)
     add_models(session)
     add_deployments(session)
     session.commit()

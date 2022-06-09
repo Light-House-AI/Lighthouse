@@ -9,8 +9,8 @@ from .project import Project
 
 
 class RawDatasetCreationMethod(enum.Enum):
-    uploaded = 'uploaded'
-    captured = 'captured'
+    uploaded = 'upload'
+    captured = 'capture'
 
 
 class RawDataset(Base):
