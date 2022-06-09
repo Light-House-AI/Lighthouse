@@ -19,6 +19,7 @@ class Project(Base):
     user_id = Column(ForeignKey(User.id), nullable=False)
 
     name = Column(String, nullable=False)
+    predicted_column = Column(String, nullable=False)
     type = Column(Enum(ProjectType), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -30,8 +31,9 @@ class Project(Base):
     deployments = relationship("Deployment", back_populates="project")
 
     def __repr__(self):
-        return "<Project(id={}, user_id={}, name={}, type={}, created_at={})>".format(
-            self.id, self.name, self.type, self.user_id, self.created_at)
+        return "<Project(id={}, user_id={}, name={}, predicted_column={}, type={}, created_at={})>".format(
+            self.id, self.name, self.predicted_column, self.type, self.user_id,
+            self.created_at)
 
     def __str__(self):
         return self.__repr__()
@@ -41,6 +43,7 @@ class Project(Base):
             "id": self.id,
             "user_id": self.user_id,
             "name": self.name,
+            "predicted_column": self.predicted_column,
             "type": self.type,
             "created_at": self.created_at,
         }

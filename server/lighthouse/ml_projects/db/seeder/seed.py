@@ -23,7 +23,8 @@ def add_projects(session):
         "id": 1,
         "user_id": 1,
         "name": "Project 1",
-        "type": "classification"
+        "type": "classification",
+        "predicted_column": "class",
     }]
 
     for project in projects:
