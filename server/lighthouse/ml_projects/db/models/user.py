@@ -26,6 +26,7 @@ class User(Base):
 
     # relationships
     projects = relationship("Project", back_populates="user")
+    notifications = relationship("Notification", back_populates="user")
 
     # methods
     def __repr__(self):

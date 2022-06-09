@@ -10,3 +10,4 @@ from lighthouse.ml_projects.db.models.cleaned_dataset_source import CleanedDatas
 from lighthouse.ml_projects.db.models.user import User, UserRole
 from lighthouse.ml_projects.db.models.project import Project, ProjectType
 from lighthouse.ml_projects.db.models.deployment import Deployment, DeploymentType
+from lighthouse.ml_projects.db.models.notification import Notification

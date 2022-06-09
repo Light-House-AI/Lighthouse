@@ -1,6 +1,7 @@
 from lighthouse.ml_projects.db import (User, Project, Model, Deployment,
                                        DeploymentType, RawDataset,
-                                       CleanedDataset, CleanedDatasetSource)
+                                       CleanedDataset, CleanedDatasetSource,
+                                       Notification)
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
 
@@ -16,6 +17,21 @@ def add_users(session):
 
     for user in users:
         session.add(User(**user))
+
+
+def add_notifications(session):
+    notifications = [{
+        "id": 1,
+        "user_id": 1,
+        "description": "This is a notification"
+    }, {
+        "id": 2,
+        "user_id": 1,
+        "description": "This is another notification"
+    }]
+
+    for notification in notifications:
+        session.add(Notification(**notification))
 
 
 def add_projects(session):
@@ -136,6 +152,7 @@ def seed(force=False, verbose=True):
 
     # seed tables
     add_users(session)
+    add_notifications(session)
     add_projects(session)
     add_raw_datasets(session)
     add_cleaned_datasets(session)
