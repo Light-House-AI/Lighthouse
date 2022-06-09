@@ -67,5 +67,8 @@ class Config(BaseSettings):
     # Celery backend URL.
     CELERY_BACKEND_URL: str = "redis://:redispassword@localhost:6379/0"
 
+    # Webhook Token.
+    WEBHOOK_TOKEN: str = "TEST_SECRET_DO_NOT_USE_IN_PROD"
+
 
 config = Config(_env_file=ENV_FILE_PATH)

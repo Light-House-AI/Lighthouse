@@ -2,10 +2,11 @@
 
 from sqlalchemy.orm import Session
 
-from lighthouse.ml_projects.db import Model, Project, CleanedDataset
-from lighthouse.ml_projects.schemas import ModelCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
+from lighthouse.ml_projects.schemas import ModelCreate
 from lighthouse.ml_projects.services.celery import celery_app
+from lighthouse.ml_projects.db import (CleanedDataset, Model, Notification,
+                                       Project)
 
 MODEL_TRAINING_TASK_NAME = 'train_model'
 
@@ -47,6 +48,34 @@ def create_model(user_id: int, model_data: ModelCreate, db: Session):
     db.refresh(model)
 
     # Create the training task
-    celery_app.send_task(MODEL_TRAINING_TASK_NAME, args=[model.id, dataset.id])
+    celery_app.send_task(
+        MODEL_TRAINING_TASK_NAME,
+        args=[model.id, dataset.id, project.predicted_column],
+    )
+
+    return model
+
+
+def mark_model_as_trained(model_id: int, db: Session):
+    """
+    Marks a model as finished.
+    """
+    # Check if the model exists
+    model = db.query(Model).join(Project).filter(Model.id == model_id).first()
+
+    if not model:
+        raise NotFoundException("Model not found")
+
+    # Update model status
+    model.is_trained = True
+
+    # Create notification
+    notification = Notification(
+        user_id=model.project.user_id,
+        description=f'Model {model.name} with id {model.id} is trained',
+    )
+
+    db.add(notification)
+    db.commit()
 
     return model
