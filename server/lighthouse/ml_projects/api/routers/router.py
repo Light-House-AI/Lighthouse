@@ -9,7 +9,7 @@ from . import deployments
 
 api_router = APIRouter(prefix=config.API_PREFIX)
 
-api_router.include_router(monitoring.router, tags=["monitoring"])
-api_router.include_router(projects.router, tags=["projects"])
-api_router.include_router(auth.router, tags=["auth"])
-api_router.include_router(deployments.router, tags=["deployments"])
+api_router.include_router(monitoring.router, tags=["Monitoring"])
+api_router.include_router(projects.router, tags=["Projects"])
+api_router.include_router(auth.router, tags=["Auth"])
+api_router.include_router(deployments.router, tags=["Deployments"])
