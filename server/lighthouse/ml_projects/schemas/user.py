@@ -1,7 +1,6 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
-from uuid import UUID
 
 from lighthouse.ml_projects.db import UserRole
 
@@ -22,7 +21,7 @@ class UserCreate(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: Optional[UUID] = None
+    id: Optional[int] = None
     created_at: Optional[datetime] = None
 
     class Config:

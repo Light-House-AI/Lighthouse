@@ -10,7 +10,7 @@ from lighthouse.ml_projects.exceptions import (
 )
 
 
-def get_prediction(*, user_id: str, deployment_id: str, input_data: dict,
+def get_prediction(*, user_id: str, deployment_id: int, input_data: dict,
                    db: Session):
     """
     Proxies to the deployed model to get predictions.

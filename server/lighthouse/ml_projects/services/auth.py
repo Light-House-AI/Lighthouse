@@ -1,13 +1,17 @@
 from typing import Optional, Dict
 from datetime import datetime, timedelta
 
-from sqlalchemy.orm.session import Session
 from jose import jwt, JWTError
+from sqlalchemy.orm.session import Session
 
 from lighthouse.config import config
 from lighthouse.ml_projects.db import User, UserRole
-from lighthouse.ml_projects.schemas import UserCreate, TokenData, Token
-from lighthouse.ml_projects.services.security import _get_password_hash, _verify_password
+from lighthouse.ml_projects.schemas import UserCreate, TokenData, AccessToken
+
+from lighthouse.ml_projects.services.security import (
+    _get_password_hash,
+    _verify_password,
+)
 
 from lighthouse.ml_projects.exceptions import (
     NotFoundException,
@@ -16,7 +20,7 @@ from lighthouse.ml_projects.exceptions import (
 )
 
 
-def get_user_by_id(*, db: Session, user_id: str) -> User:
+def get_user_by_id(*, user_id: int, db: Session) -> User:
     """
     Get a user by its id.
     
@@ -46,13 +50,14 @@ def login(*, email: str, password: str, db: Session):
         raise BadRequestException("Invalid username or password")
 
     token_data = TokenData(user_id=str(user.id), role=user.role.value)
-    token = Token(access_token=_create_access_token(token_data=token_data),
-                  token_type="bearer")
+    token = AccessToken(
+        access_token=_create_access_token(token_data=token_data),
+        token_type="bearer")
 
     return token
 
 
-def signup(*, db: Session, user_in: UserCreate) -> User:
+def signup(*, user_in: UserCreate, db: Session) -> User:
     """
     Create a new user.
     

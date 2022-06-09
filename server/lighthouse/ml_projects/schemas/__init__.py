@@ -1,4 +1,4 @@
 """ML Projects schemas."""
 
-from .auth import TokenData, Token, Login
+from .auth import TokenData, AccessToken, Login
 from .user import User, UserCreate, UserInDB

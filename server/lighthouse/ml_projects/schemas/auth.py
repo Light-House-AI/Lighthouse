@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from lighthouse.ml_projects.db import UserRole
 
 
@@ -7,11 +7,11 @@ class TokenData(BaseModel):
     role: str
 
 
-class Token(BaseModel):
+class AccessToken(BaseModel):
     access_token: str
     token_type: str
 
 
 class Login(BaseModel):
-    email: str
+    email: EmailStr
     password: str
