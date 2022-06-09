@@ -58,5 +58,14 @@ class Config(BaseSettings):
     # MongoDB URL.
     MONGO_URI: str = "mongodb://localhost:27017/"
 
+    # Celery app name.
+    CELERY_APP_NAME: str = "light-house"
+
+    # Celery broker URL.
+    CELERY_BROKER_URL: str = "redis://:redispassword@localhost:6379/0"
+
+    # Celery backend URL.
+    CELERY_BACKEND_URL: str = "redis://:redispassword@localhost:6379/0"
+
 
 config = Config(_env_file=ENV_FILE_PATH)

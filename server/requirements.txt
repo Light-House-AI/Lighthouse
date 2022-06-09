@@ -23,6 +23,7 @@ pydantic[email]
 stringcase
 python-multipart
 mongoengine
+celery[redis]
 
 # AutoML
 keras
