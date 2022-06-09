@@ -1,3 +1,5 @@
+"""Deployments service."""
+
 import requests
 from sqlalchemy.orm import Session
 
@@ -59,3 +61,14 @@ def get_prediction(*, user_id: str, deployment_id: int, input_data: dict,
     deployment_response.pop("secondary_model_prediction")
 
     return deployment_response
+
+
+def create_deployment(project_id: int, model_id: int, db: Session):
+    """
+    Creates a deployment.
+    """
+    deployment = Deployment(project_id=project_id, model_id=model_id)
+    db.add(deployment)
+    db.commit()
+    db.refresh(deployment)
+    return deployment

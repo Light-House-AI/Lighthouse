@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.api import get_session, get_current_user_data
-from lighthouse.ml_projects.services import deployments as deployments_service
+from lighthouse.ml_projects.services import deployment as deployment_service
 
 from lighthouse.ml_projects.exceptions import (
     BadRequestException,
@@ -34,7 +34,7 @@ def get_prediction(*,
 
     try:
 
-        return deployments_service.get_prediction(
+        return deployment_service.get_prediction(
             deployment_id=str(deployment_id),
             user_id=user_data.user_id,
             input_data=input_data,
