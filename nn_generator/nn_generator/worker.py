@@ -10,7 +10,7 @@ from .config import config
 app = Celery(
     config.APP_NAME,
     broker=config.BROKER_URL,
-    backend=config.RESULTS_BACKEND_URL,
+    backend=config.BACKEND_URL,
 )
 
 logger = get_logger(__name__)

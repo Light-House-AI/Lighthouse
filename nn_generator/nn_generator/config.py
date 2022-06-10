@@ -13,7 +13,7 @@ class Config(BaseSettings):
     LOG_LEVEL: str = 'INFO'
 
     # Backend URL.
-    RESULTS_BACKEND_URL: str = 'redis://:redispassword@localhost:6379/0'
+    BACKEND_URL: str = 'redis://:redispassword@localhost:6379/0'
 
     # Broker URL.
     BROKER_URL: str = 'redis://:redispassword@localhost:6379/0'
