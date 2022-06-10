@@ -1,11 +1,13 @@
 """Datasets service"""
 
-from fastapi import UploadFile
+from fastapi import UploadFile, Response
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
+from lighthouse.automl.data_cleaning import visualizations as data_cleaning_visualizations_service
+
 from lighthouse.ml_projects.db import (
     CleanedDataset,
     RawDataset,
@@ -82,6 +84,27 @@ def upload_raw_dataset(user_id: str, dataset_id: int, file: UploadFile,
     return {"message": "Dataset uploaded"}
 
 
+def get_raw_dataset_rows(user_id: str, dataset_id: int, skip: int, limit: int,
+                         db: Session):
+    """
+    Returns raw dataset rows.
+    """
+    dataset = db.query(RawDataset).join(Project).filter(
+        Project.user_id == user_id, RawDataset.id == dataset_id).first()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # TODO: download dataset
+
+    file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
+
+    rows = data_cleaning_visualizations_service.get_rows(
+        file_path, skip, limit)
+
+    return Response(rows, media_type="application/json")
+
+
 def get_cleaned_datasets(user_id: str,
                          db: Session,
                          skip: int = 0,
@@ -146,3 +169,24 @@ def create_cleaned_dataset(user_id: str,
     # TODO: create rules
 
     return cleaned_dataset
+
+
+def get_cleaned_dataset_rows(user_id: str, dataset_id: int, skip: int,
+                             limit: int, db: Session):
+    """
+    Returns cleaned dataset rows.
+    """
+    dataset = db.query(CleanedDataset).join(Project).filter(
+        CleanedDataset.id == dataset_id, Project.user_id == user_id).first()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # TODO: download dataset
+
+    file_path = dataset_file_service.get_cleaned_dataset_local_path(dataset_id)
+
+    rows = data_cleaning_visualizations_service.get_rows(
+        file_path, skip, limit)
+
+    return Response(rows, media_type="application/json")

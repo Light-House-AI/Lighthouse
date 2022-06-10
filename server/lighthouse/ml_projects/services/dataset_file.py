@@ -38,8 +38,8 @@ def upload_raw_dataset(dataset_id: int):
     conn_str = config.AZURE_CONN_STR
     container_name = config.AZURE_raw_DATASETS_CONTAINER_NAME
 
-    blob_name = f"{dataset_id}.csv"
-    file_path = config.RAW_DATASETS_TEMP_DIR + "/" + blob_name
+    blob_name = get_raw_dataset_blob_name(dataset_id)
+    file_path = get_raw_dataset_local_path(dataset_id)
 
     return upload_blob(
         conn_str,
@@ -56,8 +56,8 @@ def upload_cleaned_dataset(dataset_id: int):
     conn_str = config.AZURE_CONN_STR
     container_name = config.AZURE_CLEANED_DATASETS_CONTAINER_NAME
 
-    blob_name = f"{dataset_id}.csv"
-    file_path = config.CLEANED_DATASETS_TEMP_DIR + "/" + blob_name
+    blob_name = get_cleaned_dataset_blob_name(dataset_id)
+    file_path = get_cleaned_dataset_local_path(dataset_id)
 
     return upload_blob(
         conn_str,
@@ -95,8 +95,9 @@ def download_cleaned_dataset(dataset_id: int):
     """
     conn_str = config.AZURE_CONN_STR
     container_name = config.AZURE_CLEANED_DATASETS_CONTAINER_NAME
-    blob_name = f"{dataset_id}.csv"
-    file_path = config.CLEANED_DATASETS_TEMP_DIR + blob_name
+
+    blob_name = get_cleaned_dataset_blob_name(dataset_id)
+    file_path = get_cleaned_dataset_local_path(dataset_id)
 
     return download_blob_if_not_exists(
         conn_str,
@@ -113,8 +114,9 @@ def download_raw_dataset(dataset_id: int):
     """
     conn_str = config.AZURE_CONN_STR
     container_name = config.AZURE_RAW_DATASETS_CONTAINER_NAME
-    blob_name = f"{dataset_id}.csv"
-    file_path = config.RAW_DATASETS_TEMP_DIR + blob_name
+
+    blob_name = get_raw_dataset_blob_name(dataset_id)
+    file_path = get_raw_dataset_local_path(dataset_id)
 
     return download_blob_if_not_exists(
         conn_str,
@@ -162,3 +164,31 @@ def download_blob(conn_str: str, container_name: str, blob_name: str,
     except Exception as ex:
         print(ex)
         return False
+
+
+def get_raw_dataset_blob_name(dataset_id: int):
+    """
+    Returns the blob name of a raw dataset.
+    """
+    return f"{dataset_id}.csv"
+
+
+def get_raw_dataset_local_path(dataset_id: int):
+    """
+    Returns the local path of a raw dataset.
+    """
+    return config.RAW_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"
+
+
+def get_cleaned_dataset_blob_name(dataset_id: int):
+    """
+    Returns the blob name of a cleaned dataset.
+    """
+    return f"{dataset_id}.csv"
+
+
+def get_cleaned_dataset_local_path(dataset_id: int):
+    """
+    Returns the local path of a cleaned dataset.
+    """
+    return config.CLEANED_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"

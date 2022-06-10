@@ -104,6 +104,26 @@ def upload_raw_dataset(*,
     )
 
 
+@router.get('/raw/{dataset_id}/rows/',
+            responses=UnauthenticatedException.get_example_response())
+def get_raw_dataset_rows(*,
+                         dataset_id: int,
+                         skip: int = 0,
+                         limit: int = 100,
+                         db: Session = Depends(get_session),
+                         user_data=Depends(get_current_user_data)):
+    """
+    Returns raw dataset rows.
+    """
+    return dataset_service.get_raw_dataset_rows(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        skip=skip,
+        limit=limit,
+        db=db,
+    )
+
+
 @router.get('/cleaned/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[CleanedDataset])
@@ -164,5 +184,22 @@ def create_cleaned_dataset(*,
         )
     except AppException as e:
         raise e.to_http_exception()
-
     return dataset
+@router.get('/cleaned/{dataset_id}/rows/',
+            responses=UnauthenticatedException.get_example_response())
+def get_cleaned_dataset_rows(*,
+                             dataset_id: int,
+                             skip: int = 0,
+                             limit: int = 100,
+                             db: Session = Depends(get_session),
+                             user_data=Depends(get_current_user_data)):
+    """
+    Returns cleaned dataset rows.
+    """
+    return dataset_service.get_cleaned_dataset_rows(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        skip=skip,
+        limit=limit,
+        db=db,
+    )
