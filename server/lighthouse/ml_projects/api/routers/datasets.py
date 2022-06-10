@@ -86,6 +86,24 @@ def create_raw_dataset(*,
     return dataset
 
 
+@router.post('/raw/{dataset_id}/upload/',
+             responses=UnauthenticatedException.get_example_response())
+def upload_raw_dataset(*,
+                       dataset_id: int,
+                       file: UploadFile,
+                       db: Session = Depends(get_session),
+                       user_data=Depends(get_current_user_data)):
+    """
+    Uploads a raw dataset.
+    """
+    return dataset_service.upload_raw_dataset(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        file=file,
+        db=db,
+    )
+
+
 @router.get('/cleaned/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[CleanedDataset])

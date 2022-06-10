@@ -1,10 +1,11 @@
 """Datasets service"""
 
-from typing import Dict
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
+from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.ml_projects.db import (
     CleanedDataset,
     RawDataset,
@@ -21,7 +22,6 @@ def get_raw_datasets(user_id: str,
     Returns user raw datasets.
     """
     return db.query(RawDataset).join(Project).filter(
-        # RawDataset.project_id == Project.id,
         Project.user_id == user_id).offset(skip).limit(limit).all()
 
 
@@ -55,6 +55,31 @@ def create_raw_dataset(user_id: str, raw_dataset_in: RawDatasetCreate,
     db.add(raw_dataset)
     db.commit()
     return raw_dataset
+
+
+def upload_raw_dataset(user_id: str, dataset_id: int, file: UploadFile,
+                       db: Session):
+    """
+    Uploads raw dataset.
+    """
+    # Check if a record exists
+    raw_dataset = db.query(RawDataset).join(Project).filter(
+        Project.user_id == user_id, RawDataset.id == dataset_id).first()
+
+    if not raw_dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # Save uploaded file
+    is_saved = dataset_file_service.save_raw_dataset_to_local_disk(
+        dataset_id=dataset_id, file=file.file)
+
+    if not is_saved:
+        raise Exception("Could not save file.")
+
+    # Upload dataset
+    # dataset_file_service.upload_raw_dataset(dataset_id)
+
+    return {"message": "Dataset uploaded"}
 
 
 def get_cleaned_datasets(user_id: str,
