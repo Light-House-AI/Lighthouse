@@ -16,7 +16,6 @@ fastapi
 uvicorn
 ujson
 fire
-uuid
 passlib
 python-jose
 pydantic[email]
@@ -24,6 +23,7 @@ stringcase
 python-multipart
 mongoengine
 celery[redis]
+azure-storage-blob
 
 # AutoML
 keras

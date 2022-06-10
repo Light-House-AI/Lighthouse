@@ -1,6 +1,5 @@
 """Router for deployment."""
 
-from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -24,7 +23,7 @@ router = APIRouter(prefix="/deployments")
                  **NotFoundException.get_example_response(),
              })
 def get_prediction(*,
-                   deployment_id: UUID,
+                   deployment_id: int,
                    input_data: dict,
                    db: Session = Depends(get_session),
                    user_data=Depends(get_current_user_data)):
