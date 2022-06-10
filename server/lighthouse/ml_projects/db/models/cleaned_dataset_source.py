@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey
+from sqlalchemy.orm import relationship
 
 from .base import Base
 from .cleaned_dataset import CleanedDataset
@@ -11,6 +12,10 @@ class CleanedDatasetSource(Base):
                                 primary_key=True)
 
     raw_dataset_id = Column(ForeignKey(RawDataset.id), primary_key=True)
+
+    # relationships
+    cleaned_dataset = relationship("CleanedDataset", back_populates="sources")
+    raw_dataset = relationship("RawDataset", back_populates="cleaned_datasets")
 
     def __repr__(self):
         return "<CleanedDatasetSource(cleaned_dataset_id={}, raw_dataset_id={}>".format(

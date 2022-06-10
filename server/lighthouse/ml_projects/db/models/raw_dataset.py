@@ -15,7 +15,7 @@ class RawDatasetCreationMethod(enum.Enum):
 
 class RawDataset(Base):
 
-    id = Column(Integer, primary_key=True, default=func.uuid_generate_v4())
+    id = Column(Integer, primary_key=True)
     project_id = Column(ForeignKey(Project.id), index=True, nullable=False)
 
     name = Column(String, nullable=False)
@@ -27,6 +27,8 @@ class RawDataset(Base):
 
     # relationships
     project = relationship("Project", back_populates="raw_datasets")
+    cleaned_datasets = relationship("CleanedDatasetSource",
+                                    back_populates="raw_dataset")
 
     # methods
     def __repr__(self):

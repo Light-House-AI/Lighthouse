@@ -4,129 +4,153 @@ from lighthouse.ml_projects.db import (User, Project, Model, Deployment,
                                        Notification)
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
+from lighthouse.ml_projects.services import security
 
 
 def add_users(session):
-    users = [{
-        "id": 1,
+    users_data = [{
         "email": "johndoe@gmail.com",
         "first_name": "John",
         "last_name": "Doe",
-        "hashed_password": "password"
+        "hashed_password": security._get_password_hash("password")
     }]
 
+    users = [User(**user_data) for user_data in users_data]
+
     for user in users:
-        session.add(User(**user))
+        session.add(user)
+
+    return users
 
 
-def add_notifications(session):
-    notifications = [{
-        "id": 1,
-        "user_id": 1,
+def add_notifications(session, user):
+    notifications_data = [{
+        "user": user,
         "description": "This is a notification"
     }, {
-        "id": 2,
-        "user_id": 1,
+        "user": user,
         "description": "This is another notification"
     }]
 
+    notifications = [
+        Notification(**notification_data)
+        for notification_data in notifications_data
+    ]
+
     for notification in notifications:
-        session.add(Notification(**notification))
+        session.add(notification)
+
+    return notifications
 
 
-def add_projects(session):
-    projects = [{
-        "id": 1,
-        "user_id": 1,
+def add_projects(session, user):
+    projects_data = [{
+        "user": user,
         "name": "Project 1",
         "type": "classification",
         "predicted_column": "class",
     }]
 
+    projects = [Project(**project_data) for project_data in projects_data]
+
     for project in projects:
-        session.add(Project(**project))
+        session.add(project)
+
+    return projects
 
 
-def add_raw_datasets(session):
-    datasets = [{
-        "id": 1,
+def add_raw_datasets(session, project):
+    datasets_data = [{
         "name": "Raw dataset 1",
-        "project_id": 1,
+        "project": project,
         "creation_method": "upload",
     }, {
-        "id": 2,
         "name": "Raw dataset 2",
-        "project_id": 1,
+        "project": project,
         "creation_method": "upload",
     }]
 
+    datasets = [RawDataset(**dataset_data) for dataset_data in datasets_data]
+
     for dataset in datasets:
-        session.add(RawDataset(**dataset))
+        session.add(dataset)
+
+    return datasets
 
 
-def add_cleaned_datasets(session):
-    datasets = [{
-        "id": 1,
+def add_cleaned_datasets(session, project, raw_dataset_1, raw_dataset_2):
+    datasets_data = [{
         "name": "Cleaned dataset 1",
-        "project_id": 1
+        "project": project
     }, {
-        "id": 2,
         "name": "Cleaned dataset 2",
-        "project_id": 1
+        "project": project
     }]
 
-    for dataset in datasets:
-        session.add(CleanedDataset(**dataset))
+    cleaned_datasets = [
+        CleanedDataset(**dataset_data) for dataset_data in datasets_data
+    ]
+
+    for dataset in cleaned_datasets:
+        session.add(dataset)
 
     sources = [{
-        "cleaned_dataset_id": 1,
-        "raw_dataset_id": 1
+        "cleaned_dataset": cleaned_datasets[0],
+        "raw_dataset": raw_dataset_1
     }, {
-        "cleaned_dataset_id": 2,
-        "raw_dataset_id": 1
+        "cleaned_dataset": cleaned_datasets[1],
+        "raw_dataset": raw_dataset_1
     }, {
-        "cleaned_dataset_id": 2,
-        "raw_dataset_id": 2
+        "cleaned_dataset": cleaned_datasets[1],
+        "raw_dataset": raw_dataset_2
     }]
 
     for source in sources:
         session.add(CleanedDatasetSource(**source))
 
+    return cleaned_datasets
 
-def add_models(session):
-    models = [{
-        "id": "1",
-        "project_id": 1,
-        "dataset_id": 1,
+
+def add_models(session, project, cleaned_dataset_1, cleaned_dataset_2):
+    models_data = [{
+        "project": project,
+        "dataset": cleaned_dataset_1,
         "name": "Model 1",
     }, {
-        "id": 2,
-        "project_id": 1,
-        "dataset_id": 2,
+        "project": project,
+        "dataset": cleaned_dataset_2,
         "name": "Model 2",
     }]
 
+    models = [Model(**model_data) for model_data in models_data]
+
     for model in models:
-        session.add(Model(**model))
+        session.add(model)
+
+    return models
 
 
-def add_deployments(session):
-    deployments = [{
-        "id": 1,
-        "project_id": 1,
-        "primary_model_id": 1,
+def add_deployments(session, project, model_1, model_2):
+    deployments_data = [{
+        "project": project,
+        "primary_model": model_1,
         "name": "Deployment 1",
     }, {
-        "id": 2,
-        "project_id": 1,
-        "primary_model_id": 1,
-        "secondary_model_id": 2,
+        "project": project,
+        "primary_model": model_1,
+        "secondary_model": model_2,
         "name": "Deployment 2",
         "deployment_type": DeploymentType.champion_challenger,
     }]
 
+    deployments = [
+        Deployment(**deployment_data) for deployment_data in deployments_data
+    ]
+
     for deployment in deployments:
-        session.add(Deployment(**deployment))
+        session.add(deployment)
+
+    return deployments
 
 
 def seed(force=False, verbose=True):
@@ -143,6 +167,7 @@ def seed(force=False, verbose=True):
         session.query(CleanedDataset).delete()
         session.query(RawDataset).delete()
         session.query(Project).delete()
+        session.query(Notification).delete()
         session.query(User).delete()
 
     # check if users table is empty
@@ -151,13 +176,18 @@ def seed(force=False, verbose=True):
         return False
 
     # seed tables
-    add_users(session)
-    add_notifications(session)
-    add_projects(session)
-    add_raw_datasets(session)
-    add_cleaned_datasets(session)
-    add_models(session)
-    add_deployments(session)
+    users = add_users(session)
+    projects = add_projects(session, users[0])
+    raw_datasets = add_raw_datasets(session, projects[0])
+
+    cleaned_dataset = add_cleaned_datasets(session, projects[0],
+                                           raw_datasets[0], raw_datasets[1])
+
+    models = add_models(session, projects[0], cleaned_dataset[0],
+                        cleaned_dataset[1])
+
+    add_deployments(session, projects[0], models[0], models[1])
+    add_notifications(session, users[0])
     session.commit()
     session.close()
 
