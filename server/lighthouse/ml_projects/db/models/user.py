@@ -37,16 +37,6 @@ class User(Base):
     def __str__(self):
         return self.__repr__()
 
-    def dict(self):
-        return {
-            "id": self.id,
-            "email": self.email,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "role": self.role,
-            "created_at": self.created_at,
-        }
-
     def is_admin(self):
         return self.role == UserRole.admin
 

@@ -38,12 +38,3 @@ class RawDataset(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def dict(self):
-        return {
-            "id": self.id,
-            "project_id": self.project_id,
-            "name": self.name,
-            "creation_method": self.creation_method,
-            "created_at": self.created_at,
-        }

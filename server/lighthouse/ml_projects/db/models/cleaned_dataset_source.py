@@ -23,9 +23,3 @@ class CleanedDatasetSource(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def dict(self):
-        return {
-            "cleaned_dataset_id": self.cleaned_dataset_id,
-            "raw_dataset_id": self.raw_dataset_id,
-        }

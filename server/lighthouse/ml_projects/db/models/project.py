@@ -37,13 +37,3 @@ class Project(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def dict(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "name": self.name,
-            "predicted_column": self.predicted_column,
-            "type": self.type,
-            "created_at": self.created_at,
-        }

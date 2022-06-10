@@ -182,7 +182,7 @@ def get_cleaned_dataset(*,
     except AppException as e:
         raise e.to_http_exception()
 
-    return dataset.dict()
+    return dataset.to_dict()
 
 
 @router.post('/cleaned/',

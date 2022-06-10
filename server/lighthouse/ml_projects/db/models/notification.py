@@ -24,11 +24,3 @@ class Notification(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def dict(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "description": self.description,
-            "created_at": self.created_at,
-        }

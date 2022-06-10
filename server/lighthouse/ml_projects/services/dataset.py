@@ -1,7 +1,7 @@
 """Datasets service"""
 
 from fastapi import UploadFile
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
@@ -142,9 +142,10 @@ def get_cleaned_dataset(user_id: int, dataset_id: int, db: Session):
     """
     Returns cleaned dataset.
     """
-    dataset = db.query(CleanedDataset).join(CleanedDatasetSource).join(
-        Project).filter(CleanedDataset.id == dataset_id,
-                        Project.user_id == user_id).first()
+    dataset = db.query(CleanedDataset).options(
+        joinedload(CleanedDataset.sources)).join(Project).filter(
+            CleanedDataset.id == dataset_id,
+            Project.user_id == user_id).first()
 
     if not dataset:
         raise NotFoundException("Dataset not found.")

@@ -53,15 +53,3 @@ class Deployment(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def dict(self):
-        return {
-            "id": self.id,
-            "project_id": self.project_id,
-            "primary_model_id": self.primary_model_id,
-            "secondary_model_id": self.secondary_model_id,
-            "name": self.name,
-            "created_at": self.created_at,
-            "is_running": self.is_running,
-            "deployment_type": self.deployment_type.value,
-        }

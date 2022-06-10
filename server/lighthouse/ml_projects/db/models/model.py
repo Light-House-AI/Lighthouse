@@ -47,12 +47,8 @@ class Model(Base):
     def __str__(self):
         return self.__repr__()
 
-    def dict(self):
-        return {
-            "id": self.id,
-            "project_id": self.project_id,
-            "dataset_id": self.dataset_id,
-            "name": self.name,
-            "created_at": self.created_at,
-            "data_cleaning_pipeline_id": self.get_data_cleaning_pipeline_id(),
-        }
+    def to_dict(self):
+        data = super().to_dict()
+        data["data_cleaning_pipeline_id"] = self.get_data_cleaning_pipeline_id(
+        )
+        return data
