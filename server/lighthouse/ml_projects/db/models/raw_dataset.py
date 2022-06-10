@@ -9,8 +9,8 @@ from .project import Project
 
 
 class RawDatasetCreationMethod(enum.Enum):
-    uploaded = 'upload'
-    captured = 'capture'
+    upload = 'upload'
+    capture = 'capture'
 
 
 class RawDataset(Base):
@@ -21,7 +21,7 @@ class RawDataset(Base):
     name = Column(String, nullable=False)
     creation_method = Column(Enum(RawDatasetCreationMethod),
                              nullable=False,
-                             default=RawDatasetCreationMethod.uploaded.value)
+                             default=RawDatasetCreationMethod.upload.value)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

@@ -3,7 +3,7 @@ from lighthouse.ml_projects.db import UserRole
 
 
 class TokenData(BaseModel):
-    user_id: str
+    user_id: int
     role: str
 
 
