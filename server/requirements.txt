@@ -32,3 +32,4 @@ sklearn
 numpy
 pandas
 fuzzywuzzy
+python-Levenshtein

@@ -1,7 +1,7 @@
 """Router for Datasets."""
 
 from typing import Dict, List
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, Response
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.api import get_session, get_current_user_data
@@ -115,11 +115,30 @@ def get_raw_dataset_rows(*,
     """
     Returns raw dataset rows.
     """
-    return dataset_service.get_raw_dataset_rows(
+    rows = dataset_service.get_raw_dataset_rows(
         user_id=user_data.user_id,
         dataset_id=dataset_id,
         skip=skip,
         limit=limit,
+        db=db,
+    )
+
+    return Response(rows, media_type="application/json")
+
+
+@router.get('/raw/{dataset_id}/recommendations/',
+            responses=UnauthenticatedException.get_example_response())
+def get_raw_dataset_cleaning_rules_recommendations(
+        *,
+        dataset_id: int,
+        db: Session = Depends(get_session),
+        user_data=Depends(get_current_user_data)):
+    """
+    Returns raw dataset cleaning rules recommendations.
+    """
+    return dataset_service.get_raw_dataset_cleaning_rules_recommendations(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
         db=db,
     )
 
@@ -182,9 +201,13 @@ def create_cleaned_dataset(*,
             cleaned_dataset_in=cleaned_dataset_in,
             db=db,
         )
+
     except AppException as e:
         raise e.to_http_exception()
+
     return dataset
+
+
 @router.get('/cleaned/{dataset_id}/rows/',
             responses=UnauthenticatedException.get_example_response())
 def get_cleaned_dataset_rows(*,
@@ -196,10 +219,12 @@ def get_cleaned_dataset_rows(*,
     """
     Returns cleaned dataset rows.
     """
-    return dataset_service.get_cleaned_dataset_rows(
+    rows = dataset_service.get_cleaned_dataset_rows(
         user_id=user_data.user_id,
         dataset_id=dataset_id,
         skip=skip,
         limit=limit,
         db=db,
     )
+
+    Response(rows, media_type="application/json")

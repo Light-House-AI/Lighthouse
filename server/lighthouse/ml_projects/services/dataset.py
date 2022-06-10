@@ -1,6 +1,6 @@
 """Datasets service"""
 
-from fastapi import UploadFile, Response
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
@@ -102,7 +102,29 @@ def get_raw_dataset_rows(user_id: str, dataset_id: int, skip: int, limit: int,
     rows = data_cleaning_visualizations_service.get_rows(
         file_path, skip, limit)
 
-    return Response(rows, media_type="application/json")
+    return rows
+
+
+def get_raw_dataset_cleaning_rules_recommendations(user_id: str,
+                                                   dataset_id: int,
+                                                   db: Session):
+    """
+    Returns raw dataset cleaning rules recommendations.
+    """
+    dataset = db.query(RawDataset).join(Project).filter(
+        Project.user_id == user_id, RawDataset.id == dataset_id).first()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # TODO: download dataset
+
+    file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
+    rules = data_cleaning_visualizations_service.get_data_cleaning_suggestions(
+        file_path, dataset.project.predicted_column)
+
+    print(rules)
+    return rules
 
 
 def get_cleaned_datasets(user_id: str,
@@ -166,7 +188,15 @@ def create_cleaned_dataset(user_id: str,
     db.add_all(sources)
     db.commit()
 
-    # TODO: create rules
+    # TODO: uncomment commands
+    # raw_dataset_file_path = dataset_file_service.get_raw_dataset_local_path(
+    #     sources[0].raw_dataset_id)
+
+    # cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
+    #     cleaned_dataset.id)
+
+    # data_cleaning_visualizations_service.create_cleaned_dataset(
+    #     raw_dataset_file_path, cleaned_dataset_file_path, rules)
 
     return cleaned_dataset
 
@@ -189,4 +219,4 @@ def get_cleaned_dataset_rows(user_id: str, dataset_id: int, skip: int,
     rows = data_cleaning_visualizations_service.get_rows(
         file_path, skip, limit)
 
-    return Response(rows, media_type="application/json")
+    return rows
