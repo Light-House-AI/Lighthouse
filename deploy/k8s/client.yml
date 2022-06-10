@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: lighthouse-client:latest
+          image: ghcr.io/light-house-ai/lighthouse-client:latest
           readinessProbe:
             httpGet:
               path: /
@@ -49,10 +49,10 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: lighthouse-app
+  name: lighthouse-client
   namespace: lighthouse
   labels:
-    name: lighthouse-app
+    name: lighthouse-client
 spec:
   rules:
     - host: lighthouse.local
