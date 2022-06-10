@@ -53,7 +53,7 @@ def create_model(*,
         raise e.to_http_exception()
 
 
-@router.post('/{model_id}/training_status',
+@router.post('/{model_id}/training_status/',
              responses=UnauthenticatedException.get_example_response())
 def update_model_training_status(*,
                                  model_id: int,

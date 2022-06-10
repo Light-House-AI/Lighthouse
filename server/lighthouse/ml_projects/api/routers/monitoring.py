@@ -14,7 +14,7 @@ class HealthCheck(BaseModel):
     status: str
 
 
-@router.get('/health', response_model=HealthCheck)
+@router.get('/health/', response_model=HealthCheck)
 def health_check() -> None:
     """
     Checks the health of a project.

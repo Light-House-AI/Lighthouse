@@ -17,7 +17,7 @@ from lighthouse.ml_projects.exceptions import (
 router = APIRouter(prefix="/deployments")
 
 
-@router.post('/{deployment_id}/predict',
+@router.post('/{deployment_id}/predict/',
              responses={
                  **UnauthenticatedException.get_example_response(),
                  **BadRequestException.get_example_response(),
