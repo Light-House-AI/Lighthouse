@@ -6,8 +6,14 @@ An end-to-end platform for creating and shipping machine learning models to prod
 
 ### Docker environment
 
-1. Add `.env` file in the `server` directory.
-2. Run the docker-compose up command: `docker-compose -f ./deploy/docker-compose.yml -d up`
+Run the following command to setup the environment:
+
+```bash
+cd deploy
+docker-compose up -d
+```
+
+Note: You can change the environment variables in the `deploy/.env` file.
 
 ### Without docker
 
