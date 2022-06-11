@@ -1,2 +1,2 @@
-from .mongo import connect_to_mongo
+from .log_prediction import log_prediction
 from .collections import InputMetadata, DeploymentInput

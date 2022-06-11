@@ -72,8 +72,17 @@ class Config(BaseSettings):
     # Login route.
     LOGIN_ROUTE: str = "/api/v1/auth/login"
 
-    # MongoDB URL.
-    MONGO_URI: str = "mongodb://localhost:27017/"
+    # Monitoring MongoDB URL.
+    MONITORING_MONGO_URI: str = "mongodb://localhost:27017/monitoring"
+
+    # Monitoring MongoDB Alias.
+    MONITORING_MONGO_ALIAS: str = "monitoring"
+
+    # ML-Projects MongoDB URL.
+    ML_PROJECTS_MONGO_URI: str = "mongodb://localhost:27017/ml_projects"
+
+    # ML-Projects MongoDB Alias.
+    ML_PROJECTS_MONGO_ALIAS: str = "ml-projects"
 
     # Celery app name.
     CELERY_APP_NAME: str = "light-house"

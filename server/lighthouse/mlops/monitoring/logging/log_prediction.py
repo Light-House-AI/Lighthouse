@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional
-from lighthouse.mlops.monitoring.db import InputMetadata, DeploymentInput
+from .collections import InputMetadata, DeploymentInput
 
 
 def log_prediction(deployment_id: str,

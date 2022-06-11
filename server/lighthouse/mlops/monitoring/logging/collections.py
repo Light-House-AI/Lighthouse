@@ -1,11 +1,14 @@
 from datetime import datetime
+from lighthouse.config import config
 
-from mongoengine import (DynamicDocument, 
-                         EmbeddedDocument, 
-                         EmbeddedDocumentField, 
-                         DateTimeField,
-                         StringField, 
-                         ListField)
+from mongoengine import (
+    DynamicDocument,
+    EmbeddedDocument,
+    EmbeddedDocumentField,
+    DateTimeField,
+    StringField,
+)
+
 
 class InputMetadata(EmbeddedDocument):
     """
@@ -23,5 +26,10 @@ class DeploymentInput(DynamicDocument):
     """
     _metadata = EmbeddedDocumentField(InputMetadata)
 
-    # create index on deployment_id
-    meta = {'indexes':['_metadata.deployment_id']}
+    meta = {
+        # create index on deployment_id
+        'indexes': ['_metadata.deployment_id'],
+
+        # choose db connection alias
+        'db_alias': config.MONITORING_MONGO_ALIAS
+    }
