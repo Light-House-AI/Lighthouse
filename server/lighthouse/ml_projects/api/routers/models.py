@@ -4,18 +4,21 @@ from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
 
 from lighthouse.config import config
-from lighthouse.ml_projects.api import get_session, get_current_user_data
 from lighthouse.ml_projects.services import model as model_service
 from lighthouse.ml_projects.schemas import ModelCreate, Model
-from lighthouse.ml_projects.exceptions import (
-    UnauthenticatedException,
-    AppException,
+from lighthouse.ml_projects.exceptions import UnauthenticatedException
+
+from lighthouse.ml_projects.api import (
+    get_session,
+    get_current_user_data,
+    catch_app_exceptions,
 )
 
 router = APIRouter(prefix="/models")
 
 
 @router.get('/', responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def get_models(*,
                skip: int = 0,
                limit: int = 100,
@@ -35,6 +38,7 @@ def get_models(*,
 @router.post('/',
              responses=UnauthenticatedException.get_example_response(),
              response_model=Model)
+@catch_app_exceptions
 def create_model(*,
                  model_data: ModelCreate,
                  db: Session = Depends(get_session),
@@ -42,19 +46,16 @@ def create_model(*,
     """
     Creates a new model.
     """
-    try:
-        return model_service.create_model(
-            user_id=user_data.user_id,
-            model_data=model_data,
-            db=db,
-        )
-
-    except AppException as e:
-        raise e.to_http_exception()
+    return model_service.create_model(
+        user_id=user_data.user_id,
+        model_data=model_data,
+        db=db,
+    )
 
 
 @router.post('/{model_id}/training_status/',
              responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def update_model_training_status(*,
                                  model_id: int,
                                  x_token: str = Header(None),
@@ -65,13 +66,9 @@ def update_model_training_status(*,
     if x_token != config.WEBHOOK_TOKEN:
         raise UnauthenticatedException("Invalid webhook token.")
 
-    try:
-        model_service.mark_model_as_trained(
-            model_id=model_id,
-            db=db,
-        )
+    model_service.mark_model_as_trained(
+        model_id=model_id,
+        db=db,
+    )
 
-        return {"message": "Model status updated."}
-
-    except AppException as e:
-        raise e.to_http_exception()
+    return {"message": "Model status updated."}

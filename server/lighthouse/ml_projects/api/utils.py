@@ -2,6 +2,7 @@
 Dependencies for the API.
 """
 
+from functools import wraps
 from sqlalchemy.orm import sessionmaker
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, Request
@@ -36,3 +37,17 @@ def get_current_user_data(token: str = Depends(oauth2_scheme)):
         raise e.to_http_exception()
 
     return token_data
+
+
+def catch_app_exceptions(func):
+    """
+    Decorator for catching AppException.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except AppException as e:
+            raise e.to_http_exception()
+
+    return wrapper

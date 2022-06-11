@@ -1,5 +1,5 @@
 """API for lighthouse."""
 
-from .deps import get_session, get_current_user_data
+from .utils import get_session, get_current_user_data, catch_app_exceptions
 from .application import get_app
 from .metadata import METADATA

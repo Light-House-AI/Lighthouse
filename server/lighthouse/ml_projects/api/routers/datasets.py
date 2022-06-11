@@ -4,12 +4,13 @@ from typing import Dict, List
 from fastapi import APIRouter, Depends, UploadFile, Response
 from sqlalchemy.orm import Session
 
-from lighthouse.ml_projects.api import get_session, get_current_user_data
 from lighthouse.ml_projects.services import dataset as dataset_service
+from lighthouse.ml_projects.exceptions import UnauthenticatedException
 
-from lighthouse.ml_projects.exceptions import (
-    UnauthenticatedException,
-    AppException,
+from lighthouse.ml_projects.api import (
+    get_session,
+    get_current_user_data,
+    catch_app_exceptions,
 )
 
 from lighthouse.ml_projects.schemas import (
@@ -26,6 +27,7 @@ router = APIRouter(prefix="/datasets")
 @router.get('/raw/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[RawDataset])
+@catch_app_exceptions
 def get_raw_datasets(*,
                      skip: int = 0,
                      limit: int = 100,
@@ -45,6 +47,7 @@ def get_raw_datasets(*,
 @router.get('/raw/{dataset_id}/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=RawDataset)
+@catch_app_exceptions
 def get_raw_dataset(*,
                     dataset_id: int,
                     db: Session = Depends(get_session),
@@ -52,21 +55,17 @@ def get_raw_dataset(*,
     """
     Returns a raw dataset metadata.
     """
-    try:
-        dataset = dataset_service.get_raw_dataset(
-            user_id=user_data.user_id,
-            dataset_id=dataset_id,
-            db=db,
-        )
-    except AppException as e:
-        raise e.to_http_exception()
-
-    return dataset
+    return dataset_service.get_raw_dataset(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        db=db,
+    )
 
 
 @router.post('/raw/',
              responses=UnauthenticatedException.get_example_response(),
              response_model=RawDataset)
+@catch_app_exceptions
 def create_raw_dataset(*,
                        raw_dataset_in: RawDatasetCreate,
                        db: Session = Depends(get_session),
@@ -74,20 +73,16 @@ def create_raw_dataset(*,
     """
     Creates a raw dataset.
     """
-    try:
-        dataset = dataset_service.create_raw_dataset(
-            user_id=user_data.user_id,
-            raw_dataset_in=raw_dataset_in,
-            db=db,
-        )
-    except AppException as e:
-        raise e.to_http_exception()
-
-    return dataset
+    return dataset_service.create_raw_dataset(
+        user_id=user_data.user_id,
+        raw_dataset_in=raw_dataset_in,
+        db=db,
+    )
 
 
 @router.post('/raw/{dataset_id}/upload/',
              responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def upload_raw_dataset(*,
                        dataset_id: int,
                        file: UploadFile,
@@ -106,6 +101,7 @@ def upload_raw_dataset(*,
 
 @router.get('/raw/{dataset_id}/rows/',
             responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def get_raw_dataset_rows(*,
                          dataset_id: int,
                          skip: int = 0,
@@ -128,6 +124,7 @@ def get_raw_dataset_rows(*,
 
 @router.get('/raw/{dataset_id}/recommendations/',
             responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def get_raw_dataset_cleaning_rules_recommendations(
         *,
         dataset_id: int,
@@ -146,6 +143,7 @@ def get_raw_dataset_cleaning_rules_recommendations(
 @router.get('/cleaned/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[CleanedDataset])
+@catch_app_exceptions
 def get_cleaned_datasets(*,
                          skip: int = 0,
                          limit: int = 100,
@@ -165,6 +163,7 @@ def get_cleaned_datasets(*,
 @router.get('/cleaned/{dataset_id}/',
             responses=UnauthenticatedException.get_example_response(),
             response_model=CleanedDatasetWithSources)
+@catch_app_exceptions
 def get_cleaned_dataset(*,
                         dataset_id: int,
                         db: Session = Depends(get_session),
@@ -172,22 +171,17 @@ def get_cleaned_dataset(*,
     """
     Returns a processed dataset metadata.
     """
-    try:
-        dataset = dataset_service.get_cleaned_dataset(
-            user_id=user_data.user_id,
-            dataset_id=dataset_id,
-            db=db,
-        )
-
-    except AppException as e:
-        raise e.to_http_exception()
-
-    return dataset.to_dict()
+    return dataset_service.get_cleaned_dataset(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        db=db,
+    )
 
 
 @router.post('/cleaned/',
              responses=UnauthenticatedException.get_example_response(),
              response_model=CleanedDataset)
+@catch_app_exceptions
 def create_cleaned_dataset(*,
                            cleaned_dataset_in: CleanedDatasetCreate,
                            db: Session = Depends(get_session),
@@ -195,21 +189,16 @@ def create_cleaned_dataset(*,
     """
     Creates a processed dataset.
     """
-    try:
-        dataset = dataset_service.create_cleaned_dataset(
-            user_id=user_data.user_id,
-            cleaned_dataset_in=cleaned_dataset_in,
-            db=db,
-        )
-
-    except AppException as e:
-        raise e.to_http_exception()
-
-    return dataset
+    return dataset_service.create_cleaned_dataset(
+        user_id=user_data.user_id,
+        cleaned_dataset_in=cleaned_dataset_in,
+        db=db,
+    )
 
 
 @router.get('/cleaned/{dataset_id}/rows/',
             responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
 def get_cleaned_dataset_rows(*,
                              dataset_id: int,
                              skip: int = 0,
