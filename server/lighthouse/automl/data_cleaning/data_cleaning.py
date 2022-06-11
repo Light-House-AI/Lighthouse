@@ -295,7 +295,7 @@ def automatic_data_filler(df, column, output_column, is_numeric, no_corr=0.01, l
     p_score = pearson_score(df, column, output_column)
 
     if df[column].isna().sum() == 0:
-        print(column, ': No missing values')
+        # print(column, ': No missing values')
         return 'automatic', p_score
 
     if p_score >= -no_corr and p_score <= no_corr:
