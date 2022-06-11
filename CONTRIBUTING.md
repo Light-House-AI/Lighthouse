@@ -37,6 +37,8 @@ our scopes are:
 - `ml-monitoring`
 - `infra`
 - `client`
+- `server`
+- `wrapper`
 
 example message: `feat(ml-serving): add blue/green deployments`
 
