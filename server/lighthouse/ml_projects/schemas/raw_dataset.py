@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel
 from lighthouse.ml_projects.db import RawDatasetCreationMethod
@@ -27,3 +27,7 @@ class RawDatasetInDBBase(RawDatasetBase):
 # properties to return to the client
 class RawDataset(RawDatasetInDBBase):
     ...
+
+
+class RawDatasetsRecommendations(BaseModel):
+    datasets_ids: List[int]

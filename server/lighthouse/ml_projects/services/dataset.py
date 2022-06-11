@@ -1,5 +1,6 @@
 """Dataset service"""
 
+from typing import List
 from fastapi import UploadFile
 from sqlalchemy.orm import Session, joinedload
 
@@ -81,7 +82,7 @@ def upload_raw_dataset(user_id: str, dataset_id: int, file: UploadFile,
         raise Exception("Could not save file.")
 
     # Upload dataset
-    # dataset_file_service.upload_raw_dataset(dataset_id)
+    dataset_file_service.upload_raw_dataset(dataset_id)
 
     return {"message": "Dataset uploaded"}
 
@@ -97,33 +98,36 @@ def get_raw_dataset_rows(user_id: str, dataset_id: int, skip: int, limit: int,
     if not dataset:
         raise NotFoundException("Dataset not found.")
 
-    # TODO: download dataset
-
-    file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
+    # Download dataset
+    file_path = dataset_file_service.download_raw_dataset(dataset_id)
     rows = data_cleaning_service.get_rows(file_path, skip, limit)
 
     return rows
 
 
 def get_raw_dataset_cleaning_rules_recommendations(user_id: str,
-                                                   dataset_id: int,
+                                                   datasets_ids: List[int],
                                                    db: Session):
     """
     Returns raw dataset cleaning rules recommendations.
     """
-    dataset = db.query(RawDataset).join(Project).filter(
-        Project.user_id == user_id, RawDataset.id == dataset_id).first()
+    datasets = db.query(RawDataset).join(Project).filter(
+        Project.user_id == user_id, RawDataset.id.in_(datasets_ids)).all()
 
-    if not dataset:
-        raise NotFoundException("Dataset not found.")
+    if not len(datasets):
+        raise NotFoundException("Datasets not found.")
 
-    # TODO: download dataset
+    # Download datasets
+    datasets_paths = [
+        dataset_file_service.download_raw_dataset(dataset.id)
+        for dataset in datasets
+    ]
 
-    file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
+    predicted_column = datasets[0].project.predicted_column
+
     rules = data_cleaning_service.get_data_cleaning_suggestions(
-        file_path, dataset.project.predicted_column)
+        datasets_paths, predicted_column)
 
-    print(rules)
     return rules
 
 
@@ -180,6 +184,9 @@ def create_cleaned_dataset(user_id: str,
     raw_datasets = db.query(RawDataset).join(Project).filter(
         Project.user_id == user_id, RawDataset.id.in_(raw_datasets_ids)).all()
 
+    if not len(raw_datasets):
+        raise NotFoundException("Datasets not found.")
+
     sources = [
         CleanedDatasetSource(raw_dataset=raw_dataset,
                              cleaned_dataset=cleaned_dataset)
@@ -189,14 +196,13 @@ def create_cleaned_dataset(user_id: str,
     db.add_all(sources)
     db.commit()
 
-    # TODO: Download datasets
-
-    # Create cleaned data
+    # Download datasets
     raw_datasets_file_paths = [
-        dataset_file_service.get_raw_dataset_local_path(raw_dataset.id)
-        for raw_dataset in raw_datasets
+        dataset_file_service.download_raw_dataset(dataset.id)
+        for dataset in raw_datasets
     ]
 
+    # Clean datasets
     cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
         cleaned_dataset.id)
 
@@ -206,14 +212,14 @@ def create_cleaned_dataset(user_id: str,
         rules=rules,
         predicted_column=project.predicted_column)
 
-    # TODO: Upload cleaned data
+    # Upload cleaned data
+    dataset_file_service.upload_cleaned_dataset(cleaned_dataset.id)
 
     # Save cleaning rules
     cleaning_rules = DatasetCleaningRules(
         dataset_id=cleaned_dataset.id,
         rules=rules,
     )
-
     cleaning_rules.save()
 
     return cleaned_dataset
@@ -230,9 +236,8 @@ def get_cleaned_dataset_rows(user_id: str, dataset_id: int, skip: int,
     if not dataset:
         raise NotFoundException("Dataset not found.")
 
-    # TODO: download dataset
-
-    file_path = dataset_file_service.get_cleaned_dataset_local_path(dataset_id)
+    # Download dataset
+    file_path = dataset_file_service.download_cleaned_dataset(dataset_id)
     rows = data_cleaning_service.get_rows(file_path, skip, limit)
 
     return rows

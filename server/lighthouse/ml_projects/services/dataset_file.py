@@ -20,17 +20,11 @@ def save_file_to_local_disk(file_path: str, file: BinaryIO):
     Saves a file to local disk.
     """
 
-    try:
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file, buffer)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file, buffer)
 
-        file.close()
-        return True
-
-    except Exception as ex:
-        print(ex)
-        file.close()
-        return False
+    file.close()
+    return True
 
 
 def upload_raw_dataset(dataset_id: int):
@@ -38,7 +32,7 @@ def upload_raw_dataset(dataset_id: int):
     Uploads a raw dataset to Azure Blob Storage.
     """
     conn_str = config.AZURE_CONN_STR
-    container_name = config.AZURE_raw_DATASETS_CONTAINER_NAME
+    container_name = config.AZURE_RAW_DATASETS_CONTAINER_NAME
 
     blob_name = get_raw_dataset_blob_name(dataset_id)
     file_path = get_raw_dataset_local_path(dataset_id)
@@ -74,20 +68,16 @@ def upload_blob(conn_str: str, container_name: str, blob_name: str,
     """
     Uploads a blob to Azure Blob Storage.
     """
-    try:
-        blob = BlobClient.from_connection_string(
-            conn_str=conn_str,
-            container_name=container_name,
-            blob_name=blob_name,
-        )
+    blob = BlobClient.from_connection_string(
+        conn_str=conn_str,
+        container_name=container_name,
+        blob_name=blob_name,
+    )
 
-        with open(file_path, "rb") as my_blob:
-            blob.upload_blob(my_blob)
+    with open(file_path, "rb") as my_blob:
+        blob.upload_blob(my_blob)
 
-        return True
-    except Exception as ex:
-        print(ex)
-        return False
+    return True
 
 
 def download_cleaned_dataset(dataset_id: int):
@@ -138,13 +128,8 @@ def download_blob_if_not_exists(conn_str: str, container_name: str,
         return file_path
 
     # download the dataset
-    is_downloaded = download_blob(conn_str, container_name, blob_name,
-                                  file_path)
-
-    if is_downloaded:
-        return file_path
-    else:
-        return ""
+    download_blob(conn_str, container_name, blob_name, file_path)
+    return file_path
 
 
 def download_blob(conn_str: str, container_name: str, blob_name: str,
@@ -152,20 +137,18 @@ def download_blob(conn_str: str, container_name: str, blob_name: str,
     """
     Downloads a blob from Azure Blob Storage.
     """
-    try:
-        blob = BlobClient.from_connection_string(
-            conn_str=conn_str,
-            container_name=container_name,
-            blob_name=blob_name,
-        )
 
-        with open(file_path, "wb") as my_blob:
-            blob_data = blob.download_blob()
-            blob_data.readinto(my_blob)
+    blob = BlobClient.from_connection_string(
+        conn_str=conn_str,
+        container_name=container_name,
+        blob_name=blob_name,
+    )
 
-    except Exception as ex:
-        print(ex)
-        return False
+    with open(file_path, "wb") as my_blob:
+        blob_data = blob.download_blob()
+        blob_data.readinto(my_blob)
+
+    return True
 
 
 def get_raw_dataset_blob_name(dataset_id: int):
@@ -194,3 +177,14 @@ def get_cleaned_dataset_local_path(dataset_id: int):
     Returns the local path of a cleaned dataset.
     """
     return config.CLEANED_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"
+
+
+def create_directories():
+    """
+    Creates directories if they do not exist.
+    """
+    if not os.path.exists(config.RAW_DATASETS_TEMP_DIR):
+        os.makedirs(config.RAW_DATASETS_TEMP_DIR)
+
+    if not os.path.exists(config.CLEANED_DATASETS_TEMP_DIR):
+        os.makedirs(config.CLEANED_DATASETS_TEMP_DIR)

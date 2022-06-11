@@ -36,10 +36,10 @@ class Config(BaseSettings):
     AZURE_CONN_STR: str = ''
 
     # Azure cleaned datasets container name.
-    AZURE_CLEANED_DATASETS_CONTAINER_NAME: str = ''
+    AZURE_CLEANED_DATASETS_CONTAINER_NAME: str = 'cleaned-datasets'
 
     # Azure raw datasets container name.
-    AZURE_RAW_DATASETS_CONTAINER_NAME: str = ''
+    AZURE_RAW_DATASETS_CONTAINER_NAME: str = 'raw-datasets'
 
     # Access token expiration time (in minutes).
     # 8 days in minutes = 8 * 24 * 60 = 86400

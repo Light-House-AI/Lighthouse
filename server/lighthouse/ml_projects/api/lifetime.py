@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from lighthouse.config import config
 from lighthouse.logger import logger
 from lighthouse.ml_projects.mongo import connect_to_mongo
+from lighthouse.ml_projects.services.dataset_file import create_directories
 from lighthouse.ml_projects.db.database import (
     get_session_factory,
     get_engine,
@@ -15,6 +16,9 @@ def startup(app: FastAPI):
     Actions to run on application startup.
     """
     async def _startup():
+        # create directories
+        create_directories()
+
         # setup database
         _setup_db(app)
         check_db_connection(app.state.db_session_factory, logger)
@@ -30,7 +34,6 @@ def shutdown(app: FastAPI):
     Actions to run on application's shutdown.
     """
     async def _shutdown():
-        print("Shutting down application...")
         _shutdown_db(app)
         _shutdown_mongo(app)
 
