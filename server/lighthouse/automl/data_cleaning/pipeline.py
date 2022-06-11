@@ -1,4 +1,4 @@
-from server.lighthouse.automl.data_cleaning.data_cleaning import *
+from .data_cleaning import *
 
 
 def data_cleaning_suggestions(df, output_column):
