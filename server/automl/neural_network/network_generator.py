@@ -1,45 +1,77 @@
 import numpy as np
 from math import floor, ceil
 from sklearn.model_selection import train_test_split 
-from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
 from keras.utils import np_utils
-from .neural_network import NeuralNetwork
-from .fc_layer import FCLayer
-from .activation_layer import ActivationLayer
-from .activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from .loss_functions import mse, mse_derivative
+from neural_network import NeuralNetwork
+from fc_layer import FCLayer
+from activation_layer import ActivationLayer
+from activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
+from loss_functions import mse, mse_derivative
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
-import pickle
+
+hyperparameters = {
+    # Obligatory
+    "type": "Classification", # "Regression"
+    "predicted": "Survived", # "Price"
+    # Optional
+    # Each element in the list is a trial
+    "number_of_layers": [3, 4, 5],
+    "maximum_neurons_per_layer": [128, 64, 32, 16, 8], # Number of neurons in the middle layer
+    "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
+    "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent else is mini-batch
+}
 
 class NetworkGenerator:
-    def __init__(self, X_train, y_train, X_test, y_test, type):
-        #TODO: change data input, finalize needed parameters
-        self.X_train = X_train
-        self.y_train = y_train
-        self.X_test = X_test
-        self.y_test = y_test
-        self.type = type
-        self.input_layer_size = X_train.shape[1]
+    def __init__(self, data, hyperparameters):
+        self.data = data
+        self.predicted = hyperparameters["predicted"]
+        X_train, X_test, y_train, y_test = train_test_split(self.data.loc[:, self.data.columns != self.predicted], self.data[self.predicted], test_size=0.20)
+        self.X_train = np.asarray(X_train)
+        self.y_train = np.asarray(y_train)
+        self.X_test = np.asarray(X_test)
+        self.y_test = np.asarray(y_test)
+        #To be removed after normalization already done
+        scaler = StandardScaler()
+        scaler.fit(self.X_train)
+        self.X_train = scaler.transform(self.X_train)
+        self.X_test = scaler.transform(self.X_test)
+        #Till here
+        self.type = hyperparameters["type"]
+        self.input_layer_size = self.X_train.shape[1]
+        if "number_of_layers" in hyperparameters:
+            self.number_of_layers = hyperparameters["number_of_layers"]
+        else:
+            self.number_of_layers = [4, 5, 6, 7, 8]
+        if "maximum_neurons_per_layer" in hyperparameters:
+            self.maximum_neurons_per_layer = hyperparameters["maximum_neurons_per_layer"]
+        else: 
+            self.maximum_neurons_per_layer = [8, 16, 32]
+        if "learning_rate" in hyperparameters:
+            self.learning_rate = hyperparameters["learning_rate"]
+        else:
+            self.learning_rate = [0.001, 0.01, 0.1, 1]
+        if "batch_size" in hyperparameters:
+            self.batch_size = hyperparameters["batch_size"]
+        else:
+            self.batch_size = [4, 8, 16, 32]
         if(self.type == "Regression"):
             self.output_layer_size = 1
             self.activation_function = relu
             self.activation_function_derivative = relu_derivative
         else: 
-            self.output_layer_size = y_train.shape[1]
+            self.y_train = np_utils.to_categorical(self.y_train)
+            self.y_test = np_utils.to_categorical(self.y_test)
+            self.output_layer_size = self.y_train.shape[1]
             self.activation_function = tanh
             self.activation_function_derivative = tanh_derivative
-        self.middle_layer_size = ceil((2*(self.input_layer_size + self.output_layer_size))/3)
         
-    #interpolating the hidden layer sizes
+#interpolating the hidden layer sizes
     def __interpolate_hidden_layer_sizes(self, middle_layer_size, number_of_layers):
-        '''
-        using the number of layers and the size of input, output and middle layer, the function interpolates the remaining hidden layers
-        and returns the list of hidden layer sizes without the input and output layer
-        '''
         hidden_layer_sizes = [0 for x in range(number_of_layers)]
         layers_before_middle = floor(number_of_layers/2) #2
-        layers_after_middle = ceil(number_of_layers/2) - 1 #2
         hidden_layer_sizes[layers_before_middle] = middle_layer_size
         index = layers_before_middle - 1
         for i in range(layers_before_middle, 0, -1):
@@ -52,10 +84,7 @@ class NetworkGenerator:
             index += 1
         return hidden_layer_sizes
 
-    def __create_network(self, middle_layer_size, number_of_layers, epochs, alpha):
-        '''
-        creates a network with the given parameters
-        '''
+    def __create_network(self, middle_layer_size, number_of_layers, alpha, batch_size):
         network = NeuralNetwork()
         hidden_layer_sizes = self.__interpolate_hidden_layer_sizes(middle_layer_size, number_of_layers)
         hidden_layer_sizes.insert(0, self.input_layer_size)
@@ -66,30 +95,22 @@ class NetworkGenerator:
                 network.add(ActivationLayer(self.activation_function, self.activation_function_derivative))
         if self.type == "Classification":
             network.add(ActivationLayer(sigmoid, sigmoid_derivative))
-            network.use(mse, mse_derivative)  #TODO: change loss function
-        else: 
-            network.add(ActivationLayer(identity, identity_derivative))
             network.use(mse, mse_derivative)
-        network.fit(self.X_train, self.y_train, epochs=epochs, learning_rate=alpha)
+        else: 
+            #network.add(ActivationLayer(identity, identity_derivative))
+            network.use(mse, mse_derivative)
+        network.fit(self.X_train, self.y_train, epochs=10000, learning_rate=alpha, batch_size=batch_size)
         return network
             
     def __network_generator(self, config, reporter):
-        '''
-        This function is used in the ray.tune.run function to generate the network the reporter is used 
-        to return anything needed from this trial
-        '''
-        network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["epochs"], config["alpha"])
+        network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
         y_pred = np.array(network.predict(self.X_test))
-        #TODO: accuracy metric 
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:
-            reporter(config, mean_loss = mean_squared_error(self.y_test, y_pred))
+            reporter(config, mean_loss = mean_squared_log_error(self.y_test, y_pred), network=network)
         
     def __train_network(self):
-        '''
-        Runs the network generator and returns the best result
-        '''
         scheduler = AsyncHyperBandScheduler()
         if self.type == "Classification":
             res = tune.run(
@@ -100,11 +121,11 @@ class NetworkGenerator:
             mode="max",
             scheduler=scheduler,
             config={
-                "number_of_layers": tune.grid_search([6, 7, 8, 9]),
-                "middle_layer_size": tune.grid_search([8, 16, 32]),#, 64, 128]),
-                "epochs": tune.grid_search([500, 1000]),#, 2000, 3000, 4000, 5000]),
-                "alpha": tune.grid_search([0.001, 0.01, 0.1]),#, 1]),
-            },
+                "number_of_layers": tune.grid_search(self.number_of_layers),
+                "middle_layer_size": tune.grid_search(self.maximum_neurons_per_layer),
+                "alpha": tune.grid_search(self.learning_rate),
+                "batch_size": tune.grid_search(self.batch_size),
+            }
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_accuracy"], -item[1]["time_this_iter_s"]), reverse=True)}
                 
@@ -117,33 +138,18 @@ class NetworkGenerator:
             mode="min",
             scheduler=scheduler,
             config={
-                "number_of_layers": tune.grid_search([3, 4, 5]),
-                "middle_layer_size": tune.grid_search([8, 16, 32, 64, 128]),
-                "epochs": tune.grid_search([500, 1000, 2000, 3000, 4000, 5000]),
-                "alpha": tune.grid_search([0.001, 0.01, 0.1, 1]),
+                "number_of_layers": tune.grid_search(self.number_of_layers),
+                "middle_layer_size": tune.grid_search(self.maximum_neurons_per_layer),
+                "alpha": tune.grid_search(self.learning_rate),
+                "batch_size": tune.grid_search(self.batch_size),
             },
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_loss"], item[1]["time_this_iter_s"]))}
         return list(results.values())[0]
     
     def get_best_network(self):
-        '''
-        The only function needed to be called to get the best network with it's accuracy and configuration
-        '''
         best_result = self.__train_network()
         print(best_result)
-        accuracy = best_result["mean_accuracy"] if self.type == "Classification" else best_result["mean_loss"]
         config = best_result["config"]
         network = best_result["network"]
-        return network, accuracy, config
-    
-    def import_model(self, filepath):
-        with open(filepath, 'rb') as f:
-            res = pickle.load(f, encoding='bytes')
-        if not isinstance(res, NeuralNetwork):
-            raise TypeError('File does not exist or is corrupted')
-        return res
-
-    def export_model(self, filepath, network):
-        with open(filepath, 'wb') as f:
-            pickle.dump(network, f)
+        return network, config
