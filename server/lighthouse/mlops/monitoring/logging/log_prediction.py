@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional
-from .collections import InputMetadata, DeploymentInput
+from .collections import InputData, DeploymentInput
 
 
 def log_prediction(deployment_id: str,
@@ -9,18 +9,11 @@ def log_prediction(deployment_id: str,
     """
     Adds a new deployment input to the database.
     """
-    # Create the input metadata.
-    input_metadata = InputMetadata(
+    deployment_input = DeploymentInput(
         deployment_id=deployment_id,
         primary_model_prediction=primary_model_prediction,
         secondary_model_prediction=secondary_model_prediction,
+        input_data=input_params,
     )
 
-    # Create the deployment input.
-    deployment_input = DeploymentInput(
-        **input_params,
-        _metadata=input_metadata,
-    )
-
-    # Save the deployment input.
     deployment_input.save()
