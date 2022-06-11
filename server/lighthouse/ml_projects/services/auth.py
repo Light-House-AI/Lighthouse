@@ -1,3 +1,5 @@
+"""Authentication service"""
+
 from typing import Optional, Dict
 from datetime import datetime, timedelta
 
@@ -5,35 +7,15 @@ from jose import jwt, JWTError
 from sqlalchemy.orm.session import Session
 
 from lighthouse.config import config
-from lighthouse.ml_projects.db import User, UserRole
-from lighthouse.ml_projects.schemas import UserCreate, TokenData, AccessToken
+from lighthouse.ml_projects.db import User
+from lighthouse.ml_projects.schemas import TokenData, AccessToken
 
-from lighthouse.ml_projects.services.security import (
-    _get_password_hash,
-    _verify_password,
-)
+from lighthouse.ml_projects.services.password import verify_password
 
 from lighthouse.ml_projects.exceptions import (
-    NotFoundException,
     BadRequestException,
     UnauthenticatedException,
 )
-
-
-def get_user_by_id(*, user_id: int, db: Session) -> User:
-    """
-    Get a user by its id.
-    
-    :return: The user.
-    :raises NotFoundException: If the user is not found.
-    """
-
-    user = db.query(User).filter(User.id == user_id).first()
-
-    if not user:
-        raise NotFoundException("User not found")
-
-    return user
 
 
 def login(*, email: str, password: str, db: Session):
@@ -57,38 +39,6 @@ def login(*, email: str, password: str, db: Session):
     return token
 
 
-def signup(*, user_in: UserCreate, db: Session) -> User:
-    """
-    Create a new user.
-    
-    :return: The created user.
-    :raises BadRequestException: If the user already exists or the the role is admin.
-    """
-
-    # check if user already exists
-    user = db.query(User).filter(User.email == user_in.email).first()
-    if user:
-        raise BadRequestException("User already exists")
-
-    # check for user role
-    user_data = user_in.dict()
-
-    if user_data.get("role") is UserRole.admin:
-        raise BadRequestException("Admin user creation is not allowed")
-
-    # hash password
-    user_data.pop("password")
-    user = User(**user_data)
-    user.hashed_password = _get_password_hash(user_in.password)
-
-    # add the user to the database
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-
-    return user
-
-
 def get_current_user_data(token: str):
     """
     Get the current user id from the JWT token.
@@ -108,17 +58,17 @@ def get_current_user_data(token: str):
 
 
 def _authenticate(
-    *,
-    email: str,
-    password: str,
-    db: Session,
+        *,
+        email: str,
+        password: str,
+        db: Session,
 ) -> Optional[User]:
     user = db.query(User).filter(User.email == email).first()
 
     if not user:
         return None
 
-    if not _verify_password(password, user.hashed_password):
+    if not verify_password(password, user.hashed_password):
         return None
 
     return user

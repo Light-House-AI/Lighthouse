@@ -18,7 +18,7 @@ class CleanedDatasetCreate(CleanedDatasetBase):
     name: str
     project_id: int
     sources: conset(int, min_items=1)
-    rules: Dict
+    rules: List[Dict]
 
 
 class CleanedDatasetInDBBase(CleanedDatasetBase):

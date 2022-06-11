@@ -1,12 +1,17 @@
-"""Models service."""
+"""Model service."""
 
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.schemas import ModelCreate
 from lighthouse.ml_projects.services.celery import celery_app
-from lighthouse.ml_projects.db import (CleanedDataset, Model, Notification,
-                                       Project)
+
+from lighthouse.ml_projects.db import (
+    CleanedDataset,
+    Model,
+    Notification,
+    Project,
+)
 
 MODEL_TRAINING_TASK_NAME = 'train_model'
 

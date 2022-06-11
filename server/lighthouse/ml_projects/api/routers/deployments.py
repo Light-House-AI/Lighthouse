@@ -1,4 +1,4 @@
-"""Router for deployment."""
+"""Router for Deployments."""
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -35,7 +35,9 @@ def get_prediction(*,
     """
     Returns the predictions from the deployed model.
     """
-    return deployment_service.get_prediction(deployment_id=str(deployment_id),
-                                             user_id=user_data.user_id,
-                                             input_data=input_data,
-                                             db=db)
+    return deployment_service.get_prediction(
+        deployment_id=str(deployment_id),
+        user_id=user_data.user_id,
+        input_data=input_data,
+        db=db,
+    )

@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr
-from lighthouse.ml_projects.db import UserRole
 
 
 class TokenData(BaseModel):

@@ -1,4 +1,4 @@
-"""Router for ML Projects."""
+"""Router for Models."""
 
 from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session

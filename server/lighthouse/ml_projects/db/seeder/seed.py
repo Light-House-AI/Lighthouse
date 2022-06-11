@@ -4,7 +4,7 @@ from lighthouse.ml_projects.db import (User, Project, Model, Deployment,
                                        Notification)
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
-from lighthouse.ml_projects.services import security
+from lighthouse.ml_projects.services import password
 
 
 def add_users(session):
@@ -12,7 +12,7 @@ def add_users(session):
         "email": "johndoe@gmail.com",
         "first_name": "John",
         "last_name": "Doe",
-        "hashed_password": security._get_password_hash("password")
+        "hashed_password": password.get_password_hash("password")
     }]
 
     users = [User(**user_data) for user_data in users_data]

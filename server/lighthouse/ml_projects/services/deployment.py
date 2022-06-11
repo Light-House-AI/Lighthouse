@@ -1,4 +1,4 @@
-"""Deployments service."""
+"""Deployment service."""
 
 import requests
 from sqlalchemy.orm import Session
