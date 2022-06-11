@@ -19,6 +19,7 @@ from lighthouse.ml_projects.schemas import (
     CleanedDatasetWithSources,
     RawDataset,
     CleanedDataset,
+    DatasetCleaningRules,
 )
 
 router = APIRouter(prefix="/datasets")
@@ -216,4 +217,25 @@ def get_cleaned_dataset_rows(*,
         db=db,
     )
 
-    Response(rows, media_type="application/json")
+    return Response(rows, media_type="application/json")
+
+
+@router.get('/cleaned/{dataset_id}/cleaning_rules',
+            responses=UnauthenticatedException.get_example_response(),
+            response_model=DatasetCleaningRules)
+@catch_app_exceptions
+def get_cleaned_dataset_cleaning_rules(
+        *,
+        dataset_id: int,
+        db: Session = Depends(get_session),
+        user_data=Depends(get_current_user_data)):
+    """
+    Returns the cleaning rules for a cleaned dataset.
+    """
+    rules = dataset_service.get_cleaned_dataset_cleaning_rules(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        db=db,
+    )
+
+    return Response(rules, media_type="application/json")

@@ -4,8 +4,9 @@ from lighthouse.config import config
 
 from mongoengine import (
     Document,
-    EmbeddedDocumentField,
     DynamicEmbeddedDocument,
+    EmbeddedDocumentField,
+    ListField,
     IntField,
 )
 
@@ -23,7 +24,7 @@ class DatasetCleaningRules(Document):
     """
 
     dataset_id = IntField(required=True)
-    rules = EmbeddedDocumentField(CleaningRules)
+    rules = ListField(EmbeddedDocumentField(CleaningRules))
 
     meta = {
         # create index on project_id

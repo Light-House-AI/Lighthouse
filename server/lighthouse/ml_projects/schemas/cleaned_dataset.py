@@ -36,3 +36,9 @@ class CleanedDataset(CleanedDatasetInDBBase):
 
 class CleanedDatasetWithSources(CleanedDataset):
     sources: List[CleanedDatasetSource]
+
+
+class DatasetCleaningRules(BaseModel):
+    _id: Optional[str]
+    dataset_id: Optional[int]
+    rules: List[Dict]

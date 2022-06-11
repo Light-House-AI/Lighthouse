@@ -1,4 +1,4 @@
-"""Datasets service"""
+"""Dataset service"""
 
 from fastapi import UploadFile
 from sqlalchemy.orm import Session, joinedload
@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session, joinedload
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
-from lighthouse.automl.data_cleaning import visualizations as data_cleaning_visualizations_service
+from lighthouse.automl.data_cleaning import service as data_cleaning_service
+
+from lighthouse.ml_projects.mongo import DatasetCleaningRules
 
 from lighthouse.ml_projects.db import (
     CleanedDataset,
@@ -98,9 +100,7 @@ def get_raw_dataset_rows(user_id: str, dataset_id: int, skip: int, limit: int,
     # TODO: download dataset
 
     file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
-
-    rows = data_cleaning_visualizations_service.get_rows(
-        file_path, skip, limit)
+    rows = data_cleaning_service.get_rows(file_path, skip, limit)
 
     return rows
 
@@ -120,7 +120,7 @@ def get_raw_dataset_cleaning_rules_recommendations(user_id: str,
     # TODO: download dataset
 
     file_path = dataset_file_service.get_raw_dataset_local_path(dataset_id)
-    rules = data_cleaning_visualizations_service.get_data_cleaning_suggestions(
+    rules = data_cleaning_service.get_data_cleaning_suggestions(
         file_path, dataset.project.predicted_column)
 
     print(rules)
@@ -160,23 +160,23 @@ def create_cleaned_dataset(user_id: str,
     Creates a cleaned dataset.
     """
     # Check if project exists
-    project_exists = db.query(Project).filter(
+    project = db.query(Project).filter(
         Project.user_id == user_id,
-        Project.id == cleaned_dataset_in.project_id).count()
+        Project.id == cleaned_dataset_in.project_id).first()
 
-    if not project_exists:
+    if not project:
         raise NotFoundException("Project not found.")
 
     # Get data
-    cleaned_dataset_data = cleaned_dataset_in.dict()
-    rules = cleaned_dataset_data.pop("rules")
-    raw_datasets_ids = cleaned_dataset_data.pop('sources')
+    cleaned_dataset_metadata = cleaned_dataset_in.dict()
+    rules = cleaned_dataset_metadata.pop("rules")
+    raw_datasets_ids = cleaned_dataset_metadata.pop('sources')
 
-    # Create cleaned dataset
-    cleaned_dataset = CleanedDataset(**cleaned_dataset_data)
+    # Create cleaned dataset record
+    cleaned_dataset = CleanedDataset(**cleaned_dataset_metadata)
     db.add(cleaned_dataset)
 
-    # Create sources
+    # Create sources records
     raw_datasets = db.query(RawDataset).join(Project).filter(
         Project.user_id == user_id, RawDataset.id.in_(raw_datasets_ids)).all()
 
@@ -189,15 +189,32 @@ def create_cleaned_dataset(user_id: str,
     db.add_all(sources)
     db.commit()
 
-    # TODO: uncomment commands
-    # raw_dataset_file_path = dataset_file_service.get_raw_dataset_local_path(
-    #     sources[0].raw_dataset_id)
+    # TODO: Download datasets
 
-    # cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
-    #     cleaned_dataset.id)
+    # Create cleaned data
+    raw_datasets_file_paths = [
+        dataset_file_service.get_raw_dataset_local_path(raw_dataset.id)
+        for raw_dataset in raw_datasets
+    ]
 
-    # data_cleaning_visualizations_service.create_cleaned_dataset(
-    #     raw_dataset_file_path, cleaned_dataset_file_path, rules)
+    cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
+        cleaned_dataset.id)
+
+    data_cleaning_service.create_cleaned_dataset(
+        raw_datasets_file_paths=raw_datasets_file_paths,
+        cleaned_dataset_file_path=cleaned_dataset_file_path,
+        rules=rules,
+        predicted_column=project.predicted_column)
+
+    # TODO: Upload cleaned data
+
+    # Save cleaning rules
+    cleaning_rules = DatasetCleaningRules(
+        dataset_id=cleaned_dataset.id,
+        rules=rules,
+    )
+
+    cleaning_rules.save()
 
     return cleaned_dataset
 
@@ -216,8 +233,23 @@ def get_cleaned_dataset_rows(user_id: str, dataset_id: int, skip: int,
     # TODO: download dataset
 
     file_path = dataset_file_service.get_cleaned_dataset_local_path(dataset_id)
-
-    rows = data_cleaning_visualizations_service.get_rows(
-        file_path, skip, limit)
+    rows = data_cleaning_service.get_rows(file_path, skip, limit)
 
     return rows
+
+
+def get_cleaned_dataset_cleaning_rules(user_id: int, dataset_id: int,
+                                       db: Session):
+    """
+    Returns the cleaning rules for a cleaned dataset.
+    """
+    dataset = db.query(CleanedDataset).join(Project).filter(
+        CleanedDataset.id == dataset_id, Project.user_id == user_id).count()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    cleaning_rules = DatasetCleaningRules.objects(
+        dataset_id=dataset_id).first()
+
+    return cleaning_rules.to_json()
