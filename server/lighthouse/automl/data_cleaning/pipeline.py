@@ -53,7 +53,7 @@ def data_cleaning_suggestions(df, output_column):
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
             col_json.update({'unique_count': len(df[col].unique(
-            )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
+            )), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
         elif df[col].dtype == 'object':
             col_json.update({'min': None, 'max': None, 'mean': None})
             col_json.update({'unique_count': len(df[col].unique(
