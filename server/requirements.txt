@@ -26,8 +26,6 @@ celery[redis]
 azure-storage-blob
 
 # AutoML
-keras
-ray
 sklearn
 numpy
 pandas

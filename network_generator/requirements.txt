@@ -1,0 +1,11 @@
+# network generator
+keras
+ray
+sklearn
+numpy
+pandas
+
+# app
+celery[redis]
+pydantic
+requests
