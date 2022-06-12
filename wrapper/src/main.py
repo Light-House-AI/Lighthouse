@@ -20,7 +20,7 @@ def root():
 @ app.get("/predict")
 def predict():
     prediction = predict_for_deployment_type(environment_variables_dict)
-    return {"Prediction": f"{prediction}"}
+    return prediction
 
 
 if __name__ == "__main__":
