@@ -2,7 +2,7 @@
 
 from .auth import TokenData, AccessToken, Login
 from .user import User, UserCreate
-from .model import Model, ModelCreate
+from .model import Model, ModelCreate, ModelParameters
 from .project import Project, ProjectCreate
 
 from .raw_dataset import (

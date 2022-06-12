@@ -154,7 +154,7 @@ def get_cleaned_dataset(user_id: int, dataset_id: int, db: Session):
     if not dataset:
         raise NotFoundException("Dataset not found.")
 
-    return dataset
+    return dataset.to_dict()
 
 
 def create_cleaned_dataset(user_id: str,

@@ -67,4 +67,4 @@ def notify_finished(model_id: str, network_config: Dict):
     """
     requests.post(config.WEBHOOK_URL.format(model_id=model_id),
                   headers={'x-token': config.WEBHOOK_TOKEN},
-                  json={"network_config": network_config})
+                  json=network_config)
