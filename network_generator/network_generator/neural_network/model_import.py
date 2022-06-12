@@ -1,5 +1,5 @@
 import numpy as np
-from network_generator import NetworkGenerator
+from .network_generator import NetworkGenerator
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 

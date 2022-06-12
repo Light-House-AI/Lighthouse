@@ -1,5 +1,5 @@
 import pickle
-from neural_network import NeuralNetwork
+from .neural_network import NeuralNetwork
 
 def import_model(filepath):
     with open(filepath, 'rb') as f:

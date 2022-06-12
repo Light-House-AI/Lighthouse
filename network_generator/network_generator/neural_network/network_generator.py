@@ -4,11 +4,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
 from keras.utils import np_utils
-from neural_network import NeuralNetwork
-from fc_layer import FCLayer
-from activation_layer import ActivationLayer
-from activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from loss_functions import mse, mse_derivative
+from .neural_network import NeuralNetwork
+from .fc_layer import FCLayer
+from .activation_layer import ActivationLayer
+from .activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
+from .loss_functions import mse, mse_derivative
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
 
