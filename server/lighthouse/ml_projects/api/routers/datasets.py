@@ -64,11 +64,13 @@ def get_raw_dataset_cleaning_rules_recommendations(
     """
     Returns raw dataset cleaning rules recommendations.
     """
-    return dataset_service.get_raw_dataset_cleaning_rules_recommendations(
+    recommendations = dataset_service.get_raw_dataset_cleaning_rules_recommendations(
         user_id=user_data.user_id,
         datasets_ids=data_in.datasets_ids,
         db=db,
     )
+
+    return Response(recommendations, media_type="application/json")
 
 
 @router.get('/raw/{dataset_id}/',

@@ -1,7 +1,18 @@
 import pandas as pd
+import numpy as np
 
+import json
 from typing import Dict, List
 from .pipeline import clean_train, data_cleaning_suggestions
+
+
+class NumpyEncoder(json.JSONEncoder):
+    """ A custom JSON encoder that handles numpy data types. """
+    def default(self, obj):
+        if isinstance(obj, np.generic):
+            return obj.item()
+        else:
+            return super(NumpyEncoder, self).default(obj)
 
 
 def get_rows(file_path: str, skip: int = 0, limit: int = 100):
@@ -18,7 +29,8 @@ def get_data_cleaning_suggestions(datasets_paths: List[str],
     Returns data cleaning suggestions.
     """
     df = create_merged_data_frame(datasets_paths)
-    return data_cleaning_suggestions(df, predicted_column)
+    rules = data_cleaning_suggestions(df, predicted_column)
+    return json.dumps(rules, cls=NumpyEncoder)
 
 
 def create_cleaned_dataset(raw_datasets_file_paths: List[str],
