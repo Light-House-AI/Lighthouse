@@ -1,11 +1,13 @@
 # network generator
 keras
-ray
+tensorflow
+ray[tune]
 sklearn
 numpy
 pandas
 
 # app
-celery[redis]
+dramatiq[redis]
 pydantic
 requests
+azure-storage-blob

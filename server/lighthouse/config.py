@@ -87,11 +87,11 @@ class Config(BaseSettings):
     # Celery app name.
     CELERY_APP_NAME: str = "light-house"
 
-    # Celery broker URL.
-    CELERY_BROKER_URL: str = "redis://:redispassword@localhost:6379/0"
+    # Dramatiq broker URL.
+    DRAMATIQ_REDIS_BROKER_URL: str = "redis://:redispassword@localhost:6379/0"
 
-    # Celery backend URL.
-    CELERY_BACKEND_URL: str = "redis://:redispassword@localhost:6379/0"
+    # Models training queue name.
+    MODELS_TRAINING_QUEUE_NAME: str = "train_model"
 
     # Webhook Token.
     WEBHOOK_TOKEN: str = "TEST_SECRET_DO_NOT_USE_IN_PROD"

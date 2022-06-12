@@ -1,5 +1,6 @@
-.env
-.pkl
+*.env
+*.pkl
+tmp/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

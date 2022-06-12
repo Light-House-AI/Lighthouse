@@ -32,14 +32,14 @@ services:
       - redis:/data
     command: redis-server --requirepass ${REDIS_PASSWORD}
 
-  nn-generator:
+  network-generator:
     build:
-      context: ../nn_generator/
+      context: ../network_generator/
       dockerfile: Dockerfile
     environment:
       - LOG_LEVEL=${LOG_LEVEL}
-      - BROKER_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
-      - RESULTS_BACKEND_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
+      - DRAMATIQ_REDIS_BROKER_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
+      - AZURE_CONN_STR=${AZURE_CONN_STR}
       - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
       - WEBHOOK_URL=http://lighthouse-server:${SERVER_PORT}/api/v1/models/{model_id}/training_status/
     depends_on:
@@ -56,10 +56,11 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - DEBUG=${DEBUG}
       - PORT=${SERVER_PORT}
+      - AZURE_CONN_STR=${AZURE_CONN_STR}
       - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
-      - CELERY_BACKEND_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
-      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
-      - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
+      - DRAMATIQ_REDIS_BROKER_URL=redis://:${REDIS_PASSWORD}@redis-celery:${REDIS_PORT}/0
+      - MONITORING_MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:${MONGO_PORT}/monitoring?authSource=admin
+      - ML_PROJECTS_MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:${MONGO_PORT}/ml_projects?authSource=admin
       - SQLALCHEMY_DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/postgres
     depends_on:
       - db

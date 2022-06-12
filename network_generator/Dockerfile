@@ -20,11 +20,11 @@ RUN pip install -r ./requirements.txt
 COPY ./ ./
 
 # chown all the files to the app user
-RUN chown -R app:app $HOME
+RUN chown -R app:app /app
 
 # change to the app user
 # switch to a non-root user, which is recommended.
 USER app
 
 # run the app
-CMD ["python", "-m", "nn_generator"]
+CMD ["dramatiq", "network_generator.worker", "-p", "1", "-t", "1"]

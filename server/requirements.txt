@@ -22,7 +22,7 @@ pydantic[email]
 stringcase
 python-multipart
 mongoengine
-celery[redis]
+dramatiq[redis]
 azure-storage-blob
 
 # AutoML
@@ -30,4 +30,4 @@ sklearn
 numpy
 pandas
 fuzzywuzzy
-python-Levenshtein
+python-Levenshtein-wheels

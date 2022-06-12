@@ -1,15 +1,15 @@
-name: NN-Generator-CI
+name: Network-Generator-CI
 
 on:
   push:
     branches: [master]
     paths:
-      - nn_generator/**
-      - .github/workflows/nn_generator.yaml
+      - network_generator/**
+      - .github/workflows/network_generator.yaml
 
 env:
-    APP_NAME: nn-generator
-    PACKAGE_NAME: light-house-ai/nn-generator
+    APP_NAME: network_generator
+    PACKAGE_NAME: light-house-ai/network_generator
     GHCR_USERNAME: light-house-ai
 
 jobs:

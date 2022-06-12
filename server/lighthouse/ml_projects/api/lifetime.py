@@ -4,6 +4,7 @@ from lighthouse.config import config
 from lighthouse.logger import logger
 from lighthouse.ml_projects.mongo import connect_to_mongo
 from lighthouse.ml_projects.services.dataset_file import create_directories
+from lighthouse.ml_projects.services.dramatiq import init_dramatiq
 from lighthouse.ml_projects.db.database import (
     get_session_factory,
     get_engine,
@@ -25,6 +26,9 @@ def startup(app: FastAPI):
 
         # setup mongo
         _setup_mongo(app)
+
+        # init dramatiq
+        init_dramatiq()
 
     return _startup
 
