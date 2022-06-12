@@ -14,6 +14,9 @@ class ModelBase(BaseModel):
     learning_rate: Optional[float]
     batch_size: Optional[int]
 
+    accuracy_score: Optional[float]
+    mean_squared_log_error: Optional[float]
+
 
 # properties to receive on Model creation
 class ModelCreate(ModelBase):

@@ -6,6 +6,7 @@ from lighthouse.ml_projects.db import Project, ProjectType
 
 class ProjectBase(BaseModel):
     name: Optional[str]
+    overview: Optional[str]
     predicted_column: Optional[str]
     type: Optional[ProjectType]
 
@@ -13,6 +14,7 @@ class ProjectBase(BaseModel):
 # properties to receive on Project creation
 class ProjectCreate(ProjectBase):
     name: str
+    overview: str
     predicted_column: str
     type: ProjectType
 

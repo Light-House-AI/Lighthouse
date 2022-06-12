@@ -24,6 +24,9 @@ class Model(Base):
     learning_rate = Column(Float, nullable=True)
     batch_size = Column(Integer, nullable=True)
 
+    accuracy_score = Column(Float, nullable=True)
+    mean_squared_log_error = Column(Float, nullable=True)
+
     # relationships
     project = relationship("Project", back_populates="models")
     dataset = relationship("CleanedDataset", back_populates="models")

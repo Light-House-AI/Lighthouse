@@ -47,6 +47,7 @@ def add_projects(session, user):
     projects_data = [{
         "user": user,
         "name": "Project 1",
+        "overview": "This is an overview for project 1",
         "type": "classification",
         "predicted_column": "class",
     }]

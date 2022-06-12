@@ -19,6 +19,7 @@ class Project(Base):
     user_id = Column(ForeignKey(User.id), index=True, nullable=False)
 
     name = Column(String, nullable=False)
+    overview = Column(String, nullable=False)
     predicted_column = Column(String, nullable=False)
     type = Column(Enum(ProjectType), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
