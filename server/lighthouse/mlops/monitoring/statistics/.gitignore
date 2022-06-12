@@ -1,4 +1,4 @@
-data/*.csv
+/data
 */*/__pycache__
 */expectations/*.json
 */checkpoints/
