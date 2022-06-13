@@ -10,10 +10,13 @@ Run the following command to setup the environment:
 
 ```bash
 cd deploy
-docker-compose up -d
+docker-compose up -d --build
 ```
 
-Note: You can change the environment variables in the `deploy/.env` file.
+Notes:
+
+- You can change the environment variables in the `deploy/.env` file.
+- You can comment unwanted services in the `deploy/docker-compose.yml` file.
 
 ### Without docker
 
@@ -57,13 +60,15 @@ start.sh # or start.bat for windows
 │   ├── k8s                 <- k8s manifests for deployment.
 │   └── docker-compose.yml  <- Docker compose file for development.
 │
-├── docs            <- Documentation and examples.
+├── docs                <- Documentation and examples.
 │
-├── infrastructure  <- Infrastructure code.
+├── infrastructure      <- Infrastructure code.
 │
-├── notebooks       <- Development code.
+├── network_generator   <- Network generator module.
 │
-├── server          <- Server code.
+├── notebooks           <- Development code.
+│
+├── server              <- Server code.
 │   │
 │   └── lighthouse
 │       │
