@@ -8,8 +8,8 @@ on:
       - .github/workflows/network_generator.yaml
 
 env:
-    APP_NAME: network_generator
-    PACKAGE_NAME: light-house-ai/network_generator
+    APP_NAME: network-generator
+    PACKAGE_NAME: light-house-ai/network-generator
     GHCR_USERNAME: light-house-ai
 
 jobs:
