@@ -261,4 +261,7 @@ def get_cleaned_dataset_cleaning_rules(user_id: int, dataset_id: int,
     cleaning_rules = DatasetCleaningRules.objects(
         dataset_id=dataset_id).first()
 
+    if not cleaning_rules:
+        raise NotFoundException("Cleaning rules not found.")
+
     return cleaning_rules.to_json()

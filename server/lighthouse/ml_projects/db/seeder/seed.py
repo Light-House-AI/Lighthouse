@@ -51,7 +51,7 @@ def add_projects(session, user):
         "name": "Project 1",
         "overview": "This is an overview for project 1",
         "type": "classification",
-        "predicted_column": "class",
+        "predicted_column": "price",
     }]
 
     projects = [Project(**project_data) for project_data in projects_data]
@@ -70,7 +70,7 @@ def add_raw_datasets(session, project):
     }, {
         "name": "Raw dataset 2",
         "project": project,
-        "creation_method": "upload",
+        "creation_method": "capture",
     }]
 
     datasets = [RawDataset(**dataset_data) for dataset_data in datasets_data]
