@@ -126,7 +126,8 @@ def mark_model_as_trained(model_id: int, model_params: ModelParameters,
     # Create notification
     notification = Notification(
         user_id=model.project.user_id,
-        description=f'Model {model.name} with id {model.id} is trained',
+        title="Model trained",
+        body=f'Model {model.name} with id {model.id} is trained',
     )
 
     db.add(notification)

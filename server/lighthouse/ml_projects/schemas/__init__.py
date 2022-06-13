@@ -1,7 +1,7 @@
 """ML Projects schemas."""
 
 from .auth import TokenData, AccessToken, Login
-from .user import User, UserCreate
+from .user import User, UserCreate, Notification
 from .model import Model, ModelCreate, ModelParameters
 from .project import Project, ProjectCreate
 

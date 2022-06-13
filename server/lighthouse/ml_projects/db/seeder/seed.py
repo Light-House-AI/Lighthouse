@@ -26,10 +26,12 @@ def add_users(session):
 def add_notifications(session, user):
     notifications_data = [{
         "user": user,
-        "description": "This is a notification"
+        "title": "Notification 1",
+        "body": "This is a notification"
     }, {
         "user": user,
-        "description": "This is another notification"
+        "title": "Notification 2",
+        "body": "This is another notification"
     }]
 
     notifications = [

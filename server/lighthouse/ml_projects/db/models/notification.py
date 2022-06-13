@@ -12,15 +12,16 @@ class Notification(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(ForeignKey(User.id), index=True, nullable=False)
-    description = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+    body = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # relationships
     user = relationship("User", back_populates="notifications")
 
     def __repr__(self):
-        return "Notification(id={}, user_id={}, description={}, created_at={})".format(
-            self.id, self.user_id, self.description, self.created_at)
+        return "Notification(id={}, user_id={}, title={}, body={}, created_at={})".format(
+            self.id, self.user_id, self.title, self.body, self.created_at)
 
     def __str__(self):
         return self.__repr__()
