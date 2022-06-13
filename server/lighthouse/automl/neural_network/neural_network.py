@@ -41,7 +41,7 @@ class NeuralNetwork:
                 output = layer.forward_propagation(output)
             result.append(output[0])
 
-        return result
+        return np.asarray(result)
     
     # train the network
     def fit(self, x_train, y_train, epochs, learning_rate, batch_size):

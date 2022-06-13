@@ -41,13 +41,13 @@ hyperparameters = {
 network_generator = NetworkGenerator(data["frame"], hyperparameters)
 network, config = network_generator.get_best_network()
 
-y_pred = np.array(network.predict(X_test))
+y_pred = network.predict(X_test)
 print(config, accuracy_score(y_test, y_pred.round()))
 
 export_model("wine_model.pkl", network)
 
 loaded_network = import_model("wine_model.pkl")
 # After you load the model, use it like the line below:
-y_pred = np.array(loaded_network.predict(X_test))
+y_pred = loaded_network.predict(X_test)
 
 print(accuracy_score(y_test, y_pred.round()))
