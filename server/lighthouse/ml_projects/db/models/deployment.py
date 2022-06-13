@@ -29,9 +29,9 @@ class Deployment(Base):
     name = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     is_running = Column(Boolean, nullable=False, default=False)
-    deployment_type = Column(Enum(DeploymentType),
-                             nullable=False,
-                             default=DeploymentType.single_model)
+    type = Column(Enum(DeploymentType),
+                  nullable=False,
+                  default=DeploymentType.single_model)
 
     # relationships
     project = relationship("Project", back_populates="deployments")

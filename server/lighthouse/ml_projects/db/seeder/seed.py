@@ -143,7 +143,7 @@ def add_deployments(session, project, model_1, model_2):
         "primary_model": model_1,
         "secondary_model": model_2,
         "name": "Deployment 2",
-        "deployment_type": DeploymentType.champion_challenger,
+        "type": DeploymentType.champion_challenger,
     }]
 
     deployments = [
