@@ -1,0 +1,11 @@
+.github
+.gitignore
+.env
+.env.example
+README.md
+CONTRIBUTING.md
+*/__pycache__*
+*/*/__pycache__*
+*/temp*
+*/*/temp*
+/models/*.pkl

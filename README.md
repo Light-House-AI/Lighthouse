@@ -4,16 +4,34 @@ An end-to-end platform for creating and shipping machine learning models to prod
 
 ## Getting started
 
-### Client setup
+### Docker environment
+
+1. Add `.env` file in the `server` directory.
+2. Run the docker-compose up command: `docker-compose -f ./deploy/docker-compose.yml -d up`
+
+### Without docker
+
+#### Client
 
 ```bash
 TODO
 ```
 
-### Server setup
+#### Server
+
+Install the required dependencies:
 
 ```bash
-TODO
+cd server
+pip install -r requirements.txt
+```
+
+Add the `.env` file in the `server` directory.
+
+Run the server:
+
+```bash
+start.sh # or start.bat for windows
 ```
 
 ## System architecture
@@ -27,25 +45,37 @@ TODO
 │
 ├── client          <- Client code.
 │
+├── datasets        <- Datasets used for testing.
+│
+├── deploy
+│   ├── k8s                 <- k8s manifests for deployment.
+│   └── docker-compose.yml  <- Docker compose file for development.
+│
 ├── docs            <- Documentation and examples.
 │
 ├── infrastructure  <- Infrastructure code.
 │
+├── notebooks       <- Development code.
+│
 ├── server          <- Server code.
 │   │
-│   ├── automl
-│   │
-│   ├── mlops
-│   │   ├── monitoring      <- Models monitoring service.
-│   │   └── serving         <- Models deployment service.
-│   │
-│   ├── ml_projects
-│   │   ├── alembic     <- Alembic migration scripts.
-│   │   └── app         <- FastApi application.
-│   │
-│   ├── requirements.txt        <- Python requirements.
-│   └── requirements-dev.txt    <- Python development dependencies.
+│   └── lighthouse
+│       │
+│       ├── automl
+│       │
+│       ├── ml_projects
+│       │   ├── api             <- ML projects API.
+│       │   ├── db              <- ML projects database and migration scripts.
+│       │   └── services        <- Contains the logic for orchestrating ML projects.
+│       │
+│       ├── mlops
+│       │   ├── monitoring      <- Models monitoring service.
+│       │   └── serving         <- Models deployment service.
+│       │
+│       ├── __main__.py         <- The entrypoint for the server.
+│       ├── config.py           <- Contains the configuration for the server.
+│       └── logger.py           <- Logging utility.
 │
-└── docker-compose.yml      <- Docker compose file for development.
+└── wrapper         <- ML model wrapper code.
 
 ```
