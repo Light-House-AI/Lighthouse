@@ -21,12 +21,14 @@ X_test = scaler.transform(X_test)
 
 y_train = np_utils.to_categorical(y_train)
 y_test = np_utils.to_categorical(y_test)
+print(X_test)
 print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 '''
 Till here
 '''
 
 data = load_wine(as_frame=True)
+print(data["frame"].head())
 hyperparameters = {
     # Obligatory
     "type": "Classification", # "Regression"

@@ -9,9 +9,9 @@ from fc_layer import FCLayer
 from activation_layer import ActivationLayer
 from activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
 from loss_functions import mse, mse_derivative
-from ray import tune
+from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
-
+'''
 hyperparameters = {
     # Obligatory
     "type": "Classification", # "Regression"
@@ -23,7 +23,7 @@ hyperparameters = {
     "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
     "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent else is mini-batch
 }
-
+'''
 class NetworkGenerator:
     def __init__(self, data, hyperparameters):
         self.data = data
@@ -99,7 +99,7 @@ class NetworkGenerator:
         else: 
             #network.add(ActivationLayer(identity, identity_derivative))
             network.use(mse, mse_derivative)
-        network.fit(self.X_train, self.y_train, epochs=10000, learning_rate=alpha, batch_size=batch_size)
+        network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
         return network
             
     def __network_generator(self, config, reporter):
@@ -112,6 +112,7 @@ class NetworkGenerator:
         
     def __train_network(self):
         scheduler = AsyncHyperBandScheduler()
+        init()
         if self.type == "Classification":
             res = tune.run(
             self.__network_generator,
@@ -134,7 +135,7 @@ class NetworkGenerator:
             self.__network_generator,
             name="my_exp",
             metric="mean_loss",
-            stop={"mean_loss": 0.2},
+            stop={"mean_loss": 0.01},
             mode="min",
             scheduler=scheduler,
             config={
@@ -145,6 +146,7 @@ class NetworkGenerator:
             },
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_loss"], item[1]["time_this_iter_s"]))}
+        shutdown()
         return list(results.values())[0]
     
     def get_best_network(self):
