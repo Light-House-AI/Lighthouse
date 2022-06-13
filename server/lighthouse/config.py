@@ -96,5 +96,11 @@ class Config(BaseSettings):
     # Webhook Token.
     WEBHOOK_TOKEN: str = "TEST_SECRET_DO_NOT_USE_IN_PROD"
 
+    # Github containers registry username.
+    GHCR_USERNAME: str = ""
+
+    # Github containers registry password.
+    GHCR_PASSWORD: str = ""
+
 
 config = Config(_env_file=ENV_FILE_PATH)
