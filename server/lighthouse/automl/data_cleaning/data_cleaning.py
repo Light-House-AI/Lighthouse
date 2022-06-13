@@ -323,5 +323,8 @@ def automatic_data_filler(df, column, output_column, is_numeric, no_corr=0.01, l
 
 
 def normalize_column(df, column):
-    scaler = StandardScaler()
-    df[column] = scaler.fit_transform(df[column])
+    df[column] = StandardScaler().fit_transform(df[column].values.reshape(-1, 1))
+    
+def normalize_column_test(df, column, raw_df):
+    scaler = StandardScaler().fit(raw_df[column].values.reshape(-1, 1))
+    df[column] = scaler.transform(df[column].values.reshape(-1, 1))

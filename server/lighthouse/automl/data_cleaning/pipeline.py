@@ -126,6 +126,10 @@ def clean_train(df, output_column, operations):
             else:
                 convert_ordinal_category(df, col, col_json['ordinal_order'])
 
+        # Normalizing data
+        if is_numeric:
+            normalize_column(df, col)
+
     return df
 
 
@@ -165,7 +169,6 @@ def clean_test(df, operations, raw_df, output_column):
 
         # Fill missing data
         if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
-
             p_score = col_json['p_score']
             if p_score >= -0.5 and p_score <= 0.5:
                 if not is_numeric:
@@ -174,7 +177,6 @@ def clean_test(df, operations, raw_df, output_column):
                     df[col].fillna(col_json['mean'], inplace=True)
             else:
                 knn_impute_test(raw_df, col, is_numeric, df, output_column)
-
         elif col_json['fill_method'] == 'average':
             fill_average_mode(df, col, is_numeric)
         elif col_json['fill_method'] == 'knn':
@@ -186,5 +188,9 @@ def clean_test(df, operations, raw_df, output_column):
                 df = convert_nominal_categories(df, [col])
             else:
                 convert_ordinal_category(df, col, col_json['ordinal_order'])
+
+        # Normalizing data
+        if is_numeric:
+            normalize_column_test(df, col, raw_df)
 
     return df
