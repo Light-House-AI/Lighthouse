@@ -4,7 +4,7 @@ import numpy as np
 from fuzzywuzzy import process
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
-
+from sklearn.preprocessing import StandardScaler
 
 def read_data(file_name, header=0, sep=','):
     """
@@ -320,3 +320,8 @@ def automatic_data_filler(df, column, output_column, is_numeric, no_corr=0.01, l
         # print(column, p_score, "High correlation")
         knn_impute(df, column, is_numeric)
         return 'knn', p_score
+
+
+def normalize_column(df, column):
+    scaler = StandardScaler()
+    df[column] = scaler.fit_transform(df[column])
