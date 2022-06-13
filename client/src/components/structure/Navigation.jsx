@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Navigation() {
 
+    const [location] = useState(window.location.pathname);
+
     function openFullscreen() {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
-            document.documentElement.msRequestFullscreen();
+        window.$('body').toggleClass('fullscreen-enable');
+        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
         }
+    }
+
+    function minimizeSidebar() {
+        if (document.body.attributes['data-sidebar-size'].value === 'condensed')
+            document.body.attributes['data-sidebar-size'].value = 'default';
+        else
+            document.body.attributes['data-sidebar-size'].value = 'condensed';
     }
 
     return (
@@ -109,7 +129,7 @@ function Navigation() {
                     {/* User */}
                     <li className="dropdown notification-list topbar-dropdown">
                         <button className="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light arrow-none button-no-style" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                            <img src="user.jpg" className="rounded-circle" alt='' />
+                            <img src="/user.jpg" className="rounded-circle" alt='' />
                             <span className="pro-user-name ms-1">
                                 Stanley <i className="mdi mdi-chevron-down"></i>
                             </span>
@@ -132,20 +152,32 @@ function Navigation() {
                 <div className="logo-box">
                     <a href="/" className="logo logo-light text-center">
                         <span className="logo-sm">
-                            <img src="logo-sm.png" alt="" height="22" />
+                            <img src="/logo-sm.png" alt="" height="22" />
                         </span>
                         <span className="logo-lg">
-                            <img src="logo-light.png" alt="" height="20" />
+                            <img src="/logo-light.png" alt="" height="20" />
                         </span>
                     </a>
                 </div>
 
                 {/* SIDE MENU */}
                 <ul className="list-unstyled topnav-menu topnav-menu-left m-0">
-                    <li>
-                        <button className="button-menu-mobile waves-effect waves-light">
-                            <i className="fe-menu"></i>
-                        </button>
+                    {location !== '/' && location !== '/newproject' ?
+                        <li>
+                            <button className="button-menu-mobile waves-effect waves-light" onClick={minimizeSidebar}>
+                                <i className="fe-menu"></i>
+                            </button>
+                        </li> : null
+                    }
+                    <li className="dropdown d-none d-md-block">
+                        <a className="nav-link waves-effect waves-light" href="/newproject">
+                            Create New Project
+                        </a>
+                    </li>
+                    <li className="dropdown d-block d-md-none">
+                        <a className="nav-link waves-effect waves-light" href="/newproject">
+                            <i className="fe-plus"></i>
+                        </a>
                     </li>
                 </ul>
             </div>

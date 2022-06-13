@@ -1,23 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import "bootstrap";
 import './scss/icons.scss';
 import './scss/structure.scss';
-import Homepage from './pages/Homepage';
+
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import Sample from './pages/Sample'
+import DatasetsPage from './pages/DatasetsPage';
+import ModelsPage from './pages/ModelsPage';
+import DeploymentsPage from './pages/DeploymentsPage';
+import CreateProjectPage from './pages/CreateProjectPage';
+import CreateModelPage from './pages/CreateModelPage';
+import CreateDeploymentPage from './pages/CreateDeploymentPage';
+import ViewDatasetPage from './pages/ViewDatasetPage';
+import CleanDataPage from './pages/CleanDataPage';
 
 function App() {
-  axios.defaults.baseURL = "http://localhost:3000/api";
+
+  useEffect(() => {
+    axios.defaults.baseURL = "http://localhost:3000/api";
+  }, []);
 
   return (
-    <div id='wrapper'>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/newproject" element={<CreateProjectPage />} />
+        <Route path="/:projectid" element={<DatasetsPage />} />
+        <Route path="/:projectid/datasets" element={<DatasetsPage />} />
+        <Route path="/:projectid/models" element={<ModelsPage />} />
+        <Route path="/:projectid/deployments" element={<DeploymentsPage />} />
+        <Route path="/:projectid/models/create" element={<CreateModelPage />} />
+        <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
+        <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
+        <Route path="/:projectid/datasets/:datasetid/clean" element={<CleanDataPage />} />
+        <Route path="/sample" element={<Sample />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
