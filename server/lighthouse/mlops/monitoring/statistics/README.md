@@ -16,3 +16,5 @@
     ```shell
         python main.py
     ```
+## TODOS:
+- Write the data path folder in ```great_expectations.yml``` file
