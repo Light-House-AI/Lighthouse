@@ -53,3 +53,11 @@ def create_merged_data_frame(raw_datasets_file_paths: List[str]):
                    ignore_index=True)
 
     return df
+
+
+def get_dataset_columns(file_path: str):
+    """
+    Returns dataset columns.
+    """
+    df = pd.read_csv(file_path)
+    return df.columns.to_list()

@@ -4,26 +4,19 @@ from lighthouse.config import config
 
 from mongoengine import (
     Document,
-    EmbeddedDocumentField,
-    DynamicEmbeddedDocument,
+    ListField,
+    StringField,
     IntField,
 )
 
 
-class DataSchema(DynamicEmbeddedDocument):
+class ProjectDataColumns(Document):
     """
-    Class to store the data schema.
-    """
-    ...
-
-
-class ProjectDataSchema(Document):
-    """
-    Class to store the ML Project Data Schema.
+    Class to store the ML Project Data Columns.
     """
 
-    project_id = IntField(required=True)
-    schema = EmbeddedDocumentField(DataSchema)
+    project_id = IntField()
+    columns = ListField(StringField())
 
     meta = {
         # create index on project_id

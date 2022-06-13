@@ -9,7 +9,7 @@ from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.automl.data_cleaning import service as data_cleaning_service
 
-from lighthouse.ml_projects.mongo import DatasetCleaningRules
+from lighthouse.ml_projects.mongo import DatasetCleaningRules, ProjectDataColumns
 
 from lighthouse.ml_projects.db import (
     CleanedDataset,
@@ -75,14 +75,18 @@ def upload_raw_dataset(user_id: str, dataset_id: int, file: UploadFile,
         raise NotFoundException("Dataset not found.")
 
     # Save uploaded file
-    is_saved = dataset_file_service.save_raw_dataset_to_local_disk(
+    dataset_path = dataset_file_service.save_raw_dataset_to_local_disk(
         dataset_id=dataset_id, file=file.file)
-
-    if not is_saved:
-        raise Exception("Could not save file.")
 
     # Upload dataset
     dataset_file_service.upload_raw_dataset(dataset_id)
+
+    # Get dataset schema
+    dataset_columns = data_cleaning_service.get_dataset_columns(dataset_path)
+    ProjectDataColumns(
+        project_id=raw_dataset.project_id,
+        columns=dataset_columns,
+    ).save()
 
     return {"message": "Dataset uploaded"}
 

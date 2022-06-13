@@ -11,7 +11,7 @@ def save_raw_dataset_to_local_disk(dataset_id: int, file: BinaryIO):
     """
     Saves a raw dataset to local disk.
     """
-    file_path = config.RAW_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"
+    file_path = get_raw_dataset_local_path(dataset_id)
     return save_file_to_local_disk(file_path, file)
 
 
@@ -24,7 +24,7 @@ def save_file_to_local_disk(file_path: str, file: BinaryIO):
         shutil.copyfileobj(file, buffer)
 
     file.close()
-    return True
+    return file_path
 
 
 def upload_raw_dataset(dataset_id: int):
