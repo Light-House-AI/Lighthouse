@@ -11,12 +11,13 @@ function Project(props) {
         console.log("test")
         if (project !== null) {
             document.getElementById(`project-${_id}`).innerHTML = "";
+            console.log(project.datasets);
             Morris.Donut({
                 element: 'project-' + _id,
                 data: [
-                    { label: "Datasets", value: project.datasets === null ? 0 : project.datasets },
-                    { label: "Models", value: project.models === null ? 0 : project.models },
-                    { label: "Deployments", value: project.deployments === null ? 0 : project.deployments }
+                    { label: "Datasets", value: project.datasets === undefined ? 0 : project.datasets },
+                    { label: "Models", value: project.models === undefined ? 0 : project.models },
+                    { label: "Deployments", value: project.deployments === undefined ? 0 : project.deployments }
                 ],
                 barSize: 0.2,
                 resize: true,
@@ -41,15 +42,15 @@ function Project(props) {
                         <div className="text-center">
                             <div className="row mt-2">
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.datasets === null ? 0 : project.datasets}</h3>
+                                    <h3 data-plugin="counterup">{project.datasets === undefined ? 0 : project.datasets}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Datasets</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.models === null ? 0 : project.models}</h3>
+                                    <h3 data-plugin="counterup">{project.models === undefined ? 0 : project.models}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Models</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.deployments === null ? 0 : project.deployments}</h3>
+                                    <h3 data-plugin="counterup">{project.deployments === undefined ? 0 : project.deployments}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Deployments</p>
                                 </div>
                             </div>

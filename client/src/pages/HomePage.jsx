@@ -30,7 +30,7 @@ function HomePage() {
                     {projects != null && projects.length > 0 ? projects.map((project) => {
                         return (
                             <div className="col-xl-4 col-md-6" key={project.id}>
-                                <Project data={project} _id={1} />
+                                <Project data={project} _id={project.id} />
                             </div>
                         );
                     }) :
