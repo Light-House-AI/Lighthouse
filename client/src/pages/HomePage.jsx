@@ -27,20 +27,20 @@ function HomePage() {
             <Navigation />
             <div className="homepage container-fluid mb-3">
                 <div className="row mx-2">
-                    {projects !== null ? projects.map((project) => {
+                    {projects != null && projects.length > 0 ? projects.map((project) => {
                         return (
                             <div className="col-xl-4 col-md-6" key={project.id}>
                                 <Project data={project} _id={1} />
                             </div>
                         );
-                    }) : null}
-
-                    <div className="col-xl-4 col-md-6">
-                        <Project data={{ name: 'Project 2', datasets: 3, models: 3, deployments: 3 }} _id={2} />
-                    </div>
-                    <div className="col-xl-4 col-md-6">
-                        <Project data={{ name: 'Project 2', datasets: 3, models: 3, deployments: 3 }} _id={3} />
-                    </div>
+                    }) :
+                        <div className="col-12 d-flex justify-content-center align-items-center no-projects">
+                            <div className="text-center">
+                                <h2>No project found.</h2>
+                                <a href="/newproject">Create new project?</a>
+                            </div>
+                        </div>
+                    }
                     <div className="col-12">
                         <Footer />
                     </div>

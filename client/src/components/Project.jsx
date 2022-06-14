@@ -35,7 +35,7 @@ function Project(props) {
                             <i className="mdi mdi-minus"></i>
                         </a>
                     </div>
-                    <a className="text-muted header-title mb-0 cursor-pointer cursor-pointer fs-4" href={"/" + project.id}>{project.name}</a>
+                    <a className="text-muted header-title mb-0 cursor-pointer cursor-pointer fs-4" href={"/" + project.id}>{window.capitalizeFirstLetter(project.name)}</a>
 
                     <div id={"cardCollpase" + _id} className="collapse pt-3 show">
                         <div className="text-center">
