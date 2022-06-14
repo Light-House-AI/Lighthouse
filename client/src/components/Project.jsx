@@ -14,9 +14,9 @@ function Project(props) {
             Morris.Donut({
                 element: 'project-' + _id,
                 data: [
-                    { label: "Datasets", value: project.datasets },
-                    { label: "Models", value: project.models },
-                    { label: "Deployments", value: project.deployments }
+                    { label: "Datasets", value: project.datasets === null ? 0 : project.datasets },
+                    { label: "Models", value: project.models === null ? 0 : project.models },
+                    { label: "Deployments", value: project.deployments === null ? 0 : project.deployments }
                 ],
                 barSize: 0.2,
                 resize: true,
@@ -35,21 +35,21 @@ function Project(props) {
                             <i className="mdi mdi-minus"></i>
                         </a>
                     </div>
-                    <h4 className="header-title mb-0 cursor-pointer">{project.name}</h4>
+                    <a className="text-muted header-title mb-0 cursor-pointer cursor-pointer fs-4" href={"/" + project.id}>{project.name}</a>
 
                     <div id={"cardCollpase" + _id} className="collapse pt-3 show">
                         <div className="text-center">
                             <div className="row mt-2">
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.datasets}</h3>
+                                    <h3 data-plugin="counterup">{project.datasets === null ? 0 : project.datasets}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Datasets</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.models}</h3>
+                                    <h3 data-plugin="counterup">{project.models === null ? 0 : project.models}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Models</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.deployments}</h3>
+                                    <h3 data-plugin="counterup">{project.deployments === null ? 0 : project.deployments}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Deployments</p>
                                 </div>
                             </div>

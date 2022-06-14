@@ -29,7 +29,7 @@ function Login() {
             }
         }).then((response) => {
             localStorage.setItem("accessToken", response.data.access_token);
-            localStorage.setItem("tokenType", JSON.stringify(response.data.token_type));
+            localStorage.setItem("tokenType", response.data.token_type);
             axios.get("/users/me", {
                 headers: {
                     "Authorization": response.data.token_type + " " + response.data.access_token
