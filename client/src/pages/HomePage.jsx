@@ -9,6 +9,10 @@ function HomePage() {
         document.getElementsByTagName("body")[0].classList.add("overflow-y-scroll");
     }, []);
 
+    if (localStorage.getItem('accessToken') === null) {
+        window.location.href = '/login';
+    }
+
     return (
         <div id="wrapper">
             <title>Home | Lighthouse AI</title>

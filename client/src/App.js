@@ -21,7 +21,7 @@ import CleanDataPage from './pages/CleanDataPage';
 function App() {
 
   useEffect(() => {
-    axios.defaults.baseURL = "http://localhost:3000/api";
+    axios.defaults.baseURL = "http://localhost:8000/api/v1";
   }, []);
 
   return (
