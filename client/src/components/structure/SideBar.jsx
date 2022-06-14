@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
 function SideBar() {
+    const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
+
+    const logOut = function () {
+        localStorage.clear();
+        window.location.href = "/login";
+    }
     return (
         <div className="left-side-menu">
             <div className="h-100 scroll-bar">
@@ -9,15 +15,15 @@ function SideBar() {
                         className="rounded-circle avatar-md" />
                     <div className="dropdown">
                         <a href="/" className="text-dark dropdown-toggle h5 mt-2 mb-1 d-block"
-                            data-bs-toggle="dropdown">Stanley Parker</a>
+                            data-bs-toggle="dropdown">{window.capitalizeFirstLetter(userDetails.first_name)} {window.capitalizeFirstLetter(userDetails.last_name)}</a>
                         <div className="dropdown-menu user-pro-dropdown">
-                            <a href="/" className="dropdown-item notify-item">
+                            <button className="dropdown-item notify-item" onClick={logOut}>
                                 <i className="fe-log-out me-1"></i>
                                 <span>Logout</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
-                    <p className="text-muted">Admin Head</p>
+                    <p className="text-muted">{window.capitalizeFirstLetter(userDetails.role)}</p>
                 </div>
                 <div id="sidebar-menu">
                     <ul id="side-menu">
