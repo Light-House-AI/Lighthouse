@@ -7,8 +7,8 @@ import Project from "../components/Project";
 
 function HomePage() {
     const [projects, setProjects] = useState([]);
+
     useEffect(() => {
-        axios.defaults.baseURL = "http://localhost:8000/api/v1";
         document.getElementsByTagName("body")[0].classList.add("overflow-y-scroll");
         axios.get('/projects', {
             headers: { 'Authorization': localStorage.getItem('tokenType').toString() + " " + localStorage.getItem('accessToken') }

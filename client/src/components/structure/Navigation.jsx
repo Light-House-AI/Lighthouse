@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Navigation() {
     const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
     const [location] = useState(window.location.pathname);
+
+    useEffect(() => {
+        axios.defaults.baseURL = "http://localhost:8000/api/v1";
+    }, []);
 
     function openFullscreen() {
         window.$('body').toggleClass('fullscreen-enable');

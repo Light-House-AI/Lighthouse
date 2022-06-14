@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function Login() {
     const [year] = useState(new Date().getFullYear());
+
+    useEffect(() => {
+        axios.defaults.baseURL = "http://localhost:8000/api/v1";
+    }, []);
 
     const togglePassword = function (e) {
         if (e.currentTarget.attributes["data-password"].value === "false") {
