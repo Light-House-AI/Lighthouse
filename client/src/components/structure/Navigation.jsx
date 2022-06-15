@@ -7,6 +7,16 @@ function Navigation() {
 
     useEffect(() => {
         axios.defaults.baseURL = "http://localhost:8000/api/v1";
+
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = "/login";
+                }
+            }
+        );
     }, []);
 
     function openFullscreen() {
