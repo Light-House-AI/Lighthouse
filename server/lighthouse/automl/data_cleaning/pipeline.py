@@ -1,5 +1,49 @@
 from server.lighthouse.automl.data_cleaning.data_cleaning import *
 
+def data_statistics(df, output_column):
+    df_jsons = []
+    for col in df.columns[df.columns != output_column]:
+        col_json = {}
+        col_json.update({"column_name": col})
+        
+        # Original datatype
+        if df[col].dtype == 'object':
+            col_json.update({"original_datatype": "object"})
+        elif df[col].dtype == 'int64':
+            col_json.update({"original_datatype": "int64"})
+        elif df[col].dtype == 'float64':
+            col_json.update({"original_datatype": "float64"})
+        elif df[col].dtype == 'uint8':
+            col_json.update({'original_datatype': 'uint8'})
+            
+        # Correcting datatype
+        detect_correct_datatype(df, col)
+
+        # Detect Numeric or Categorical
+        is_numeric = False
+        if df[col].dtype != 'object':
+            is_numeric, _ = is_numeric_or_categorical(df, col)
+
+        # Get Statistics (min, max, mean, mode, unique_count, unique_values)
+        if is_numeric:
+            col_json.update(
+                {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
+            col_json.update(
+                {'unique_count': None, 'unique_values': None, 'mode': None})
+        elif df[col].dtype != 'object':
+            col_json.update(
+                {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
+            col_json.update({'unique_count': len(df[col].unique(
+            )), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
+        elif df[col].dtype == 'object':
+            col_json.update({'min': None, 'max': None, 'mean': None})
+            col_json.update({'unique_count': len(df[col].unique(
+            )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
+            
+        df_jsons.append(col_json)
+    
+    return df_jsons
+
 
 def data_cleaning_suggestions(df, output_column):
     df_jsons = []
