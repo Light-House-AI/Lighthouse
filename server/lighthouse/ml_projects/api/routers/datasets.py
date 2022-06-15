@@ -1,7 +1,7 @@
 """Router for Datasets."""
 
 from typing import List, Dict
-from fastapi import APIRouter, Depends, UploadFile, Response
+from fastapi import APIRouter, Depends, Query, UploadFile, Response
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import dataset as dataset_service
@@ -58,7 +58,7 @@ def get_raw_datasets(*,
 @catch_app_exceptions
 def get_raw_dataset_cleaning_rules_recommendations(
         *,
-        data_in: RawDatasetsRecommendations,
+        datasets_ids: List[int] = Query([], alias="datasets_ids[]"),
         db: Session = Depends(get_session),
         user_data=Depends(get_current_user_data)):
     """
@@ -66,7 +66,7 @@ def get_raw_dataset_cleaning_rules_recommendations(
     """
     recommendations = dataset_service.get_raw_dataset_cleaning_rules_recommendations(
         user_id=user_data.user_id,
-        datasets_ids=data_in.datasets_ids,
+        datasets_ids=datasets_ids,
         db=db,
     )
 
