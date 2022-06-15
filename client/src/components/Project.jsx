@@ -5,13 +5,10 @@ import { Morris } from 'morris.js06';
 function Project(props) {
     const [project] = useState(props.data);
     const [_id] = useState(props._id);
-    console.log('twice')
 
     useEffect(() => {
-        console.log("test")
         if (project !== null) {
             document.getElementById(`project-${_id}`).innerHTML = "";
-            console.log(project.datasets);
             Morris.Donut({
                 element: 'project-' + _id,
                 data: [

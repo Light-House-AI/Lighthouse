@@ -44,7 +44,6 @@ function Login() {
             }).catch((error) => {
             });
         }).catch((error) => {
-            console.log(error.response);
             // BAD REQUEST 400
             if (error.response.status === 400) {
                 //error.response.data.detail

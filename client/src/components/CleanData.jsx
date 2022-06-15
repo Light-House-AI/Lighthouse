@@ -5,8 +5,8 @@ import ColumnRules from "./ColumnRules";
 
 function CleanData(props) {
     const [datasetIds] = useState(props.datasetIds);
-    console.log(datasetIds)
     const [recommendations, setRecommendations] = useState(null);
+
     useEffect(() => {
 
         axios.get('/datasets/raw/recommendations/', {
@@ -20,7 +20,6 @@ function CleanData(props) {
         }).then((response) => {
             setRecommendations(response.data);
         }).catch((error) => {
-            console.log(error);
         });
     }, []);
 
@@ -39,7 +38,7 @@ function CleanData(props) {
                     {recommendations !== null ?
                         recommendations.map((recommendation, index) => {
                             return (
-                                <ColumnRules key={index} recommendation={recommendation} />
+                                <ColumnRules key={index} recommendation={recommendation} statistics={recommendation} />
                             );
                         }) : null}
                 </div>
