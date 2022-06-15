@@ -1,6 +1,6 @@
 # Constants file
 # * GENERAL CONSTANTS
-PKL_EXTENTION = ".pkl"
+PKL_EXTENSION = ".pkl"
 IMAGE_NAME = "ghcr.io/light-house-ai/model-wrapper:latest"
 IMAGE_SECRET_NAME = "ghcr-registry-secret"
 IMAGE_SERVER = "ghcr.io"
@@ -13,5 +13,5 @@ DEFAULT_CLUSTER_IP_TARGET_PORT = 8000
 INGRESS_NAME = "models-ingress"
 INGRESS_CLASS = "nginx"
 # * DEFAULT DEPLOYMENT CONSTANTS
-DEFAULT_MODEL_ID = "default"
+DEFAULT_PROJECT_ID = "default"
 DEFAULT_IMAGE_NAME = "ghcr.io/light-house-ai/lighthouse-client:latest"
