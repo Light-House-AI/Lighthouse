@@ -37,7 +37,7 @@ function App() {
         <Route path="/:projectid/models/create" element={<CreateModelPage />} />
         <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
-        <Route path="/:projectid/datasets/:datasetid/clean" element={<CleanDataPage />} />
+        <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>
     </BrowserRouter>

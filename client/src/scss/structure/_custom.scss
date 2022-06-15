@@ -86,10 +86,6 @@ body[data-sidebar-size='default'] {
     overflow-y: scroll;
 }
 
-.overflow-x-scroll {
-    overflow-x: scroll;
-}
-
 .homepage {
     &.container-fluid {
         padding: 100px 0 0 0;
@@ -116,4 +112,32 @@ a {
 
 .no-projects {
     height: calc(100vh - 200px);
+}
+
+.overflow-x-scroll {
+    position: relative;
+    width: 100%;
+    overflow-x: scroll;
+    white-space: nowrap;
+    will-change: transform;
+    user-select: none;
+
+    &.active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
+}
+
+.recommendation {
+    .form-control {
+
+        &:disabled {
+            background: repeating-linear-gradient(-55deg,
+                    #3b4651,
+                    #3b4651 3px,
+                    #2a3138 3px,
+                    #2a3138 6px);
+            opacity: 0.6;
+        }
+    }
 }

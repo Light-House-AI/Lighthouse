@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from 'react-router-dom';
 
 import Navigation from "../components/structure/Navigation";
 import SideBar from "../components/structure/SideBar";
@@ -8,6 +9,7 @@ import PageTitle from "../components/structure/PageTitle";
 import CleanData from "../components/CleanData";
 
 function CleanDataPage() {
+    const { datasetsid } = useParams();
     return (
         <div id='wrapper'>
             <title>Create Model - Project 1 | Lighthouse AI</title>
@@ -18,7 +20,7 @@ function CleanDataPage() {
                     <div className="container-fluid scroll">
                         <PageTitle project={"Project 1"} type={"Datasets"} view={"Dataset 1"} execution={"Clean"} projectid={"asdasd"} />
                         <div className="mb-2">
-                            <CleanData />
+                            <CleanData datasetIds={datasetsid.split('-')} />
                         </div>
                         <Footer />
                     </div>
