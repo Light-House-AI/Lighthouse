@@ -1,7 +1,7 @@
 """Router for Deployments."""
 
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import deployment as deployment_service
@@ -22,11 +22,12 @@ from lighthouse.ml_projects.exceptions import (
 router = APIRouter(prefix="/deployments")
 
 
-@router.get('/',
+@router.get('',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[Deployment])
 @catch_app_exceptions
 def get_deployments(*,
+                    project_id: int = Query(...),
                     skip: int = 0,
                     limit: int = 10,
                     db: Session = Depends(get_session),
@@ -36,13 +37,14 @@ def get_deployments(*,
     """
     return deployment_service.get_deployments(
         user_id=user_data.user_id,
+        project_id=project_id,
         db=db,
         skip=skip,
         limit=limit,
     )
 
 
-@router.post('/',
+@router.post('',
              responses=UnauthenticatedException.get_example_response(),
              response_model=Deployment)
 @catch_app_exceptions
@@ -60,7 +62,7 @@ def create_deployment(*,
     )
 
 
-@router.get('/{deployment_id}/',
+@router.get('/{deployment_id}',
             responses={
                 **UnauthenticatedException.get_example_response(),
                 **NotFoundException.get_example_response(),
@@ -81,7 +83,7 @@ def get_deployment(*,
     )
 
 
-@router.post('/{deployment_id}/predict/',
+@router.post('/{deployment_id}/predict',
              responses={
                  **UnauthenticatedException.get_example_response(),
                  **BadRequestException.get_example_response(),

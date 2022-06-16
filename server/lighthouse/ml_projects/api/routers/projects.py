@@ -20,7 +20,7 @@ from lighthouse.ml_projects.api import (
 router = APIRouter(prefix="/projects")
 
 
-@router.get('/',
+@router.get('',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[Project])
 @catch_app_exceptions
@@ -40,7 +40,7 @@ def get_projects(*,
     )
 
 
-@router.post('/',
+@router.post('',
              responses=UnauthenticatedException.get_example_response(),
              response_model=Project)
 @catch_app_exceptions
