@@ -83,12 +83,8 @@ class NeuralNetwork:
             # stop epochs if error is not decreasing
             if err >= prev_error:
                 self.learning_rate /= 2
-            if err >= prev_error:
                 stopper += 1
             if stopper == 5:
                 break
-            #if(prev_error < err):
-                #self.learning_rate *= 0.9
-                #self.learning_rate /= 2
             prev_error = err
             print('epoch %d/%d   error=%f' % (i+1, epochs, err))

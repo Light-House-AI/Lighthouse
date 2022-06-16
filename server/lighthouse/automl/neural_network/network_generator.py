@@ -1,8 +1,7 @@
 import numpy as np
 from math import floor, ceil
 from sklearn.model_selection import train_test_split 
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
+from sklearn.metrics import accuracy_score, mean_squared_log_error
 from neural_network import NeuralNetwork
 from fc_layer import FCLayer
 from activation_layer import ActivationLayer
