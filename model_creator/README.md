@@ -21,4 +21,4 @@ When run as a worker, the module will listen to a Redis queue and generates a ne
 When finished the worker will upload the model to an Azure Blob Storage container. The worker will also notify the master when it is done using a webhook.
 
 1. Set environment variables in `.env` file.
-2. Run `dramatiq network_generator.worker -p 1 -t 1`.
+2. Run `dramatiq model_creator.worker -p 1 -t 1`.
