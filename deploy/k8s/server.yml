@@ -3,23 +3,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: lighthouse
-  name: lighthouse-app
+  name: lighthouse-server
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: lighthouse-app
+      app: lighthouse-server
   template:
     metadata:
       labels:
-        app: lighthouse-app
+        app: lighthouse-server
     spec:
       containers:
         - name: app
-          image: lighthouse:latest
+          image: ghcr.io/light-house-ai/lighthouse-server:latest
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /api/v1/health
               port: api-port
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -44,10 +44,10 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: lighthouse
-  name: lighthouse-app-service
+  name: lighthouse-server-service
 spec:
   selector:
-    app: lighthouse-app
+    app: lighthouse-server
   ports:
     - protocol: TCP
       port: 80
@@ -58,10 +58,10 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: lighthouse-app
+  name: lighthouse-server
   namespace: lighthouse
   labels:
-    name: lighthouse-app
+    name: lighthouse-server
 spec:
   rules:
     - host: lighthouse.local
@@ -71,7 +71,7 @@ spec:
             path: "/"
             backend:
               service:
-                name: lighthouse-app-service
+                name: lighthouse-server-service
                 port:
                   name: api-port
 

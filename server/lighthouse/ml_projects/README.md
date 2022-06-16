@@ -32,10 +32,12 @@ python -m lighthouse.ml_projects.db.seeder --force=True
 
 ```bash
 cd server
-python -m lighthouse
+start.sh # or start.bat for windows
 ```
 
 ## Checking the documentation
 
 Go to http://localhost:8000/api/v1/docs, and you should see the documentation.
 You can also check the _redoc_ documentation in the browser by going to http://localhost:8000/api/v1/redoc/
+
+You can also import he postman collection for the API. You can find it in the `docs` folder.

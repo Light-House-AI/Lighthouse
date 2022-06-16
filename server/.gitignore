@@ -13,3 +13,6 @@ dist/
 
 # Environments
 venv/
+
+# Temp files
+tmp
