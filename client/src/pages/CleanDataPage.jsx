@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
+import axios from "axios";
 
 import Navigation from "../components/structure/Navigation";
 import SideBar from "../components/structure/SideBar";
@@ -9,23 +10,48 @@ import PageTitle from "../components/structure/PageTitle";
 import CleanData from "../components/CleanData";
 
 function CleanDataPage() {
+    const { projectid } = useParams();
     const { datasetsid } = useParams();
+    const [projectDetails, setProjectDetails] = useState(null);
+    const [datasetDetails, setDatasetDetails] = useState(null);
+
+    useEffect(() => {
+        axios.get(`/projects/${projectid}/`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setProjectDetails(response.data);
+        });
+
+        axios.get(`/datasets/raw/${datasetsid}/`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setDatasetDetails(response.data);
+        });
+    }, []);
+
     return (
         <div id='wrapper'>
-            <title>Create Model - Project 1 | Lighthouse AI</title>
             <Navigation />
             <SideBar />
-            <div className="content-page">
-                <div className="content">
-                    <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Datasets"} view={"Dataset 1"} execution={"Clean"} projectid={"asdasd"} />
-                        <div className="mb-2">
-                            <CleanData datasetIds={datasetsid.split('-')} />
+            {projectDetails !== null && datasetDetails !== null ?
+                <div className="content-page">
+                    <title>Create New Clean Dataset - {projectDetails.name} | Lighthouse AI</title>
+                    <div className="content">
+                        <div className="container-fluid scroll">
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"New Clean Dataset"} execution={"Create"} projectid={projectid} />
+                            <div className="mb-2">
+                                <CleanData datasetIds={datasetsid.split('-')} projectid={projectid} />
+                            </div>
+                            <Footer />
                         </div>
-                        <Footer />
                     </div>
-                </div>
-            </div>
+                </div> : null}
         </div>
     );
 }
