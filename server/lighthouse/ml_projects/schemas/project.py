@@ -1,21 +1,21 @@
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel
-from lighthouse.ml_projects.db import Project, ProjectType
+from pydantic import BaseModel, constr
+from lighthouse.ml_projects.db import ProjectType
 
 
 class ProjectBase(BaseModel):
-    name: Optional[str]
-    overview: Optional[str]
-    predicted_column: Optional[str]
+    name: Optional[constr(min_length=1, strip_whitespace=True)]
+    overview: Optional[constr(min_length=1)]
+    predicted_column: Optional[constr(min_length=1)]
     type: Optional[ProjectType]
 
 
 # properties to receive on Project creation
 class ProjectCreate(ProjectBase):
-    name: str
-    overview: str
-    predicted_column: str
+    name: constr(min_length=1, strip_whitespace=True)
+    overview: constr(min_length=1)
+    predicted_column: constr(min_length=1)
     type: ProjectType
 
 

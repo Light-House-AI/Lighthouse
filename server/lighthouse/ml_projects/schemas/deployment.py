@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, constr
 from lighthouse.ml_projects.db import DeploymentType
 
 
@@ -9,7 +9,7 @@ class DeploymentBase(BaseModel):
     primary_model_id: Optional[int]
     secondary_model_id: Optional[int]
 
-    name: Optional[str]
+    name: Optional[constr(min_length=1, strip_whitespace=True)]
     is_running: Optional[bool]
     type: Optional[DeploymentType]
 
@@ -33,7 +33,7 @@ class DeploymentBase(BaseModel):
 class DeploymentCreate(DeploymentBase):
     project_id: int
     primary_model_id: int
-    name: str
+    name: constr(min_length=1, strip_whitespace=True)
     type: DeploymentType
 
 
