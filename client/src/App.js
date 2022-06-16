@@ -17,7 +17,7 @@ import CreateModelPage from './pages/CreateModelPage';
 import CreateDeploymentPage from './pages/CreateDeploymentPage';
 import ViewDatasetPage from './pages/ViewDatasetPage';
 import CleanDataPage from './pages/CleanDataPage';
-
+import RulesDataPage from './pages/RulesDataPage';
 function App() {
 
   useEffect(() => {
@@ -39,6 +39,7 @@ function App() {
         <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
         <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
+        <Route path="/:projectid/datasets/:datasetid/rules" element={<RulesDataPage />} />
         <Route path="/sample" element={<Sample />} />
       </Routes>
     </BrowserRouter>
