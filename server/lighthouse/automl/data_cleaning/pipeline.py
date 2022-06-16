@@ -1,4 +1,49 @@
-from server.lighthouse.automl.data_cleaning.data_cleaning import *
+from .data_cleaning import *
+
+def data_statistics(df, output_column):
+    df_jsons = []
+    for col in df.columns[df.columns != output_column]:
+        col_json = {}
+        col_json.update({"column_name": col})
+        
+        # Original datatype
+        if df[col].dtype == 'object':
+            col_json.update({"original_datatype": "object"})
+        elif df[col].dtype == 'int64':
+            col_json.update({"original_datatype": "int64"})
+        elif df[col].dtype == 'float64':
+            col_json.update({"original_datatype": "float64"})
+        elif df[col].dtype == 'uint8':
+            col_json.update({'original_datatype': 'uint8'})
+            
+        # Correcting datatype
+        detect_correct_datatype(df, col)
+
+        # Detect Numeric or Categorical
+        is_numeric = False
+        if df[col].dtype != 'object':
+            is_numeric, _ = is_numeric_or_categorical(df, col)
+
+        # Get Statistics (min, max, mean, mode, unique_count, unique_values)
+        if is_numeric:
+            col_json.update(
+                {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
+            col_json.update(
+                {'unique_count': None, 'unique_values': None, 'mode': None})
+        elif df[col].dtype != 'object':
+            col_json.update(
+                {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
+            col_json.update({'unique_count': len(df[col].unique(
+            )), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
+        elif df[col].dtype == 'object':
+            col_json.update({'min': None, 'max': None, 'mean': None})
+            col_json.update({'unique_count': len(df[col].unique(
+            )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
+            
+        df_jsons.append(col_json)
+    
+    return df_jsons
+
 
 def data_cleaning_suggestions(df, output_column):
     df_jsons = []
@@ -52,7 +97,7 @@ def data_cleaning_suggestions(df, output_column):
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
             col_json.update({'unique_count': len(df[col].unique(
-            )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
+            )), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
         elif df[col].dtype == 'object':
             col_json.update({'min': None, 'max': None, 'mean': None})
             col_json.update({'unique_count': len(df[col].unique(
@@ -74,7 +119,7 @@ def data_cleaning_suggestions(df, output_column):
 
         df_jsons.append(col_json)
 
-    return df_jsons, df
+    return df_jsons
 
 
 def clean_train(df, output_column, operations):
@@ -125,6 +170,10 @@ def clean_train(df, output_column, operations):
             else:
                 convert_ordinal_category(df, col, col_json['ordinal_order'])
 
+        # Normalizing data
+        if is_numeric:
+            normalize_column(df, col)
+
     return df
 
 
@@ -164,7 +213,6 @@ def clean_test(df, operations, raw_df, output_column):
 
         # Fill missing data
         if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
-            
             p_score = col_json['p_score']
             if p_score >= -0.5 and p_score <= 0.5:
                 if not is_numeric:
@@ -173,7 +221,6 @@ def clean_test(df, operations, raw_df, output_column):
                     df[col].fillna(col_json['mean'], inplace=True)
             else:
                 knn_impute_test(raw_df, col, is_numeric, df, output_column)
-                
         elif col_json['fill_method'] == 'average':
             fill_average_mode(df, col, is_numeric)
         elif col_json['fill_method'] == 'knn':
@@ -185,5 +232,9 @@ def clean_test(df, operations, raw_df, output_column):
                 df = convert_nominal_categories(df, [col])
             else:
                 convert_ordinal_category(df, col, col_json['ordinal_order'])
+
+        # Normalizing data
+        if is_numeric:
+            normalize_column_test(df, col, raw_df)
 
     return df

@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-redis
+  labels:
+    k8s-app: celery-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: celery-redis
+  template:
+    metadata:
+      labels:
+        k8s-app: celery-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0.1-alpine
+        command: ["redis-server"]
+        resources:
+          limits:
+            memory: "300Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 6379
+          name: server
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-redis
+  labels:
+    k8s-app: celery-redis
+spec:
+  selector:
+    k8s-app: celery-redis
+  ports:
+  - name: server
+    port: 6379
+    protocol: TCP
