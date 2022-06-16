@@ -3,7 +3,6 @@ from math import floor, ceil
 from sklearn.model_selection import train_test_split 
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
-from keras.utils import np_utils
 from neural_network import NeuralNetwork
 from fc_layer import FCLayer
 from activation_layer import ActivationLayer
@@ -24,7 +23,7 @@ class NetworkGenerator:
             "number_of_layers": [3, 4, 5],
             "maximum_neurons_per_layer": [128, 64, 32, 16, 8], # Number of neurons in the middle layer
             "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
-            "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent else is mini-batch
+            "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent [number_of_samples as int] is for batch GD else is mini-batch GD
         }
         '''
         self.data = data
@@ -36,29 +35,34 @@ class NetworkGenerator:
         self.y_test = np.asarray(y_test)
         self.type = hyperparameters["type"]
         self.input_layer_size = self.X_train.shape[1]
+        
         if "number_of_layers" in hyperparameters:
             self.number_of_layers = hyperparameters["number_of_layers"]
         else:
-            self.number_of_layers = [4, 5, 6, 7, 8]
+            self.number_of_layers = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+            
         if "maximum_neurons_per_layer" in hyperparameters:
             self.maximum_neurons_per_layer = hyperparameters["maximum_neurons_per_layer"]
         else: 
-            self.maximum_neurons_per_layer = [8, 16, 32]
+            self.maximum_neurons_per_layer = [8, 16, 32, 64]
+            
         if "learning_rate" in hyperparameters:
             self.learning_rate = hyperparameters["learning_rate"]
         else:
             self.learning_rate = [0.001, 0.01, 0.1, 1]
+            
         if "batch_size" in hyperparameters:
             self.batch_size = hyperparameters["batch_size"]
         else:
-            self.batch_size = [4, 8, 16, 32]
+            self.batch_size = [4, 8, 16, 32, 64]
+            
         if(self.type == "Regression"):
             self.output_layer_size = 1
             self.activation_function = relu
             self.activation_function_derivative = relu_derivative
         else: 
-            self.y_train = np_utils.to_categorical(self.y_train)
-            self.y_test = np_utils.to_categorical(self.y_test)
+            self.y_train = to_categorical(self.y_train)
+            self.y_test = to_categorical(self.y_test)
             self.output_layer_size = self.y_train.shape[1]
             self.activation_function = tanh
             self.activation_function_derivative = tanh_derivative
@@ -95,15 +99,15 @@ class NetworkGenerator:
             network.add(ActivationLayer(identity, identity_derivative))
             network.use(mse, mse_derivative)
         network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
-        return network
+        return network, hidden_layer_sizes
             
     def __network_generator(self, config, reporter):
-        network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
-        y_pred = np.array(network.predict(self.X_test))
+        network, hidden_layer_sizes = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
+        y_pred = network.predict(self.X_test)
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:
-            reporter(config, mean_loss = mean_squared_log_error(self.y_test, y_pred), network=network)
+            reporter(config, mean_loss = mean_squared_log_error(self.y_test, y_pred), network=network, hidden_layer_sizes = hidden_layer_sizes)
         
     def __train_network(self):
         scheduler = AsyncHyperBandScheduler()
@@ -150,3 +154,18 @@ class NetworkGenerator:
         config = best_result["config"]
         network = best_result["network"]
         return network, config
+    
+def to_categorical(y, num_classes=None, dtype="float32"):
+    y = np.array(y, dtype="int")
+    input_shape = y.shape
+    if input_shape and input_shape[-1] == 1 and len(input_shape) > 1:
+        input_shape = tuple(input_shape[:-1])
+    y = y.ravel()
+    if not num_classes:
+        num_classes = np.max(y) + 1
+    n = y.shape[0]
+    categorical = np.zeros((n, num_classes), dtype=dtype)
+    categorical[np.arange(n), y] = 1
+    output_shape = input_shape + (num_classes,)
+    categorical = np.reshape(categorical, output_shape)
+    return categorical

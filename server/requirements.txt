@@ -24,7 +24,6 @@ python-multipart
 mongoengine
 
 # AutoML
-keras
 ray
 sklearn
 numpy

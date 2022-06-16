@@ -49,7 +49,7 @@ class NeuralNetwork:
         #samples = 
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        prev_error = 100
+        prev_error = np.inf
         stopper = 0
         data_size = len(x_train)
         # training loop wth mini-batch gradient descent
@@ -91,4 +91,4 @@ class NeuralNetwork:
                 #self.learning_rate *= 0.9
                 #self.learning_rate /= 2
             prev_error = err
-            #print('epoch %d/%d   error=%f' % (i+1, epochs, err))
+            print('epoch %d/%d   error=%f' % (i+1, epochs, err))
