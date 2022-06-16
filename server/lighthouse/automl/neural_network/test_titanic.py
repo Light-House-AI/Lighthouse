@@ -7,8 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
 from keras.utils import np_utils
 from save_load_model import import_model, export_model
+import time
 
-data = pd.read_csv('../../../../datasets/cleaned_datasets/cleaned_titanic.csv')
+data = pd.read_csv('../../../../datasets/cleaned_datasets/titanic_final.csv')
 
 hyperparameters = {
     # Obligatory
@@ -32,11 +33,14 @@ hyperparameters = {
 #     "learning_rate": [0.01, 0.1],
 #     "batch_size": [1, 2], # [1] is for stochastic Gradient Descent else is mini-batch
 # }
+start = time.time()
 network_generator = NetworkGenerator(data, hyperparameters)
 network, config = network_generator.get_best_network()
+end = time.time()
+print("Time to create network(in minutes):", (end - start)/60)
 
 X_train, X_test, y_train, y_test = train_test_split(
-    data.loc[:, data.columns != 'Survived'], data["Survived"], test_size=0.20)
+    data.loc[:, data.columns != hyperparameters["predicted"]], data[hyperparameters["predicted"]], test_size=0.20)
 X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
 X_test = np.asarray(X_test)

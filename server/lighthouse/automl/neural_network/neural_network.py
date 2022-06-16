@@ -81,11 +81,11 @@ class NeuralNetwork:
             # calculate average error on all samples
             err /= data_size
             # stop epochs if error is not decreasing
-            #if err > prev_error:
-                #self.learning_rate /= 2
+            if err >= prev_error:
+                self.learning_rate /= 2
             if err >= prev_error:
                 stopper += 1
-            if stopper == 8:
+            if stopper == 5:
                 break
             #if(prev_error < err):
                 #self.learning_rate *= 0.9

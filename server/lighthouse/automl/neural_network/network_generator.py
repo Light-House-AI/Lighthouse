@@ -11,21 +11,22 @@ from activation_functions import sigmoid, sigmoid_derivative, identity, identity
 from loss_functions import mse, mse_derivative
 from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
-'''
-hyperparameters = {
-    # Obligatory
-    "type": "Classification", # "Regression"
-    "predicted": "Survived", # "Price"
-    # Optional
-    # Each element in the list is a trial
-    "number_of_layers": [3, 4, 5],
-    "maximum_neurons_per_layer": [128, 64, 32, 16, 8], # Number of neurons in the middle layer
-    "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
-    "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent else is mini-batch
-}
-'''
+
 class NetworkGenerator:
     def __init__(self, data, hyperparameters):
+        '''
+        hyperparameters = {
+            # Obligatory
+            "type": "Classification", # "Regression"
+            "predicted": "Survived", # "Price"
+            # Optional
+            # Each element in the list is a trial
+            "number_of_layers": [3, 4, 5],
+            "maximum_neurons_per_layer": [128, 64, 32, 16, 8], # Number of neurons in the middle layer
+            "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
+            "batch_size": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], # [1] is for stochastic Gradient Descent else is mini-batch
+        }
+        '''
         self.data = data
         self.predicted = hyperparameters["predicted"]
         X_train, X_test, y_train, y_test = train_test_split(self.data.loc[:, self.data.columns != self.predicted], self.data[self.predicted], test_size=0.20)
@@ -33,12 +34,6 @@ class NetworkGenerator:
         self.y_train = np.asarray(y_train)
         self.X_test = np.asarray(X_test)
         self.y_test = np.asarray(y_test)
-        #To be removed after normalization already done
-        scaler = StandardScaler()
-        scaler.fit(self.X_train)
-        self.X_train = scaler.transform(self.X_train)
-        self.X_test = scaler.transform(self.X_test)
-        #Till here
         self.type = hyperparameters["type"]
         self.input_layer_size = self.X_train.shape[1]
         if "number_of_layers" in hyperparameters:
@@ -97,7 +92,7 @@ class NetworkGenerator:
             network.add(ActivationLayer(sigmoid, sigmoid_derivative))
             network.use(mse, mse_derivative)
         else: 
-            #network.add(ActivationLayer(identity, identity_derivative))
+            network.add(ActivationLayer(identity, identity_derivative))
             network.use(mse, mse_derivative)
         network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
         return network
