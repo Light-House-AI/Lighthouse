@@ -1,7 +1,7 @@
 from kubernetes import client, config
 
-from services.helpers import *
-from services.constants import *
+from .helpers import *
+from .constants import *
 
 
 def startup():

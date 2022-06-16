@@ -1,89 +1,159 @@
-from lighthouse.ml_projects.db import User
-from lighthouse.ml_projects.db import Project
-from lighthouse.ml_projects.db import Model
-from lighthouse.ml_projects.db import Deployment, DeploymentType
-from lighthouse.ml_projects.db import Dataset
+from lighthouse.ml_projects.db import (User, Project, Model, Deployment,
+                                       DeploymentType, RawDataset,
+                                       CleanedDataset, CleanedDatasetSource,
+                                       Notification)
 
 from lighthouse.ml_projects.db.database import get_session_factory, get_engine
+from lighthouse.ml_projects.services import password
 
 
 def add_users(session):
-    users = [{
-        "id": "50555621-7791-4ca0-9f95-ff351bcec788",
+    users_data = [{
+        "email": "johndoe@gmail.com",
         "first_name": "John",
         "last_name": "Doe",
-        "email": "johndoe@gmail.com",
-        "hashed_password": "password"
+        "hashed_password": password.get_password_hash("password")
     }]
+
+    users = [User(**user_data) for user_data in users_data]
 
     for user in users:
-        # session.add(User(**user))
-        db_user = User(**user)
-        print(db_user)
-        session.add(db_user)
+        session.add(user)
+
+    return users
 
 
-def add_projects(session):
-    projects = [{
-        "name": "Project 1",
-        "id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "user_id": "50555621-7791-4ca0-9f95-ff351bcec788",
-        "type": "classification"
+def add_notifications(session, user):
+    notifications_data = [{
+        "user": user,
+        "title": "Notification 1",
+        "body": "This is a notification"
+    }, {
+        "user": user,
+        "title": "Notification 2",
+        "body": "This is another notification"
     }]
+
+    notifications = [
+        Notification(**notification_data)
+        for notification_data in notifications_data
+    ]
+
+    for notification in notifications:
+        session.add(notification)
+
+    return notifications
+
+
+def add_projects(session, user):
+    projects_data = [{
+        "user": user,
+        "name": "Project 1",
+        "overview": "This is an overview for project 1",
+        "type": "classification",
+        "predicted_column": "price",
+    }]
+
+    projects = [Project(**project_data) for project_data in projects_data]
 
     for project in projects:
-        session.add(Project(**project))
+        session.add(project)
+
+    return projects
 
 
-def add_datasets(session):
-    datasets = [{
-        "name": "Data 1",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
+def add_raw_datasets(session, project):
+    datasets_data = [{
+        "name": "Raw dataset 1",
+        "project": project,
+        "creation_method": "upload",
     }, {
-        "name": "Data 2",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
+        "name": "Raw dataset 2",
+        "project": project,
+        "creation_method": "capture",
     }]
+
+    datasets = [RawDataset(**dataset_data) for dataset_data in datasets_data]
 
     for dataset in datasets:
-        session.add(Dataset(**dataset))
+        session.add(dataset)
+
+    return datasets
 
 
-def add_models(session):
-    models = [{
-        "name": "Model 1",
-        "id": "7388516b-3501-4a66-8f79-b872cd926b7c",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "dataset_id": "f82cb577-da16-4445-8cdc-9acbea16edb0"
+def add_cleaned_datasets(session, project, raw_dataset_1, raw_dataset_2):
+    datasets_data = [{
+        "name": "Cleaned dataset 1",
+        "project": project
     }, {
-        "name": "Model 2",
-        "id": "1c5e3b26-503f-4f01-b5ce-564515104ded",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "dataset_id": "25ef5e52-f23b-48a5-8151-5d30ae16d42e"
+        "name": "Cleaned dataset 2",
+        "project": project
     }]
+
+    cleaned_datasets = [
+        CleanedDataset(**dataset_data) for dataset_data in datasets_data
+    ]
+
+    for dataset in cleaned_datasets:
+        session.add(dataset)
+
+    sources = [{
+        "cleaned_dataset": cleaned_datasets[0],
+        "raw_dataset": raw_dataset_1
+    }, {
+        "cleaned_dataset": cleaned_datasets[1],
+        "raw_dataset": raw_dataset_1
+    }, {
+        "cleaned_dataset": cleaned_datasets[1],
+        "raw_dataset": raw_dataset_2
+    }]
+
+    for source in sources:
+        session.add(CleanedDatasetSource(**source))
+
+    return cleaned_datasets
+
+
+def add_models(session, project, cleaned_dataset_1, cleaned_dataset_2):
+    models_data = [{
+        "project": project,
+        "dataset": cleaned_dataset_1,
+        "name": "Model 1",
+    }, {
+        "project": project,
+        "dataset": cleaned_dataset_2,
+        "name": "Model 2",
+    }]
+
+    models = [Model(**model_data) for model_data in models_data]
 
     for model in models:
-        session.add(Model(**model))
+        session.add(model)
+
+    return models
 
 
-def add_deployments(session):
-    deployments = [{
+def add_deployments(session, project, model_1, model_2):
+    deployments_data = [{
+        "project": project,
+        "primary_model": model_1,
         "name": "Deployment 1",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "a8711a7d-252f-4a96-a387-35380e38bba8",
-        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c"
     }, {
+        "project": project,
+        "primary_model": model_1,
+        "secondary_model": model_2,
         "name": "Deployment 2",
-        "project_id": "a6a19a2b-c7bf-4c66-9d87-83d4007f65a3",
-        "id": "ce5ab1f5-cf35-41c2-906f-57e1abcee725",
-        "deployment_type": DeploymentType.champion_challenger,
-        "primary_model_id": "7388516b-3501-4a66-8f79-b872cd926b7c",
-        "secondary_model_id": "1c5e3b26-503f-4f01-b5ce-564515104ded"
+        "type": DeploymentType.champion_challenger,
     }]
 
+    deployments = [
+        Deployment(**deployment_data) for deployment_data in deployments_data
+    ]
+
     for deployment in deployments:
-        session.add(Deployment(**deployment))
+        session.add(deployment)
+
+    return deployments
 
 
 def seed(force=False, verbose=True):
@@ -96,8 +166,11 @@ def seed(force=False, verbose=True):
     if force:
         session.query(Deployment).delete()
         session.query(Model).delete()
-        session.query(Dataset).delete()
+        session.query(CleanedDatasetSource).delete()
+        session.query(CleanedDataset).delete()
+        session.query(RawDataset).delete()
         session.query(Project).delete()
+        session.query(Notification).delete()
         session.query(User).delete()
 
     # check if users table is empty
@@ -106,11 +179,18 @@ def seed(force=False, verbose=True):
         return False
 
     # seed tables
-    add_users(session)
-    add_projects(session)
-    add_datasets(session)
-    add_models(session)
-    add_deployments(session)
+    users = add_users(session)
+    projects = add_projects(session, users[0])
+    raw_datasets = add_raw_datasets(session, projects[0])
+
+    cleaned_dataset = add_cleaned_datasets(session, projects[0],
+                                           raw_datasets[0], raw_datasets[1])
+
+    models = add_models(session, projects[0], cleaned_dataset[0],
+                        cleaned_dataset[1])
+
+    add_deployments(session, projects[0], models[0], models[1])
+    add_notifications(session, users[0])
     session.commit()
     session.close()
 

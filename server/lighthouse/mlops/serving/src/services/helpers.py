@@ -1,11 +1,11 @@
 from kubernetes import client
 
-from k8s_client.deployment import Deployment
-from k8s_client.secret import Secret
-from k8s_client.cluster_ip import ClusterIP
-from k8s_client.ingress import Ingress
-from services.vars import *
-from services.constants import *
+from ..k8s_client.deployment import Deployment
+from ..k8s_client.secret import Secret
+from ..k8s_client.cluster_ip import ClusterIP
+from ..k8s_client.ingress import Ingress
+from .vars import *
+from .constants import *
 
 
 def create_image_secret(core_v1: client.CoreV1Api, secret_class_arguments_dict: dict):

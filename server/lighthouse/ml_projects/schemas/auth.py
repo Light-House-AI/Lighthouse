@@ -1,17 +1,16 @@
-from pydantic import BaseModel
-from lighthouse.ml_projects.db import UserRole
+from pydantic import BaseModel, EmailStr
 
 
 class TokenData(BaseModel):
-    user_id: str
+    user_id: int
     role: str
 
 
-class Token(BaseModel):
+class AccessToken(BaseModel):
     access_token: str
     token_type: str
 
 
 class Login(BaseModel):
-    email: str
+    email: EmailStr
     password: str

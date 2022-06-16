@@ -1,5 +1,5 @@
 from kubernetes import client
-from k8s_client.helpers import encode_base64, create_docker_config_json_file_string
+from .helpers import encode_base64, create_docker_config_json_file_string
 
 
 class Secret:

@@ -1,6 +1,6 @@
-from services.helpers import *
-from services.startup import *
-from k8s_client.ingress import Ingress
+from .helpers import *
+from .startup import *
+from ..k8s_client.ingress import Ingress
 
 
 def add_main_ingress_path():
