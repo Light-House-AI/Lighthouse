@@ -25,7 +25,7 @@ RUN pip install -r ./requirements.txt
 COPY ./ ./
 
 # chown all the files to the app user
-RUN chown -R app:app $HOME
+RUN chown -R app:app /app
 
 # make the script executable
 RUN chmod +x ./start.sh

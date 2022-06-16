@@ -17,8 +17,6 @@
 @import "./structure/layouts";
 @import "./structure/horizontal-nav";
 @import "./structure/two-column-menu";
-@import "./structure/custom";
-
 
 // Components
 @import './components/accordions';
@@ -91,3 +89,7 @@
 @import "./plugins/mapeal-maps";
 @import "./plugins/datepicker";
 @import "./plugins/dragula";
+
+
+
+@import "./structure/custom";

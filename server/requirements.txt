@@ -1,4 +1,8 @@
 # MLOps
+
+## monitoring
+great-expectations
+
 ## serving
 kubernetes 
 
@@ -12,12 +16,19 @@ fastapi
 uvicorn
 ujson
 fire
-uuid
+passlib
+python-jose
+pydantic[email]
+stringcase
+python-multipart
+mongoengine
+dramatiq[redis]
+azure-storage-blob
 
 # AutoML
-keras
 ray
 sklearn
 numpy
 pandas
 fuzzywuzzy
+python-Levenshtein-wheels
