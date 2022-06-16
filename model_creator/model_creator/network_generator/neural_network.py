@@ -41,7 +41,7 @@ class NeuralNetwork:
                 output = layer.forward_propagation(output)
             result.append(output[0])
 
-        return result
+        return np.asarray(result)
     
     # train the network
     def fit(self, x_train, y_train, epochs, learning_rate, batch_size):
@@ -49,7 +49,7 @@ class NeuralNetwork:
         #samples = 
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        prev_error = 100
+        prev_error = np.inf
         stopper = 0
         data_size = len(x_train)
         # training loop wth mini-batch gradient descent
@@ -81,14 +81,10 @@ class NeuralNetwork:
             # calculate average error on all samples
             err /= data_size
             # stop epochs if error is not decreasing
-            #if err > prev_error:
-                #self.learning_rate /= 2
             if err >= prev_error:
+                self.learning_rate /= 2
                 stopper += 1
             if stopper == 5:
                 break
-            #if(prev_error < err):
-                #self.learning_rate *= 0.9
-                #self.learning_rate /= 2
             prev_error = err
-            #print('epoch %d/%d   error=%f' % (i+1, epochs, err))
+            # print('epoch %d/%d   error=%f' % (i+1, epochs, err))
