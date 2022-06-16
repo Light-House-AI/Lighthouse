@@ -26,6 +26,7 @@ dramatiq[redis]
 azure-storage-blob
 
 # AutoML
+ray
 sklearn
 numpy
 pandas

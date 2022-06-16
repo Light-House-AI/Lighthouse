@@ -1,6 +1,4 @@
 # network generator
-keras
-tensorflow
 ray[tune]
 sklearn
 numpy

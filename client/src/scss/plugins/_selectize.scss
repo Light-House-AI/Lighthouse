@@ -13,7 +13,7 @@
     border: $input-border-width solid $input-border-color;
     box-shadow: $components-shadow-sm;
 
-    > input {
+    >input {
         color: $input-color;
 
         &::placeholder {
@@ -31,19 +31,23 @@
 }
 
 .selectize-control {
-    &.multi {
-        .selectize-input > div {
+
+    &.multi,
+    &.single {
+        .selectize-input>div {
             padding: 1px 8px;
-            background: lighten($gray-300,5%);
+            background: $primary;
             color: $gray-800;
-            
-            > a {
+            border-radius: 0.25rem;
+
+            >a {
                 color: $gray-800;
             }
-        
+
             &.active {
                 background: $primary;
-                > a {
+
+                >a {
                     color: color-yiq($primary);
                 }
             }
@@ -57,7 +61,7 @@
                 border-width: 0 2px 2px 0;
                 border-color: transparent $gray-500 $gray-500 transparent;
                 content: '';
-                display: block;
+                display: none;
                 height: 7px;
                 margin-top: -5px;
                 pointer-events: none;
@@ -96,9 +100,9 @@
     font-size: .875rem;
     position: absolute;
     z-index: 1000;
-    
+
     &.show {
-        top: 100%!important;
+        top: 100% !important;
     }
 
     &.active {
@@ -110,7 +114,7 @@
         color: $gray-600;
     }
 
-    .option, 
+    .option,
     .optgroup-header {
         display: block;
         width: 100%;
@@ -122,8 +126,9 @@
         text-align: inherit;
         white-space: nowrap;
         background-color: transparent;
-    
-        &:hover, &:focus {
+
+        &:hover,
+        &:focus {
             color: $dropdown-link-hover-color;
             text-decoration: none;
             background-color: $dropdown-link-hover-bg !important;
@@ -135,7 +140,7 @@
             border-right-color: $border-color;
         }
     }
-    
+
     .optgroup:before {
         background-color: $border-color;
     }
@@ -146,6 +151,7 @@
     color: $dropdown-link-active-color;
     background-color: $dropdown-link-active-bg;
     text-decoration: none;
+
     .selectize-dropdown-header-close {
         right: 12px;
         left: auto;
@@ -153,7 +159,7 @@
 }
 
 .selectize-dropdown-content {
-    > div {
+    >div {
         background-color: transparent !important;
         color: $input-color !important;
     }

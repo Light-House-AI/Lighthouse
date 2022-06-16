@@ -27,4 +27,4 @@ RUN chown -R app:app /app
 USER app
 
 # run the app
-CMD ["dramatiq", "network_generator.worker", "-p", "1", "-t", "1"]
+CMD ["dramatiq", "model_creator.worker", "-p", "1", "-t", "1"]
