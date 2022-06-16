@@ -1,6 +1,4 @@
-"""
-Contains the configuration for the database.
-"""
+"""Contains the configuration for the database."""
 
 import logging
 from sqlalchemy import create_engine
@@ -35,17 +33,6 @@ def get_session_factory(engine: Engine):
                                    bind=engine)
 
     return session_factory
-
-
-def get_session(session_factory: sessionmaker):
-    """
-    Returns a session instance.
-    """
-    session = session_factory()
-    try:
-        yield session
-    finally:
-        session.close()
 
 
 def check_db_connection(session_factory: sessionmaker, logger: logging.Logger):

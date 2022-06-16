@@ -6,8 +6,17 @@ An end-to-end platform for creating and shipping machine learning models to prod
 
 ### Docker environment
 
-1. Add `.env` file in the `server` directory.
-2. Run the docker-compose up command: `docker-compose -f ./deploy/docker-compose.yml -d up`
+Run the following command to setup the environment:
+
+```bash
+cd deploy
+docker-compose up -d --build
+```
+
+Notes:
+
+- You can change the environment variables in the `deploy/.env` file.
+- You can comment unwanted services in the `deploy/docker-compose.yml` file.
 
 ### Without docker
 
@@ -51,13 +60,15 @@ start.sh # or start.bat for windows
 │   ├── k8s                 <- k8s manifests for deployment.
 │   └── docker-compose.yml  <- Docker compose file for development.
 │
-├── docs            <- Documentation and examples.
+├── docs                <- Documentation and examples.
 │
-├── infrastructure  <- Infrastructure code.
+├── infrastructure      <- Infrastructure code.
 │
-├── notebooks       <- Development code.
+├── network_generator   <- Network generator module.
 │
-├── server          <- Server code.
+├── notebooks           <- Development code.
+│
+├── server              <- Server code.
 │   │
 │   └── lighthouse
 │       │

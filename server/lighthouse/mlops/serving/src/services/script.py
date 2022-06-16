@@ -1,4 +1,4 @@
-from services.run import *
+from .run import *
 
 
 def get_command_from_terminal(startup_config_dict: dict):
