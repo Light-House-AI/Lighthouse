@@ -1,8 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Navigation() {
-
+    const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
     const [location] = useState(window.location.pathname);
+
+    useEffect(() => {
+        axios.defaults.baseURL = "http://localhost:8000/api/v1";
+
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = "/login";
+                }
+            }
+        );
+    }, []);
 
     function openFullscreen() {
         window.$('body').toggleClass('fullscreen-enable');
@@ -30,6 +45,11 @@ function Navigation() {
             document.body.attributes['data-sidebar-size'].value = 'default';
         else
             document.body.attributes['data-sidebar-size'].value = 'condensed';
+    }
+
+    function logOut() {
+        localStorage.clear();
+        window.location.href = "/login";
     }
 
     return (
@@ -131,7 +151,7 @@ function Navigation() {
                         <button className="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light arrow-none button-no-style" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                             <img src="/user.jpg" className="rounded-circle" alt='' />
                             <span className="pro-user-name ms-1">
-                                Stanley <i className="mdi mdi-chevron-down"></i>
+                                {userDetails.first_name} <i className="mdi mdi-chevron-down"></i>
                             </span>
                         </button>
                         <div className="dropdown-menu dropdown-menu-end profile-dropdown ">
@@ -139,10 +159,10 @@ function Navigation() {
                                 <h6 className="text-overflow m-0">Welcome !</h6>
                             </div>
                             <div className="dropdown-divider"></div>
-                            <a href="/login" className="dropdown-item notify-item">
+                            <button className="dropdown-item notify-item" onClick={logOut}>
                                 <i className="fe-log-out"></i>
                                 <span>Logout</span>
-                            </a>
+                            </button>
                         </div>
                     </li>
 
