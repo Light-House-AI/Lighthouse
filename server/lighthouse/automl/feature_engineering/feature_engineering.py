@@ -47,7 +47,7 @@ class FeatureEngineering:
                     else:
                         #Pearson
                         corr = self.data[column['column_name']].corr(target, method='pearson')
-                        if corr < 0.05:
+                        if abs(corr) < 0.05:
                             to_drop.append(column['column_name'])
                 else:
                     if self.problem_type == 'Classification':
@@ -71,6 +71,8 @@ class FeatureEngineering:
             else:
                 #ANOVA
                 F, P = f_classif(self.data[[self.target_column,column]], self.data[column])
+                if P[0] > 0.05:
+                    to_drop.append(column)
         self.data.drop(to_drop, axis = 1, inplace = True)
 
     def __get_strongly_correlated_features(self):
