@@ -35,7 +35,7 @@ def convert_str_to_list(projects_str: str):
         projects_str = projects_str.replace("[", "")
         projects_str = projects_str.replace("]", "")
         project_list = projects_str.split(",")
-        project_list = [model_id for model_id in project_list]
+        project_list = [project_id for project_id in project_list]
 
         return project_list
     except Exception as e:
