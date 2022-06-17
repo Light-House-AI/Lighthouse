@@ -154,6 +154,7 @@ function Deployments(props) {
                         </tbody>
                     </table>
                 </div>
+                <GenericModal hideNext={false} />
             </div>
         </div>
     );
