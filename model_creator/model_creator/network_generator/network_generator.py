@@ -97,7 +97,7 @@ class NetworkGenerator:
             network.use(mse, mse_derivative)
         else: 
             network.add(ActivationLayer(identity, identity_derivative))
-            network.use(msle, msle_derivative)
+            network.use(mse, mse_derivative)
         network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
         return network
             

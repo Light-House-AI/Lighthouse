@@ -1,4 +1,4 @@
-from .layer import Layer
+from layer import Layer
 
 class ActivationLayer(Layer):
     def __init__(self, activation_function, activation_function_derivative):
