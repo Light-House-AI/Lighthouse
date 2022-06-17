@@ -11,7 +11,7 @@ def predict_for_deployment_type(environment_variables_dict):
     azure_container_name = environment_variables_dict['azure_container_name']
     azure_main_blob_name = environment_variables_dict['azure_blob_name']
     deployment_type = environment_variables_dict['deployment_type']
-    if deployment_type == "champion/challenger" or deployment_type == "ch/ch":
+    if deployment_type == "champion_challenger" or deployment_type == "ch/ch":
         azure_challenger_blob_name = environment_variables_dict['azure_blob_name_2']
         is_downloaded = download_blob(azure_conn_str, azure_container_name,
                                       azure_main_blob_name)

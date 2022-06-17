@@ -46,10 +46,10 @@ class Deployment(Base):
 
     # methods
     def __repr__(self):
-        return "<Deployment(id={}, project_id={}, primary_model_id={}, secondary_model_id={}, name={}, created_at={}, is_running={}, deployment_type={})>".format(
+        return "<Deployment(id={}, project_id={}, primary_model_id={}, secondary_model_id={}, name={}, created_at={}, is_running={}, type={})>".format(
             self.id, self.project_id, self.primary_model_id,
             self.secondary_model_id, self.name, self.created_at,
-            self.is_running, self.deployment_type)
+            self.is_running, self.type)
 
     def __str__(self):
         return self.__repr__()
