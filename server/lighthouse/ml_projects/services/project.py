@@ -1,5 +1,6 @@
 """Projects service."""
 
+from typing import Dict, List
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
@@ -7,6 +8,8 @@ from lighthouse.ml_projects.db import Project, Deployment, Model, RawDataset, Cl
 from lighthouse.ml_projects.schemas.project import ProjectCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.mongo import ProjectDataColumns
+
+from lighthouse.mlops.monitoring.logging import service as monitoring_service
 
 
 def get_user_projects(user_id: int,
@@ -130,3 +133,42 @@ def get_project_columns(user_id: int, project_id: int, db: Session):
             "Project columns data not found. Please upload a dataset.")
 
     return data_columns.columns
+
+
+def get_shadow_data(
+        user_id: int,
+        project_id: int,
+        db: Session,
+        skip: int = 0,
+        limit: int = 100,
+):
+    """
+    Get shadow data for a project.
+    """
+    project = db.query(Project.id).filter(Project.user_id == user_id,
+                                          Project.id == project_id).first()
+
+    if not project:
+        raise NotFoundException("Project not found.")
+
+    shadow_data = monitoring_service.get_project_input_data(
+        project_id, skip, limit)
+
+    json_str = '[' + ','.join([data.to_json() for data in shadow_data]) + ']'
+    return json_str
+
+
+def label_shadow_data(user_id: int, project_id: int,
+                      labeled_data: List[Dict[str, str]], db: Session) -> None:
+    """
+    Label data.
+    """
+    project = db.query(Project.id).filter(Project.id == project_id,
+                                          Project.user_id == user_id).first()
+
+    if not project:
+        raise NotFoundException("Project not found.")
+
+    monitoring_service.label_data(project_id, labeled_data)
+
+    return {"status": "success"}

@@ -7,6 +7,7 @@ from mongoengine import (
     EmbeddedDocumentField,
     DateTimeField,
     StringField,
+    IntField,
 )
 
 
@@ -21,16 +22,19 @@ class DeploymentInput(Document):
     """
     Class to store the input parameters for a deployment.
     """
-    deployment_id = StringField(required=True)
+    deployment_id = IntField(required=True)
+    project_id = IntField(required=True)
+
     created_at = DateTimeField(required=True, default=datetime.utcnow)
     primary_model_prediction = StringField(required=True)
     secondary_model_prediction = StringField()
+    label = StringField()
 
     input_data = EmbeddedDocumentField(InputData)
 
     meta = {
-        # create index on deployment_id
-        'indexes': ['deployment_id'],
+        # create index on deployment_id, project_id
+        'indexes': ['deployment_id', 'project_id'],
 
         # choose db connection alias
         'db_alias': config.MONITORING_MONGO_ALIAS

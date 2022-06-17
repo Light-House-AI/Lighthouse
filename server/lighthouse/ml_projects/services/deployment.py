@@ -4,7 +4,7 @@ import requests
 from typing import Dict
 from sqlalchemy.orm import Session
 
-from lighthouse.mlops.monitoring import log_prediction
+from lighthouse.mlops.monitoring.logging import service as monitoring_service
 from lighthouse.ml_projects.schemas import DeploymentCreate
 
 from lighthouse.ml_projects.exceptions import (
@@ -222,8 +222,9 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     }
 
     # Save the request to the database.
-    log_prediction(
+    monitoring_service.log_prediction(
         deployment_id=deployment_id,
+        project_id=deployment.project_id,
         input_params=input_data,
         primary_model_prediction=deployment_response[
             "primary_model_prediction"],

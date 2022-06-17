@@ -1,7 +1,7 @@
 """Router for Projects."""
 
-from typing import List
-from fastapi import APIRouter, Depends
+from typing import Dict, List
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import project as project_service
@@ -102,5 +102,47 @@ def get_project_columns(*,
     return project_service.get_project_columns(
         user_id=user_data.user_id,
         project_id=project_id,
+        db=db,
+    )
+
+
+@router.get('/{project_id}/shadow_data',
+            responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
+def get_shadow_data(*,
+                    project_id: int,
+                    skip: int = 0,
+                    limit: int = 100,
+                    db: Session = Depends(get_session),
+                    user_data=Depends(get_current_user_data)):
+    """
+    Returns shadow data for a project.
+    """
+    shadow_data = project_service.get_shadow_data(
+        user_id=user_data.user_id,
+        project_id=project_id,
+        skip=skip,
+        limit=limit,
+        db=db,
+    )
+
+    return Response(shadow_data, media_type="application/json")
+
+
+@router.patch('/{project_id}/shadow_data',
+              responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
+def label_shadow_data(*,
+                      project_id: int,
+                      labeled_data: List[Dict],
+                      db: Session = Depends(get_session),
+                      user_data=Depends(get_current_user_data)):
+    """
+    Labels shadow data.
+    """
+    return project_service.label_shadow_data(
+        user_id=user_data.user_id,
+        project_id=project_id,
+        labeled_data=labeled_data,
         db=db,
     )
