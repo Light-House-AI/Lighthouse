@@ -95,6 +95,14 @@ function Models(props) {
         document.getElementById('modal-trigger').click();
     }
 
+    const findDatasetName = function () {
+        for (let i = 0; i < cleanedDatasets.length; i++) {
+            if (cleanedDatasets[i].id === this.dataset_id) {
+                return cleanedDatasets[i].name;
+            }
+        }
+    }
+
     return (
         <div className="row">
             <div className="col-12">
@@ -138,7 +146,7 @@ function Models(props) {
                                                 <td>{model.accuracy_score}</td> :
                                                 <td>{model.mean_squared_log_error}</td>
                                             }
-                                            <td>{model.dataset_id}</td>
+                                            <td>{findDatasetName(model.dataset_id)}</td>
                                             <td>{model.number_of_layers}</td>
                                             <td>{model.maximum_neurons_per_layer}</td>
                                             <td>{model.learning_rate}</td>
