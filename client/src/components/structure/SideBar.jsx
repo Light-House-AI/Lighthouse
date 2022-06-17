@@ -46,7 +46,7 @@ function SideBar(props) {
                                                 {projectDetails.raw_datasets.map((record, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <a href={`${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
+                                                            <a href={`/${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
                                                         </li>
                                                     );
                                                 })}
@@ -62,7 +62,7 @@ function SideBar(props) {
                                                 {projectDetails.cleaned_datasets.map((record, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <a href={`${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
+                                                            <a href={`/${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
                                                         </li>
                                                     );
                                                 })}
@@ -85,7 +85,7 @@ function SideBar(props) {
                                     {projectDetails.models.map((record, index) => {
                                         return (
                                             <li key={index}>
-                                                <a href={`${record.project_id}/models/${record.id}/view`}>{record.name}</a>
+                                                <a href={`/${record.project_id}/models/${record.id}/view`}>{record.name}</a>
                                             </li>
                                         );
                                     })}
@@ -105,7 +105,7 @@ function SideBar(props) {
                                     {projectDetails.deployments.map((record, index) => {
                                         return (
                                             <li key={index}>
-                                                <a href={`${record.project_id}/deployments/${record.id}/view`}>{record.name}</a>
+                                                <a href={`/${record.project_id}/deployments/${record.id}/view`}>{record.name}</a>
                                             </li>
                                         );
                                     })}
