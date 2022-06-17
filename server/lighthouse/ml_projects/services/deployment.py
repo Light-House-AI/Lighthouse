@@ -31,19 +31,28 @@ def init_serving_module(db: Session):
     """
     Initializes the serving module.
     """
+    add_main_ingress_path()
     config_dict = startup()
 
     # Get deployments.
     deployments = db.query(
         Deployment.id).filter(Deployment.is_running == True).all()
 
-    deployments_ids = [str(deployment[0]) for deployment in deployments]
+    deployments_ids = [
+        _get_k8s_deployment_name(deployment[0]) for deployment in deployments
+    ]
 
     # Initialize module.
-    add_main_ingress_path()
     recreate_ingress_rules(config_dict, deployments_ids)
 
     return config_dict
+
+
+def _get_k8s_deployment_name(deployment_id: int):
+    """
+    Gets the k8s deployment name.
+    """
+    return "lighthouse-{}".format(deployment_id)
 
 
 def get_deployments(user_id: int, project_id: int, skip: int, limit: int,
@@ -148,7 +157,7 @@ def _deploy(deployment: Deployment, serving_config: Dict):
     """
     return deploy_model(
         serving_config,
-        str(deployment.id),
+        _get_k8s_deployment_name(deployment.id),
         deployment.type.value,
         str(deployment.primary_model_id),
         str(deployment.secondary_model_id),
@@ -173,7 +182,7 @@ def stop_deployment(user_id: int, deployment_id: int, serving_config: Dict,
         raise BadRequestException("Deployment is not running!")
 
     # Delete the deployment.
-    delete_model(serving_config, str(deployment.id))
+    delete_model(serving_config, _get_k8s_deployment_name(deployment.id))
     deployment.is_running = False
     db.commit()
 
