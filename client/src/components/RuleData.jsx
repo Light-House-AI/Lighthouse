@@ -16,7 +16,8 @@ function RuleData(props) {
                 'Authorization': localStorage.getItem('tokenType').toString() + " " + localStorage.getItem('accessToken')
             }
         }).then((response) => {
-            setRules(response.data);
+            setRules(response.data.rules);
+            console.log(response.data);
         }).catch((error) => {
         });
     }, []);
@@ -29,13 +30,13 @@ function RuleData(props) {
         <div className="row recommendation">
             <div className="col-12">
                 <div className="row overflow-x-scroll enable-row-overflow-x me-1">
-                    {/* {rules !== null ?
+                    {rules !== null ?
                         rules.map((rule, index) => {
                             rule.unique_values = rule.unique_values !== null ? rule.unique_values.toString() : '';
                             return (
                                 <ViewRules key={`col-${index}`} rules={rule} />
                             );
-                        }) : null} */}
+                        }) : null}
                 </div>
             </div>
         </div>

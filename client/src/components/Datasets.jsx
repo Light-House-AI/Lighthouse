@@ -7,6 +7,12 @@ function Datasets(props) {
     const [cleanedDatasets, setCleanedDatasets] = useState(null);
 
     useEffect(() => {
+        window.tippy('[data-plugin="tippy"]', {
+            placement: 'left',
+            followCursor: 'false',
+            arrow: 'true'
+        });
+
         axios.get(`/datasets/raw/`, {
             params: {
                 project_id: projectId

@@ -1,14 +1,26 @@
-import React, { useEffect, useRef } from "react";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 
-function ViewDataset() {
+function ViewDataset(props) {
     const tableRef = useRef(null);
+    const [datasetId] = useState(props.datasetId);
+    const [datasetType] = useState(props.datasetType);
+
     useEffect(() => {
         window.$(tableRef.current).DataTable({
             searching: false,
-            paging: false,
             scrollCollapse: true,
-            scrollY: 250,
+            scrollY: 200,
             scrollX: true
+        });
+
+        axios.get(`/datasets/${datasetType}/${datasetId}/rows/`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            console.log(response.data);
+        }).catch((error) => {
         });
     }, []);
     return (
