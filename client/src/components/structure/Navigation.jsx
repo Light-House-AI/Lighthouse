@@ -7,6 +7,7 @@ function Navigation() {
 
     useEffect(() => {
         axios.defaults.baseURL = "http://localhost:8000/api/v1";
+        window.baseURL = "http://localhost:8000/api/v1";
 
         axios.interceptors.response.use(
             response => response,
