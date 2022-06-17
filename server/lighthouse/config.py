@@ -102,5 +102,8 @@ class Config(BaseSettings):
     # Github containers registry password.
     GHCR_PASSWORD: str = ""
 
+    # Monitoring rows threshold.
+    MONITORING_NUM_ROWS_NOTIFY: int = 100
+
 
 config = Config(_env_file=ENV_FILE_PATH)

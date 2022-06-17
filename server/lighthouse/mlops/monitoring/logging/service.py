@@ -57,3 +57,10 @@ def label_input_data(project_id, labeled_data: List[Dict[str, str]]) -> None:
         DeploymentInput.objects(
             id=labeled_row["oid"],
             project_id=project_id).update(set__label=labeled_row["label"])
+
+
+def get_count_input_data(deployment_id: int) -> int:
+    """
+    Get number of input data for deployment.
+    """
+    return DeploymentInput.objects(deployment_id=deployment_id).count()
