@@ -1,7 +1,14 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, constr
+
 from lighthouse.ml_projects.db import ProjectType
+from lighthouse.ml_projects.schemas import (
+    Deployment,
+    Model,
+    RawDataset,
+    CleanedDataset,
+)
 
 
 class ProjectBase(BaseModel):
@@ -30,4 +37,14 @@ class ProjectInDBBase(ProjectBase):
 
 # properties to return to the client
 class Project(ProjectInDBBase):
-    ...
+    num_models: int
+    num_deployments: int
+    num_raw_datasets: int
+    num_cleaned_datasets: int
+
+
+class ProjectWithRelationships(ProjectInDBBase):
+    models: List[Model]
+    raw_datasets: List[RawDataset]
+    cleaned_datasets: List[CleanedDataset]
+    deployments: List[Deployment]
