@@ -1,10 +1,33 @@
 """Dataset file service"""
 
+import csv
 import os
 import shutil
-from typing import BinaryIO
+from typing import BinaryIO, List
 from azure.storage.blob import BlobClient
 from lighthouse.config import config
+
+
+def save_dicts_as_raw_dataset_file(dataset_id: int, dict_data: List[dict]):
+    """
+    Saves a list of dict as a raw dataset file.
+    """
+    file_path = get_raw_dataset_local_path(dataset_id)
+    _save_dicts_to_csv(file_path, dict_data)
+    return file_path
+
+
+def _save_dicts_to_csv(file_path: str, dict_data: List[dict]):
+    """
+    Saves a list of dict data to csv file.
+    """
+    if len(dict_data) == 0:
+        return
+
+    with open(file_path, 'w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=dict_data[0].keys())
+        writer.writeheader()
+        writer.writerows(dict_data)
 
 
 def save_raw_dataset_to_local_disk(dataset_id: int, file: BinaryIO):

@@ -169,6 +169,6 @@ def label_shadow_data(user_id: int, project_id: int,
     if not project:
         raise NotFoundException("Project not found.")
 
-    monitoring_service.label_data(project_id, labeled_data)
+    monitoring_service.label_input_data(project_id, labeled_data)
 
     return {"status": "success"}

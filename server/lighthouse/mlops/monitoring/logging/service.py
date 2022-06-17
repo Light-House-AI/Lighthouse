@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Optional, Any
 from .collections import DeploymentInput
 
@@ -30,7 +31,25 @@ def get_project_input_data(project_id: int, skip: int = 0,
         project_id=project_id).limit(limit).skip(skip)
 
 
-def label_data(project_id, labeled_data: List[Dict[str, str]]) -> None:
+def get_project_labeled_input_data(project_id: int,
+                                   predicted_column_name: str) -> list:
+    """
+    Get labeled data for project.
+    """
+    input_data = DeploymentInput.objects(
+        project_id=project_id,
+        label__exists=True,
+    )
+
+    input_data_dict = [json.loads(row.to_json()) for row in input_data]
+
+    return [{
+        **row["input_data"],
+        predicted_column_name: row["label"],
+    } for row in input_data_dict]
+
+
+def label_input_data(project_id, labeled_data: List[Dict[str, str]]) -> None:
     """
     Label data.
     """
