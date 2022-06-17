@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
+import axios from "axios";
 
 import Navigation from "../components/structure/Navigation";
 import SideBar from "../components/structure/SideBar";
@@ -7,21 +9,37 @@ import PageTitle from "../components/structure/PageTitle";
 import Deployments from "../components/Deployments";
 
 function DeploymentsPage() {
+    const { projectid } = useParams();
+    const [projectDetails, setProjectDetails] = useState(null);
+
+    useEffect(() => {
+        axios.get(`/projects/${projectid}/`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setProjectDetails(response.data);
+        });
+    }, []);
+
     return (
         <div id='wrapper'>
-            <title>Deployments - Project 1 | Lighthouse AI</title>
             <Navigation />
-            <SideBar />
+            {projectDetails !== null ?
+                <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
-                <div className="content">
-                    <div className="container-fluid scroll">
-                        <PageTitle project={"Project 1"} type={"Deployments"} view={null} execution={null} projectid={"asdasd"} />
-                        <div className="mb-2">
-                            <Deployments />
+                {projectDetails !== null ?
+                    <div className="content">
+                        <title>Deployments - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
+                        <div className="container-fluid scroll">
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Deployments"} view={null} execution={null} projectid={projectid} />
+                            <div className="mb-2">
+                                <Deployments projectId={projectid} />
+                            </div>
+                            <Footer />
                         </div>
-                        <Footer />
-                    </div>
-                </div>
+                    </div> : null}
             </div>
         </div>
     );

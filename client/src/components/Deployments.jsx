@@ -1,7 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from 'react-dom/client';
+import axios from "axios";
 
-function Deployments() {
+import GenericModal from './structure/GenericModal';
+
+function Deployments(props) {
+    const [projectId] = useState(props.projectId);
+    const [rootCreated, setRootCreated] = useState(false);
+    const [reactRoot, setReactRoot] = useState(null);
+    const [deployments, setDeployments] = useState(null);
+    
     useEffect(() => {
+        window.tippy('[data-plugin="tippy"]', {
+            placement: 'left',
+            followCursor: 'false',
+            arrow: 'true'
+        });
+
         window.$("#testing").footable();
     }, []);
     return (
