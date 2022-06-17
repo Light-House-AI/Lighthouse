@@ -5,7 +5,7 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.get('/health/', response_model=str)
+@router.get('/health', response_model=str)
 def health_check() -> None:
     """
     Checks the health of a project.

@@ -1,5 +1,7 @@
 *.env
 *.pkl
+*.csv
+*.json
 tmp/
 
 ### Python ###

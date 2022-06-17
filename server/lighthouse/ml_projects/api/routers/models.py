@@ -1,7 +1,7 @@
 """Router for Models."""
 
-from typing import Dict, List
-from fastapi import APIRouter, Depends, Header
+from typing import List
+from fastapi import APIRouter, Depends, Header, Query
 from sqlalchemy.orm import Session
 
 from lighthouse.config import config
@@ -19,11 +19,12 @@ from lighthouse.ml_projects.exceptions.not_found import NotFoundException
 router = APIRouter(prefix="/models")
 
 
-@router.get('/',
+@router.get('',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[Model])
 @catch_app_exceptions
 def get_models(*,
+               project_id: int = Query(...),
                skip: int = 0,
                limit: int = 100,
                db: Session = Depends(get_session),
@@ -33,13 +34,14 @@ def get_models(*,
     """
     return model_service.get_user_models(
         user_id=user_data.user_id,
+        project_id=project_id,
         db=db,
         skip=skip,
         limit=limit,
     )
 
 
-@router.post('/',
+@router.post('',
              responses=UnauthenticatedException.get_example_response(),
              response_model=Model)
 @catch_app_exceptions
@@ -78,7 +80,7 @@ def get_model(*,
     )
 
 
-@router.post('/{model_id}/training_status/',
+@router.post('/{model_id}/training_status',
              responses={
                  **UnauthenticatedException.get_example_response(),
                  **NotFoundException.get_example_response()

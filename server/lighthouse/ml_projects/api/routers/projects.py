@@ -5,7 +5,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import project as project_service
-from lighthouse.ml_projects.schemas import ProjectCreate, Project
+
+from lighthouse.ml_projects.schemas import (
+    ProjectCreate,
+    Project,
+    ProjectWithRelationships,
+)
+
 from lighthouse.ml_projects.exceptions import (
     UnauthenticatedException,
     NotFoundException,
@@ -20,7 +26,7 @@ from lighthouse.ml_projects.api import (
 router = APIRouter(prefix="/projects")
 
 
-@router.get('/',
+@router.get('',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[Project])
 @catch_app_exceptions
@@ -40,7 +46,7 @@ def get_projects(*,
     )
 
 
-@router.post('/',
+@router.post('',
              responses=UnauthenticatedException.get_example_response(),
              response_model=Project)
 @catch_app_exceptions
@@ -63,7 +69,7 @@ def create_project(*,
                 **UnauthenticatedException.get_example_response(),
                 **NotFoundException.get_example_response()
             },
-            response_model=Project)
+            response_model=ProjectWithRelationships)
 @catch_app_exceptions
 def get_project(*,
                 project_id: int,

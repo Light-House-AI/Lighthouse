@@ -29,12 +29,16 @@ def train_model(model_id: str, dataset_id: str, model_params: Dict):
     ...
 
 
-def get_user_models(user_id: int, db: Session, skip: int = 0,
+def get_user_models(user_id: int,
+                    project_id: int,
+                    db: Session,
+                    skip: int = 0,
                     limit: int = 100):
     """
     Returns current user models.
     """
     return db.query(Model).join(Project).filter(
+        Project.id == project_id,
         Project.user_id == user_id).offset(skip).limit(limit).all()
 
 

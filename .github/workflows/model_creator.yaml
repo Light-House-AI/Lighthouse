@@ -1,15 +1,15 @@
-name: Network-Generator-CI
+name: Model-Creator-CI
 
 on:
   push:
     branches: [master]
     paths:
-      - network_generator/**
-      - .github/workflows/network_generator.yaml
+      - model_creator/**
+      - .github/workflows/model_creator.yaml
 
 env:
-    APP_NAME: network-generator
-    PACKAGE_NAME: light-house-ai/network-generator
+    APP_NAME: model-creator
+    PACKAGE_NAME: light-house-ai/model-creator
     GHCR_USERNAME: light-house-ai
 
 jobs:

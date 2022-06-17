@@ -1,4 +1,4 @@
 **/__pycache__
 /models/*.pkl
 .env
-tempCodeRunnerFile.py
+**/tempCodeRunnerFile.py
