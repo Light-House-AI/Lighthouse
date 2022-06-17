@@ -68,7 +68,7 @@ function Datasets(props) {
                                             <tr key={index}>
                                                 <td>{window.capitalizeFirstLetter(dataset.name)}</td>
                                                 <td>{(new Date(dataset.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}</td>
-                                                <td><a href={`/${projectId}/datasets/${dataset.id}/view`} className="btn btn-outline-success btn-sm rounded-pill">View Dataset</a></td>
+                                                <td><a href={`/${projectId}/datasets/raw/${dataset.id}/view`} className="btn btn-outline-success btn-sm rounded-pill">View Dataset</a></td>
                                             </tr>
                                         );
                                     })}
@@ -106,7 +106,7 @@ function Datasets(props) {
                                                 <td>{window.capitalizeFirstLetter(dataset.name)}</td>
                                                 <td>{(new Date(dataset.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}</td>
                                                 <td><a href={`/${projectId}/datasets/${dataset.id}/rules`} className="btn btn-outline-warning btn-sm rounded-pill">View Rules</a></td>
-                                                <td><a href={`/${projectId}/datasets/${dataset.id}/view`} className="btn btn-outline-success btn-sm rounded-pill">View Dataset</a></td>
+                                                <td><a href={`/${projectId}/datasets/cleaned/${dataset.id}/view`} className="btn btn-outline-success btn-sm rounded-pill">View Dataset</a></td>
                                             </tr>
                                         );
                                     })}
