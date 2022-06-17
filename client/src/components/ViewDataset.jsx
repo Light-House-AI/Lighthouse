@@ -26,7 +26,7 @@ function ViewDataset(props) {
                 searching: false,
                 ordering: false,
                 scrollCollapse: true,
-                scrollY: 200,
+                scrollY: "45vh",
                 scrollX: true,
                 columns: dtColumns,
                 bInfo: false,
