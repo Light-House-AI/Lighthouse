@@ -1,6 +1,7 @@
 """Deployment service."""
 
 import requests
+from typing import Dict
 from sqlalchemy.orm import Session
 
 from lighthouse.mlops.monitoring import log_prediction
@@ -11,19 +12,51 @@ from lighthouse.ml_projects.exceptions import (
     BadRequestException,
 )
 
-from lighthouse.ml_projects.db import (Model, Deployment, DeploymentType,
-                                       Project)
+from lighthouse.ml_projects.db import (
+    Model,
+    Deployment,
+    Project,
+)
+
+from lighthouse.mlops.serving import (
+    recreate_ingress_rules,
+    add_main_ingress_path,
+    deploy_model,
+    delete_model,
+    startup,
+)
 
 
-def get_deployments(user_id: str, skip: int, limit: int, db: Session):
+def init_serving_module(db: Session):
+    """
+    Initializes the serving module.
+    """
+    config_dict = startup()
+
+    # Get deployments.
+    deployments = db.query(
+        Deployment.id).filter(Deployment.is_running == True).all()
+
+    deployments_ids = [str(deployment[0]) for deployment in deployments]
+
+    # Initialize module.
+    add_main_ingress_path()
+    recreate_ingress_rules(config_dict, deployments_ids)
+
+    return config_dict
+
+
+def get_deployments(user_id: int, project_id: int, skip: int, limit: int,
+                    db: Session):
     """
     Gets all deployments.
     """
-    return db.query(Deployment).join(
-        Project, Project.user_id == user_id).offset(skip).limit(limit).all()
+    return db.query(Deployment).join(Project).filter(
+        Project.user_id == user_id,
+        Project.id == project_id).offset(skip).limit(limit).all()
 
 
-def get_deployment(user_id: str, deployment_id: int, db: Session):
+def get_deployment(user_id: int, deployment_id: int, db: Session):
     """
     Gets a deployment.
     """
@@ -38,7 +71,7 @@ def get_deployment(user_id: str, deployment_id: int, db: Session):
 
 
 def create_deployment(user_id: int, deployment_data: DeploymentCreate,
-                      db: Session):
+                      serving_config: Dict, db: Session):
     """
     Creates a deployment.
     """
@@ -71,20 +104,83 @@ def create_deployment(user_id: int, deployment_data: DeploymentCreate,
         if not models_exists:
             raise NotFoundException("Model not found.")
 
-    # Create deployment
-    print(deployment_data.type)
-    print("haa       ", deployment_data.dict())
+    # Create deployment record
     deployment = Deployment(**deployment_data.dict())
     db.add(deployment)
     db.commit()
-    db.refresh(deployment)
 
-    # TODO: Call create deployment
+    # Create deployment
+    _deploy(deployment, serving_config)
+    deployment.is_running = True
+    db.commit()
 
     return deployment
 
 
-def get_prediction(*, user_id: str, deployment_id: int, input_data: dict,
+def run_deployment(user_id: int, deployment_id: int, serving_config: Dict,
+                   db: Session):
+    """
+    Starts a deployment.
+    """
+
+    # Get the deployment.
+    deployment = db.query(Deployment).filter(
+        Deployment.id == deployment_id).join(
+            Project, Project.user_id == user_id).first()
+
+    if not deployment:
+        raise NotFoundException("Deployment not found!")
+
+    if deployment.is_running:
+        raise BadRequestException("Deployment is already running!")
+
+    # Start the deployment.
+    _deploy(deployment, serving_config)
+    deployment.is_running = True
+    db.commit()
+
+    return deployment
+
+
+def _deploy(deployment: Deployment, serving_config: Dict):
+    """
+    Deploys a deployment.
+    """
+    return deploy_model(
+        serving_config,
+        str(deployment.id),
+        deployment.type.value,
+        str(deployment.primary_model_id),
+        str(deployment.secondary_model_id),
+    )
+
+
+def stop_deployment(user_id: int, deployment_id: int, serving_config: Dict,
+                    db: Session):
+    """
+    Stops a deployment.
+    """
+
+    # Get the deployment.
+    deployment = db.query(Deployment).filter(
+        Deployment.id == deployment_id).join(
+            Project, Project.user_id == user_id).first()
+
+    if not deployment:
+        raise NotFoundException("Deployment not found!")
+
+    if not deployment.is_running:
+        raise BadRequestException("Deployment is not running!")
+
+    # Delete the deployment.
+    delete_model(serving_config, str(deployment.id))
+    deployment.is_running = False
+    db.commit()
+
+    return deployment
+
+
+def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
                    db: Session):
     """
     Proxies to the deployed model to get predictions.
@@ -105,7 +201,7 @@ def get_prediction(*, user_id: str, deployment_id: int, input_data: dict,
         raise BadRequestException("Deployment is not running!")
 
     # Get the predictions from the deployed model.
-    url = deployment_id + "/predict"
+    url = str(deployment_id) + "/predict"
 
     # TODO: uncomment line below
     # deployment_response = requests.get(url, json=input_data).json()

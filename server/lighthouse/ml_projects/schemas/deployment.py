@@ -18,7 +18,7 @@ class DeploymentBase(BaseModel):
         if type == DeploymentType.champion_challenger and not values[
                 'secondary_model_id']:
             raise ValueError(
-                "Secondary model id is required for champion challenger deployment."
+                "secondary_model_id is required for champion challenger deployment."
             )
 
         if type == DeploymentType.single_model and values['secondary_model_id']:
