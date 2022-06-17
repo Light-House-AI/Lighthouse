@@ -32,7 +32,7 @@ function DatasetsPage() {
                     <div className="content">
                         <title>Datasets - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={null} execution={null} projectid={"asdasd"} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={null} execution={null} projectid={projectid} />
                             <div className="mb-2">
                                 <Datasets projectId={projectid} />
                             </div>
