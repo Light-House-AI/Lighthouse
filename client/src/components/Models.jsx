@@ -137,7 +137,7 @@ function Models(props) {
                                     return (
                                         <tr key={index}>
                                             <td>{model.name}</td>
-                                            <td>{(new Date(model.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}5</td>
+                                            <td>{(new Date(model.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}</td>
                                             {model.is_trained ?
                                                 <td><span className="badge bg-soft-success text-success p-1">Completed</span></td> :
                                                 <td><span className="badge bg-soft-warning text-warning p-1">In progress</span></td>
