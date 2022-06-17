@@ -8,6 +8,11 @@ def mse(y_true, y_pred):
 def mse_derivative(y_true, y_pred):
     return 2*(y_pred-y_true)/y_true.size;
 
+def msle(y_true, y_pred):
+    return np.mean(np.power(np.log(abs(y_pred)+epsilon) - np.log(y_true+epsilon), 2));
+
+def msle_derivative(y_true, y_pred):
+    return 2*(np.log(abs(y_pred)+epsilon) - np.log(y_true+epsilon))/y_true.size;
 # loss function and its derivative for binary an multi-class classification
 def cross_entropy_binary(y_true, y_pred):
     return -(y_true * np.log(y_pred+epsilon) + (1-y_true) * np.log(1-y_pred+epsilon));
