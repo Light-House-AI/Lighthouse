@@ -24,8 +24,8 @@ function CreateModel(props) {
         }
 
         var model_data = {
-            project_id: projectId,
-            dataset_id: cleanedDatasetId,
+            project_id: parseInt(projectId),
+            dataset_id: parseInt(cleanedDatasetId),
             name: document.getElementById("model-name").value
         }
 
@@ -45,10 +45,13 @@ function CreateModel(props) {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
-            }
+            },
         }).then((response) => {
-            window.location.href = `/${projectId}/deployments/${response.data.id}/create`;
+            debugger;
+            // window.location.href = `/${projectId}/deployments/${response.data.id}/create`;
         }).catch((error) => {
+            debugger;
+            console.log(error);
             if (isPipeline)
                 window.$("#loading-btn").html('<i class="fe-arrow-right me-1"></i>');
             else
