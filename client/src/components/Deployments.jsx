@@ -96,6 +96,32 @@ function Deployments(props) {
         }
     }
 
+    const enableDeployment = function (e) {
+        let deploymentId = window.$(e.target).attr('deploymentid');
+        axios.post(`/deployments/${deploymentId}/run`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            window.location.reload();
+        }).catch((error) => {
+        });
+    }
+
+    const disableDeployment = function (e) {
+        let deploymentId = window.$(e.target).attr('deploymentid');
+        axios.post(`/deployments/${deploymentId}/stop`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            window.location.reload();
+        }).catch((error) => {
+        });
+    }
+
     return (
         <div className="row">
             <div className="col-12">
@@ -143,8 +169,8 @@ function Deployments(props) {
                                                 <td><button className="btn btn-outline-success btn-sm rounded-pill disabled">View</button></td>
                                             }
                                             {deployment.is_running ?
-                                                <td><button className="btn btn-outline-danger btn-sm rounded-pill">Disable</button></td> :
-                                                <td><button className="btn btn-outline-success btn-sm rounded-pill">Enable</button></td>
+                                                <td><button className="btn btn-outline-danger btn-sm rounded-pill" deploymentid={deployment.id} onClick={disableDeployment}>Disable</button></td> :
+                                                <td><button className="btn btn-outline-success btn-sm rounded-pill" deploymentid={deployment.id} onClick={enableDeployment}>Enable</button></td>
                                             }
                                             <td>{findModelName(deployment.primary_model_id)}</td>
                                             <td>{deployment.type === 'champion_challenger' ? deployment.secondary_model_id : 'No secondary model'}</td>
