@@ -3,8 +3,7 @@ from services.validations import *
 from services.cleanup import *
 
 
-def generate_data_statistics(dataset_name: str):
-    expectation_suite_name = dataset_name.split(".")[0]
+def generate_data_statistics(dataset_name: str, expectation_suite_name: str):
     expectations_suite, batch_request = generate_expectations_for_data(
         dataset_name, expectation_suite_name)
     delete_suite_expectations_file(expectation_suite_name)
