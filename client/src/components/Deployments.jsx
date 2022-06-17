@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from 'react-dom/client';
 import axios from "axios";
 
@@ -38,7 +38,6 @@ function Deployments(props) {
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
             }
         }).then((response) => {
-            console.log(response.data);
             setDeployments(response.data);
         }).catch((error) => {
         });
@@ -46,7 +45,7 @@ function Deployments(props) {
         window.$("#testing").footable();
     }, []);
 
-    const createModel = () => {
+    const createDeployment = () => {
         if (deployments.length === 0 || deployments === null)
             return;
 
@@ -59,8 +58,8 @@ function Deployments(props) {
 
         let selectDS =
             <div className="h-50 my-2">
-                <label className="form-label">Select Dataset:</label><br />
-                <select id="select-multiple-datasets">
+                <label className="form-label">Select Model:</label><br />
+                <select id="select-multiple-model">
                     {deployments !== null ?
                         deployments.map((dataset, index) => {
                             return (
@@ -72,20 +71,17 @@ function Deployments(props) {
             </div>;
         modalBody.render(selectDS);
 
-        window.$("#modal-structure #modal-title").text("Create new cleaned dataset");
+        window.$("#modal-structure #modal-title").text("Create new deployment");
         setTimeout(() => {
-            window.selectizeModal = window.$("#modal-structure #select-multiple-datasets").selectize({
+            window.selectizeModal = window.$("#modal-structure #select-multiple-model").selectize({
                 maxItems: 1
             });
         }, 100);
 
         window.$("#modal-structure #modal-btn").on('click', function () {
-            let datasetsId = window.selectizeModal[0].selectize.getValue();
-            if (datasetsId !== '' && datasetsId !== null && datasetsId !== [] && datasetsId !== undefined) {
-                if (Array.isArray(datasetsId))
-                    window.location.href = `/${projectId}/datasets/${datasetsId.join('-')}/clean`;
-                else
-                    window.location.href = `/${projectId}/datasets/${datasetsId}/clean`;
+            let modelId = window.selectizeModal[0].selectize.getValue();
+            if (modelId !== '' && modelId !== null && modelId !== [] && modelId !== undefined) {
+                window.location.href = `/${projectId}/deployments/${modelId}/create`;
             }
         });
 
@@ -108,7 +104,7 @@ function Deployments(props) {
                         <h4 className="header-title mb-0 h-100 d-flex align-items-center">All Deployments</h4>
                     </div>
                     <div className="col-6">
-                        <button className="button-no-style float-end" title="Add new deployment" data-plugin="tippy" onClick={createModel}>
+                        <button className="button-no-style float-end" title="Add new deployment" data-plugin="tippy" onClick={createDeployment}>
                             <i className="fe-plus noti-icon text-color btn-link"></i>
                         </button>
                     </div>
@@ -122,6 +118,7 @@ function Deployments(props) {
                                 <th>Type</th>
                                 <th>Status</th>
                                 <th>Monitoring</th>
+                                <th>Action</th>
                                 <th data-hide="all">Primary Model</th>
                                 <th data-hide="all">Secondary Model</th>
                             </tr>
@@ -144,6 +141,10 @@ function Deployments(props) {
                                             {deployment.is_running ?
                                                 <td><button className="btn btn-outline-success btn-sm rounded-pill">View</button></td> :
                                                 <td><button className="btn btn-outline-success btn-sm rounded-pill disabled">View</button></td>
+                                            }
+                                            {deployment.is_running ?
+                                                <td><button className="btn btn-outline-danger btn-sm rounded-pill">Disable</button></td> :
+                                                <td><button className="btn btn-outline-success btn-sm rounded-pill">Enable</button></td>
                                             }
                                             <td>{findModelName(deployment.primary_model_id)}</td>
                                             <td>{deployment.type === 'champion_challenger' ? deployment.secondary_model_id : 'No secondary model'}</td>
