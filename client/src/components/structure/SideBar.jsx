@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
-function SideBar() {
+function SideBar(props) {
     const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
+    const [projectDetails] = useState(props.projectDetails);
 
     const logOut = function () {
         localStorage.clear();
@@ -31,39 +32,40 @@ function SideBar() {
                         <li>
                             <a href="#datasets" data-bs-toggle="collapse">
                                 <i className="fe-file-text"></i>
-                                <span className="badge bg-success rounded-pill float-end">4</span>
+                                <span className="badge bg-success rounded-pill float-end">{projectDetails.raw_datasets.length + projectDetails.cleaned_datasets.length}</span>
                                 <span> Datasets </span>
                             </a>
                             <div className="collapse" id="datasets">
                                 <ul className="nav-second-level">
                                     <li>
                                         <a href="#rawdata" data-bs-toggle="collapse">
-                                            Raw Datasets <span className="menu-arrow"></span>
+                                            <span className="badge bg-success rounded-pill">{projectDetails.raw_datasets.length}</span> Raw Datasets <span className="menu-arrow"></span>
                                         </a>
                                         <div className="collapse" id="rawdata">
                                             <ul className="nav-second-level">
-                                                <li>
-                                                    <a href="/">Datasets 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="/">Datasets 2</a>
-                                                </li>
+                                                {projectDetails.raw_datasets.map((record, index) => {
+                                                    return (
+                                                        <li key={index}>
+                                                            <a href={`${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
+                                                        </li>
+                                                    );
+                                                })}
                                             </ul>
                                         </div>
                                     </li>
-
                                     <li>
                                         <a href="#cleaneddatasets" data-bs-toggle="collapse">
-                                            Cleaned Datasets <span className="menu-arrow"></span>
+                                            <span className="badge bg-success rounded-pill">{projectDetails.cleaned_datasets.length}</span> Cleaned Datasets <span className="menu-arrow"></span>
                                         </a>
                                         <div className="collapse" id="cleaneddatasets">
                                             <ul className="nav-second-level">
-                                                <li>
-                                                    <a href="/">Datasets 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="/">Datasets 2</a>
-                                                </li>
+                                                {projectDetails.cleaned_datasets.map((record, index) => {
+                                                    return (
+                                                        <li key={index}>
+                                                            <a href={`${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
+                                                        </li>
+                                                    );
+                                                })}
                                             </ul>
                                         </div>
                                     </li>
@@ -75,23 +77,18 @@ function SideBar() {
                         <li>
                             <a href="#models" data-bs-toggle="collapse">
                                 <i className="fe-box"></i>
-                                <span className="badge bg-success rounded-pill float-end">4</span>
+                                <span className="badge bg-success rounded-pill float-end">{projectDetails.models.length}</span>
                                 <span> Models </span>
                             </a>
                             <div className="collapse" id="models">
                                 <ul className="nav-second-level">
-                                    <li>
-                                        <a href="/">Model 1</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Model 2</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Model 3</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Model 4</a>
-                                    </li>
+                                    {projectDetails.models.map((record, index) => {
+                                        return (
+                                            <li key={index}>
+                                                <a href={`${record.project_id}/models/${record.id}/view`}>{record.name}</a>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         </li>
@@ -100,23 +97,18 @@ function SideBar() {
                         <li>
                             <a href="#deployments" data-bs-toggle="collapse">
                                 <i className="fe-cloud-lightning"></i>
-                                <span className="badge bg-success rounded-pill float-end">4</span>
+                                <span className="badge bg-success rounded-pill float-end">{projectDetails.deployments.length}</span>
                                 <span> Deployments </span>
                             </a>
                             <div className="collapse" id="deployments">
                                 <ul className="nav-second-level">
-                                    <li>
-                                        <a href="/">Deployment 1</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Deployment 2</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Deployment 3</a>
-                                    </li>
-                                    <li>
-                                        <a href="/">Deployment 4</a>
-                                    </li>
+                                    {projectDetails.deployments.map((record, index) => {
+                                        return (
+                                            <li key={index}>
+                                                <a href={`${record.project_id}/deployments/${record.id}/view`}>{record.name}</a>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         </li>

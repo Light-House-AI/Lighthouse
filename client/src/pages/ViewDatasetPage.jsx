@@ -37,7 +37,8 @@ function ViewDatasetPage() {
     return (
         <div id='wrapper'>
             <Navigation />
-            <SideBar />
+            {projectDetails !== null ?
+                <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
                 {projectDetails !== null && datasetDetails !== null ?
                     <div className="content">
