@@ -158,7 +158,7 @@ function Deployments(props) {
                                             <td>{(new Date(deployment.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}</td>
                                             {deployment.type === 'champion_challenger' ?
                                                 <td><span className="badge bg-soft-info text-info p-1">Champion - Challenger</span></td> :
-                                                <td><span className="badge bg-soft-warning text-warning p-1">Fallout</span></td>
+                                                <td><span className="badge bg-soft-warning text-warning p-1">Single Model</span></td>
                                             }
                                             {deployment.is_running ?
                                                 <td><span className="badge bg-soft-success text-success p-1">Active</span></td> :
