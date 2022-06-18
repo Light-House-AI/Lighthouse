@@ -7,7 +7,7 @@ def get_environment_variables():
     try:
         environment_variables_dict = {}
         deployment_type = os.environ['DEPLOYMENT_TYPE']
-        if deployment_type is None:
+        if deployment_type is None or deployment_type is "single":
             deployment_type = "single"
         else:
             environment_variables_dict["azure_blob_name_2"] = os.environ['AZURE_BLOB_NAME_2']
@@ -19,6 +19,7 @@ def get_environment_variables():
         environment_variables_dict['azure_blob_name'] = os.environ.get(
             'AZURE_BLOB_NAME')
         environment_variables_dict['deployment_type'] = deployment_type
+
         return environment_variables_dict
 
     except Exception as ex:
@@ -41,7 +42,8 @@ def load_pkl_model(azure_blob_name: str):
 
 def generate_model_storage_path(azure_blob_name: str):
     #! FOR RUNNING WITHOUT DOCKER
-    # models_folder_path = dirname(dirname(dirname(__file__))) + "/models/"
+    # models_folder_path = dirname(
+    #     dirname(dirname(__file__))) + "/models/"
     #! FOR RUNNING WITH DOCKER
     models_folder_path = dirname(
         dirname(dirname(dirname(__file__)))) + "/models/"

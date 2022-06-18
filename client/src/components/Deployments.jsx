@@ -148,6 +148,7 @@ function Deployments(props) {
                                 <th>Status</th>
                                 <th>Monitoring</th>
                                 <th>Action</th>
+                                <th>Live</th>
                                 <th data-hide="all">Primary Model</th>
                                 <th data-hide="all">Secondary Model</th>
                             </tr>
@@ -174,6 +175,11 @@ function Deployments(props) {
                                             {deployment.is_running ?
                                                 <td><button className="btn btn-outline-danger btn-sm rounded-pill" deploymentid={deployment.id} onClick={disableDeployment}>Disable</button></td> :
                                                 <td><button className="btn btn-outline-success btn-sm rounded-pill" deploymentid={deployment.id} onClick={enableDeployment}>Enable</button></td>
+                                            }
+                                            {/* /:projectid/deployments/:deploymentid/predict */}
+                                            {deployment.is_running ?
+                                                <td><a href={`/${projectId}/deployments/${deployment.id}/predict`} className="btn btn-outline-primary btn-sm rounded-pill">Predict</a></td> :
+                                                <td><a href={`/${projectId}/deployments/${deployment.id}/predict`} className="btn btn-outline-primary btn-sm rounded-pill disabled" disabled>Predict</a></td>
                                             }
                                             <td>{findModelName(deployment.primary_model_id)}</td>
                                             <td>{deployment.type === 'champion_challenger' ? deployment.secondary_model_id : 'No secondary model'}</td>

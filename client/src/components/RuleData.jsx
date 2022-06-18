@@ -17,7 +17,6 @@ function RuleData(props) {
             }
         }).then((response) => {
             setRules(response.data.rules);
-            console.log(response.data);
         }).catch((error) => {
         });
     }, []);

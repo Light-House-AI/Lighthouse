@@ -35,7 +35,7 @@ function CreateModelPage() {
                         <div className="container-fluid scroll">
                             <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Models"} view={"Create Model"} execution={null} projectid={projectid} />
                             <div className="mb-2">
-                                <CreateModel projectId={projectid} cleanedDatasetId={datasetcleanedid} isPipeline={true} />
+                                <CreateModel projectId={projectid} cleanedDatasetId={datasetcleanedid} isPipeline={false} />
                             </div>
                             <Footer />
                         </div>
