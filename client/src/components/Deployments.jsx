@@ -27,26 +27,27 @@ function Deployments(props) {
             }
         }).then((response) => {
             setModels(response.data);
+            axios.get('/deployments', {
+                params: {
+                    project_id: projectId
+                },
+                headers: {
+                    'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+                }
+            }).then((response) => {
+                setDeployments(response.data);
+                setTimeout(() => {
+                    window.$("#testing").footable();
+                }, 100);
+            }).catch((error) => {
+            });
         }).catch((error) => {
         });
 
-        axios.get('/deployments', {
-            params: {
-                project_id: projectId
-            },
-            headers: {
-                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
-            }
-        }).then((response) => {
-            setDeployments(response.data);
-        }).catch((error) => {
-        });
-
-        window.$("#testing").footable();
     }, []);
 
     const createDeployment = () => {
-        if (deployments.length === 0 || deployments === null)
+        if (models.length === 0 || models === null)
             return;
 
         var modalBody = reactRoot;
@@ -60,11 +61,13 @@ function Deployments(props) {
             <div className="h-50 my-2">
                 <label className="form-label">Select Model:</label><br />
                 <select id="select-multiple-model">
-                    {deployments !== null ?
-                        deployments.map((dataset, index) => {
-                            return (
-                                <option key={index} value={dataset.id}>{dataset.name}</option>
-                            )
+                    {models !== null ?
+                        models.map((model, index) => {
+                            if (model.is_trained) {
+                                return (
+                                    <option key={index} value={model.id}>{model.name}</option>
+                                )
+                            }
                         })
                         : null}
                 </select>
@@ -88,9 +91,9 @@ function Deployments(props) {
         document.getElementById('modal-trigger').click();
     }
 
-    const findModelName = function () {
+    const findModelName = function (model_id) {
         for (let i = 0; i < models.length; i++) {
-            if (models[i].id === this.dataset_id) {
+            if (models[i].id === model_id) {
                 return models[i].name;
             }
         }
