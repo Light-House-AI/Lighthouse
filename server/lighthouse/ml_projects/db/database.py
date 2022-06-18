@@ -1,11 +1,13 @@
 """Contains the configuration for the database."""
 
 import logging
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.engine import Engine
 
 from lighthouse.config import config
+from lighthouse.logger import logger
 
 
 def get_engine():
@@ -35,12 +37,11 @@ def get_session_factory(engine: Engine):
     return session_factory
 
 
-def check_db_connection(session_factory: sessionmaker, logger: logging.Logger):
+def check_db_connection(db: Session):
     """
     Tests the database connection.
     """
     try:
-        db = session_factory()
         db.execute("SELECT 1")
         logger.info("Database connection successful!")
     except Exception as e:

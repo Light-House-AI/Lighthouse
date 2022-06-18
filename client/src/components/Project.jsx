@@ -12,9 +12,9 @@ function Project(props) {
             Morris.Donut({
                 element: 'project-' + _id,
                 data: [
-                    { label: "Datasets", value: project.datasets === undefined ? 0 : project.datasets },
-                    { label: "Models", value: project.models === undefined ? 0 : project.models },
-                    { label: "Deployments", value: project.deployments === undefined ? 0 : project.deployments }
+                    { label: "Datasets", value: project.num_cleaned_datasets + project.num_raw_datasets },
+                    { label: "Models", value: project.num_models },
+                    { label: "Deployments", value: project.num_deployments }
                 ],
                 barSize: 0.2,
                 resize: true,
@@ -39,15 +39,15 @@ function Project(props) {
                         <div className="text-center">
                             <div className="row mt-2">
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.datasets === undefined ? 0 : project.datasets}</h3>
+                                    <h3 data-plugin="counterup">{project.num_cleaned_datasets + project.num_raw_datasets}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Datasets</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.models === undefined ? 0 : project.models}</h3>
+                                    <h3 data-plugin="counterup">{project.num_models}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Models</p>
                                 </div>
                                 <div className="col-4">
-                                    <h3 data-plugin="counterup">{project.deployments === undefined ? 0 : project.deployments}</h3>
+                                    <h3 data-plugin="counterup">{project.num_deployments}</h3>
                                     <p className="text-muted font-13 mb-0 text-truncate">Deployments</p>
                                 </div>
                             </div>

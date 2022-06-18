@@ -26,11 +26,11 @@ class Config(BaseSettings):
 
     # Temporary raw datasets location.
     RAW_DATASETS_TEMP_DIR = os.path.join(os.path.dirname(BASE_DIR),
-                                         'tmp/raw_datasets/')
+                                         'tmp\\raw_datasets')
 
     # Temporary cleaned datasets location.
     CLEANED_DATASETS_TEMP_DIR = os.path.join(os.path.dirname(BASE_DIR),
-                                             'tmp/cleaned_datasets/')
+                                             'tmp\\cleaned_datasets')
 
     # Azure Blob Storage connection string.
     AZURE_CONN_STR: str = ''
@@ -101,6 +101,9 @@ class Config(BaseSettings):
 
     # Github containers registry password.
     GHCR_PASSWORD: str = ""
+
+    # Monitoring rows threshold.
+    MONITORING_NUM_ROWS_NOTIFY: int = 100
 
 
 config = Config(_env_file=ENV_FILE_PATH)

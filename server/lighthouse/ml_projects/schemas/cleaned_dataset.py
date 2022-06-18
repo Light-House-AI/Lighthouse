@@ -1,6 +1,6 @@
 from typing import Dict, Optional, List
 from datetime import datetime
-from pydantic import BaseModel, conset
+from pydantic import BaseModel, conset, constr
 
 
 class CleanedDatasetSource(BaseModel):
@@ -10,12 +10,12 @@ class CleanedDatasetSource(BaseModel):
 
 class CleanedDatasetBase(BaseModel):
     project_id: Optional[int]
-    name: Optional[str]
+    name: Optional[constr(min_length=1, strip_whitespace=True)]
 
 
 # properties to receive on CleanedDataset creation
 class CleanedDatasetCreate(CleanedDatasetBase):
-    name: str
+    name: constr(min_length=1, strip_whitespace=True)
     project_id: int
     sources: conset(int, min_items=1)
     rules: List[Dict]

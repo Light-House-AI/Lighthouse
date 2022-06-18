@@ -1,18 +1,18 @@
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, constr, conset
 from lighthouse.ml_projects.db import RawDatasetCreationMethod
 
 
 class RawDatasetBase(BaseModel):
     project_id: Optional[int]
-    name: Optional[str]
+    name: Optional[constr(min_length=1, strip_whitespace=True)]
     creation_method: Optional[RawDatasetCreationMethod]
 
 
 # properties to receive on RawDataset creation
 class RawDatasetCreate(RawDatasetBase):
-    name: str
+    name: constr(min_length=1, strip_whitespace=True)
     project_id: int
 
 
@@ -30,4 +30,4 @@ class RawDataset(RawDatasetInDBBase):
 
 
 class RawDatasetsRecommendations(BaseModel):
-    datasets_ids: List[int]
+    datasets_ids: conset(int, min_items=1)

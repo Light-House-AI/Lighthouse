@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 
 from lighthouse.ml_projects.db import UserRole
 
@@ -15,9 +15,9 @@ class UserBase(BaseModel):
 # properties to receive on user creation
 class UserCreate(UserBase):
     email: EmailStr
-    password: str
-    first_name: str
-    last_name: str
+    password: constr(min_length=8)
+    first_name: constr(strip_whitespace=True, min_length=3)
+    last_name: constr(strip_whitespace=True, min_length=3)
 
 
 class UserInDBBase(UserBase):
@@ -37,14 +37,3 @@ class UserInDB(UserInDBBase):
 # properties to return to the client
 class User(UserInDBBase):
     ...
-
-
-class Notification(BaseModel):
-    id: int
-    created_at: datetime
-    user_id: int
-    title: str
-    body: str
-
-    class Config:
-        orm_mode = True

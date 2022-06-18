@@ -40,7 +40,7 @@ class NeuralNetwork:
             for layer in self.layers:
                 output = layer.forward_propagation(output)
             result.append(output[0])
-
+        result = [np.argmax(predicted_result) for predicted_result in result]
         return np.asarray(result)
     
     # train the network

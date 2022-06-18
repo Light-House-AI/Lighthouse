@@ -33,7 +33,7 @@ function ViewRules(props) {
                     {/* DROP COLUMN */}
                     <div className="mb-2">
                         <div className="form-check form-switch">
-                            <input className="form-check-input" type="checkbox" role="switch" defaultChecked={false} disabled />
+                            <input className="form-check-input" type="checkbox" role="switch" defaultChecked={rules.fill_method === 'column' ? true : false} disabled />
                             <label className="form-check-label">Drop column?</label>
                         </div>
                     </div>
@@ -88,7 +88,7 @@ function ViewRules(props) {
                     {/* FILL METHOD */}
                     <div className="mb-2">
                         <label className="form-label">Fill Method:</label>
-                        <select ref={columnFill} defaultValue={rules.fill_method} name="fill_method">
+                        <select ref={columnFill} defaultValue={rules.fill_method} name="fill_method" disabled>
                             <option value="">Select a fill method</option>
                             <option value="automatic">Automatic</option>
                             <option value="column">Drop Column</option>
@@ -108,7 +108,7 @@ function ViewRules(props) {
                     <div className="mb-1">
                         <label className="form-label mb-0">Order Values:</label><br />
                         <small className="text-muted">CSV: 0,1,2</small>
-                        <input type="text" className="form-control" placeholder="0,1,2" disabled />
+                        <input type="text" className="form-control" defaultValue={rules.ordinal_order} disabled />
                     </div>
                 </div> : null}
         </div>

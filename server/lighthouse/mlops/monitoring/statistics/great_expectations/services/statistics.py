@@ -1,12 +1,15 @@
-from services.constants import *
+from .constants import *
 
+import os
 import great_expectations as ge
 from great_expectations.core.batch import BatchRequest
 from great_expectations.profile.user_configurable_profiler import UserConfigurableProfiler
 
+_context_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 def generate_expectations_for_data(dataset_name: str, expectation_suite_name: str):
-    context = ge.get_context()
+    context = ge.DataContext(context_root_dir=_context_path)
+        
     suite = context.create_expectation_suite(
         expectation_suite_name=expectation_suite_name, overwrite_existing=True)
     batch_request = {"datasource_name": f"{DATASOURCE_NAME}",

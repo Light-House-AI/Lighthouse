@@ -1,16 +1,16 @@
 from .constants import *
-from lighthouse.config import config
+from lighthouse.config import config as lighthouse_config
 
 secret_class_arguments_dict = {
     "name": IMAGE_SECRET_NAME,
-    "username": config.GHCR_USERNAME,
-    "password": config.GHCR_PASSWORD,
+    "username": lighthouse_config.GHCR_USERNAME,
+    "password": lighthouse_config.GHCR_PASSWORD,
     "server": IMAGE_SERVER,
     "namespace": CLUSTER_NAMESPACE
 }
 
 deployment_envs_dict = {
-    "AZURE_STORAGE_CONNECTION_STRING": config.AZURE_CONN_STR,
+    "AZURE_STORAGE_CONNECTION_STRING": lighthouse_config.AZURE_CONN_STR,
     "AZURE_CONTAINER_NAME": CONTAINER_NAME,
     "DEPLOYMENT_TYPE": "leave as is",
     "AZURE_BLOB_NAME": "leave as is" + PKL_EXTENSION,

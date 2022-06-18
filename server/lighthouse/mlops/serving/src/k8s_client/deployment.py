@@ -6,8 +6,6 @@ class Deployment:
         try:
             self.api = api
             self.project_id = deployment_class_arguments["project_id"]
-            self.model_id = deployment_class_arguments["model_id"]
-            self.challenger_model_id = deployment_class_arguments["challenger_model_id"]
             self.name = self.project_id + "-deployment"
             self.container_name = self.project_id + "-container"
             self.replicas = deployment_class_arguments["replicas"]
@@ -113,25 +111,23 @@ class Deployment:
             print(f"Error in getting the deployments")
             print(e)
 
-# TODO check this fn
-
     @staticmethod
-    def get_pods(api_client: client.CoreV1Api, model_id: str, namespace: str):
+    def get_pods(api_client: client.CoreV1Api, project_id: str, namespace: str):
         # deployment_name = project_id+"-deployment"
         try:
             resp = api_client.list_namespaced_pod(pretty=True,
-                                                  namespace=namespace, label_selector=f"model={model_id}")
+                                                  namespace=namespace, label_selector=f"project={project_id}")
             pods_counter = 1
 
-            print(f"Pods in deployment {model_id}-deployment")
+            print(f"Pods in deployment {project_id}-deployment")
             for pod in resp.items:
                 print(
-                    f"Pod number {pods_counter} with name {pod.metadata.name} in deployment {model_id}-deployment")
+                    f"Pod number {pods_counter} with name {pod.metadata.name} in deployment {project_id}-deployment")
                 pods_counter += 1
 
             return True
 
         except Exception as e:
-            print(f"Error in getting the pods of {model_id}-deployment")
+            print(f"Error in getting the pods of {project_id}-deployment")
             print(e)
             return False
