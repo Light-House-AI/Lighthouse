@@ -8,6 +8,19 @@ def mse(y_true, y_pred):
 def mse_derivative(y_true, y_pred):
     return 2*(y_pred-y_true)/y_true.size;
 
+def mae(y_true, y_pred):
+    return np.sqrt(np.mean(np.abs(y_true-y_pred)));
+def mae_derivative(y_true, y_pred):
+    return 2*(y_pred-y_true)/y_true.size;
+
+def rmse(y_true, y_pred):
+    y_pred = np.nan_to_num(y_pred)
+    return np.sqrt(np.mean(np.power(abs(y_true-y_pred), 2)));
+                   
+def rmse_derivative(y_true, y_pred):
+    y_pred = np.nan_to_num(y_pred)
+    return 2*(abs(y_pred-y_true))/y_true.size;
+
 def msle(y_true, y_pred):
     return np.mean(np.power(np.sqrt(abs(y_pred)+epsilon) - np.sqrt(y_true+epsilon), 2));
 

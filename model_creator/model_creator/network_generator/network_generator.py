@@ -6,7 +6,7 @@ from neural_network import NeuralNetwork
 from fc_layer import FCLayer
 from activation_layer import ActivationLayer
 from activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from loss_functions import mse, mse_derivative, msle, msle_derivative
+from loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
 
@@ -97,13 +97,13 @@ class NetworkGenerator:
             network.use(mse, mse_derivative)
         else: 
             network.add(ActivationLayer(identity, identity_derivative))
-            network.use(mse, mse_derivative)
+            network.use(mae, mae_derivative)
         network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
         return network
             
     def __network_generator(self, config, reporter):
         network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
-        y_pred = network.predict(self.X_test)
+        np.nan_to_num(y_pred = network.predict(self.X_test))
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:

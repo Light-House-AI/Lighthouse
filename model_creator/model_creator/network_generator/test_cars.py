@@ -14,7 +14,7 @@ hyperparameters = {
     "predicted": "price", # "Price"
     # Optional
     # Each element in the list is a trial
-    "number_of_layers": [5, 6, 7, 8, 9],
+    "number_of_layers": [2, 3, 4, 5],
     "maximum_neurons_per_layer": [32, 16, 8], # Number of neurons in the middle layer
     "learning_rate": [0.001, 0.01, 0.1],
     "batch_size": [8, 16, 32], # [1] is for stochastic Gradient Descent else is mini-batch
