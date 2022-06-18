@@ -61,7 +61,6 @@ class NetworkGenerator:
             self.activation_function_derivative = relu_derivative
         else: 
             self.y_train = to_categorical(self.y_train)
-            self.y_test = to_categorical(self.y_test)
             self.output_layer_size = self.y_train.shape[1]
             self.activation_function = tanh
             self.activation_function_derivative = tanh_derivative
@@ -103,7 +102,7 @@ class NetworkGenerator:
             
     def __network_generator(self, config, reporter):
         network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
-        np.nan_to_num(y_pred = network.predict(self.X_test))
+        y_pred = np.nan_to_num(network.predict(self.X_test))
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:
