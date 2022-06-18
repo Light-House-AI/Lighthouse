@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from network_generator import NetworkGenerator
-from save_load_model import import_model, export_model
+from .network_generator import NetworkGenerator
+from .save_load_model import import_model, export_model
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import mean_squared_log_error
 import time

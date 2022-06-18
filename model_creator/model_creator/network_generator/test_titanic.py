@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from network_generator import NetworkGenerator, to_categorical
-from save_load_model import import_model, export_model
+from .network_generator import NetworkGenerator, to_categorical
+from .save_load_model import import_model, export_model
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 
