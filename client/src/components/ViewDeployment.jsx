@@ -3,9 +3,13 @@ import React, { useState, useEffect, useRef } from "react";
 function ViewDeployment(props) {
     const [deploymentDetails] = useState(props.deploymentDetails);
     const selectModelsRef = useRef(null);
+    const selectModelsRef2 = useRef(null);
 
     useEffect(() => {
         window.selectSecondaryModels = window.$(selectModelsRef.current).selectize({
+            maxItems: 1
+        });
+        window.selectSecondaryModels = window.$(selectModelsRef2.current).selectize({
             maxItems: 1
         });
     }, []);
@@ -37,9 +41,16 @@ function ViewDeployment(props) {
                             </div>
                             <div className="col-xl-6">
                                 <div className="mb-3">
-                                    <label htmlFor="models-select" className="form-label">Select Secondary Model:</label>
+                                    <label htmlFor="models-select" className="form-label">Select Primary Model:</label>
                                     <select id="models-select" ref={selectModelsRef} disabled>
-                                        <option>{deploymentDetails.secondary_model_id}</option>
+                                        <option>{deploymentDetails.primary_model.name}</option>
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="models-select" className="form-label">Select Secondary Model:</label>
+                                    <select id="models-select" ref={selectModelsRef2} disabled>
+                                        {deploymentDetails.secondary_model !== null ?
+                                            <option>{deploymentDetails.secondary_model.name}</option> : null}
                                     </select>
                                 </div>
                                 {/* ENABLE/DISABLE DEPLOYMENT */}
