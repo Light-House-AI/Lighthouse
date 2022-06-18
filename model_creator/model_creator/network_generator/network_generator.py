@@ -57,8 +57,8 @@ class NetworkGenerator:
             
         if(self.type == "Regression"):
             self.output_layer_size = 1
-            self.activation_function = tanh
-            self.activation_function_derivative = tanh_derivative
+            self.activation_function = relu
+            self.activation_function_derivative = relu_derivative
         else: 
             self.y_train = to_categorical(self.y_train)
             self.y_test = to_categorical(self.y_test)
