@@ -3,14 +3,15 @@ import { useParams } from 'react-router-dom';
 import axios from "axios";
 
 import Navigation from "../components/structure/Navigation";
-import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
+import SideBar from "../components/structure/SideBar";
 import PageTitle from "../components/structure/PageTitle";
-import Deployments from "../components/Deployments";
+import ViewModel from "../components/ViewModel.jsx";
 
-function DeploymentsPage() {
-    const { projectid } = useParams();
+function ViewModelPage() {
+    const { projectid, modelid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
+    const [modelDetails, setModelDetails] = useState(null);
 
     useEffect(() => {
         axios.get(`/projects/${projectid}/`, {
@@ -21,6 +22,14 @@ function DeploymentsPage() {
         }).then((response) => {
             setProjectDetails(response.data);
         });
+
+        axios.get(`/models/${modelid}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setModelDetails(response.data);
+        })
     }, []);
 
     return (
@@ -29,13 +38,13 @@ function DeploymentsPage() {
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
-                {projectDetails !== null ?
+                {projectDetails !== null && modelDetails !== null ?
                     <div className="content">
-                        <title>Deployments - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
+                        <title>View {window.capitalizeFirstLetter(modelDetails.name)} - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Deployments"} view={null} execution={null} projectid={projectid} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Models"} view={window.capitalizeFirstLetter(modelDetails.name)} execution={"View"} projectid={projectid} />
                             <div className="mb-2">
-                                <Deployments projectId={projectid} />
+                                <ViewModel modelDetails={modelDetails} type={projectDetails.type} />
                             </div>
                             <Footer />
                         </div>
@@ -45,4 +54,4 @@ function DeploymentsPage() {
     );
 }
 
-export default DeploymentsPage;
+export default ViewModelPage;

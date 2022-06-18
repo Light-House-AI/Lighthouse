@@ -3,14 +3,16 @@ import { useParams } from 'react-router-dom';
 import axios from "axios";
 
 import Navigation from "../components/structure/Navigation";
-import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
+import SideBar from "../components/structure/SideBar";
 import PageTitle from "../components/structure/PageTitle";
-import Deployments from "../components/Deployments";
 
-function DeploymentsPage() {
-    const { projectid } = useParams();
+import ViewDeployment from "../components/ViewDeployment";
+
+function ViewDeploymentPage() {
+    const { projectid, deploymentid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
+    const [deploymentDetails, setDeploymentDetails] = useState(null);
 
     useEffect(() => {
         axios.get(`/projects/${projectid}/`, {
@@ -21,6 +23,15 @@ function DeploymentsPage() {
         }).then((response) => {
             setProjectDetails(response.data);
         });
+
+        axios.get(`/deployments/${deploymentid}/`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setDeploymentDetails(response.data);
+        }).catch((error) => {
+        });
     }, []);
 
     return (
@@ -29,13 +40,13 @@ function DeploymentsPage() {
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
-                {projectDetails !== null ?
+                {projectDetails !== null && deploymentDetails !== null ?
                     <div className="content">
-                        <title>Deployments - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
+                        <title>Predict {window.capitalizeFirstLetter(deploymentDetails.name)} - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Deployments"} view={null} execution={null} projectid={projectid} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Deployments"} view={window.capitalizeFirstLetter(deploymentDetails.name)} execution={"View"} projectid={projectid} />
                             <div className="mb-2">
-                                <Deployments projectId={projectid} />
+                                <ViewDeployment deploymentDetails={deploymentDetails} />
                             </div>
                             <Footer />
                         </div>
@@ -43,6 +54,7 @@ function DeploymentsPage() {
             </div>
         </div>
     );
+
 }
 
-export default DeploymentsPage;
+export default ViewDeploymentPage;

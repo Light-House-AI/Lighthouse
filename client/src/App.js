@@ -8,7 +8,6 @@ import './scss/structure.scss';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import Sample from './pages/Sample'
 import DatasetsPage from './pages/DatasetsPage';
 import ModelsPage from './pages/ModelsPage';
 import DeploymentsPage from './pages/DeploymentsPage';
@@ -18,6 +17,10 @@ import CreateDeploymentPage from './pages/CreateDeploymentPage';
 import ViewDatasetPage from './pages/ViewDatasetPage';
 import CleanDataPage from './pages/CleanDataPage';
 import RulesDataPage from './pages/RulesDataPage';
+import ViewModelPage from './pages/ViewModelPage';
+import ViewDeploymentPage from './pages/ViewDeploymentPage';
+import PredictPage from './pages/PredictPage';
+
 function App() {
 
   useEffect(() => {
@@ -30,17 +33,21 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/newproject" element={<CreateProjectPage />} />
+        {/* DATASET */}
         <Route path="/:projectid" element={<DatasetsPage />} />
         <Route path="/:projectid/datasets" element={<DatasetsPage />} />
-        <Route path="/:projectid/models" element={<ModelsPage />} />
-        <Route path="/:projectid/deployments" element={<DeploymentsPage />} />
-        <Route path="/:projectid/models/create" element={<CreateModelPage />} />
-        <Route path="/:projectid/models/:datasetcleanedid/create" element={<CreateModelPage />} />
-        <Route path="/:projectid/deployments/create" element={<CreateDeploymentPage />} />
-        <Route path="/:projectid/datasets/:datasetid/view" element={<ViewDatasetPage />} />
+        <Route path="/:projectid/datasets/:datasettype/:datasetid/view" element={<ViewDatasetPage />} />
         <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
         <Route path="/:projectid/datasets/:datasetid/rules" element={<RulesDataPage />} />
-        <Route path="/sample" element={<Sample />} />
+        {/* MODEL */}
+        <Route path="/:projectid/models" element={<ModelsPage />} />
+        <Route path="/:projectid/models/:datasetcleanedid/create" element={<CreateModelPage />} />
+        <Route path="/:projectid/models/:modelid/view" element={<ViewModelPage />} />
+        {/* DEPLOYMENTS */}
+        <Route path="/:projectid/deployments" element={<DeploymentsPage />} />
+        <Route path="/:projectid/deployments/:modelid/create" element={<CreateDeploymentPage />} />
+        <Route path="/:projectid/deployments/:deploymentid/predict" element={<PredictPage />} />
+        <Route path="/:projectid/deployments/:deploymentid/view" element={<ViewDeploymentPage />} />
       </Routes>
     </BrowserRouter>
   );

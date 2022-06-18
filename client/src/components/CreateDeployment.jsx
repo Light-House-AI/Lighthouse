@@ -1,11 +1,91 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-function CreateDeployment() {
+function CreateDeployment(props) {
+    const [projectId] = useState(props.projectId);
+    const [modelId] = useState(props.modelId);
+    const [models, setModels] = useState(null);
     const selectModelsRef = useRef(null);
 
     useEffect(() => {
-        window.$(selectModelsRef.current).select2();
+        axios.get('/models', {
+            params: {
+                project_id: parseInt(projectId)
+            },
+            headers: {
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            let models = [];
+            for (let i = 0; i < response.data.length; i++) {
+                if (response.data[i].id !== parseInt(modelId)) {
+                    models.push(response.data[i]);
+                }
+            }
+            setModels(models);
+            setTimeout(() => {
+                window.selectSecondaryModels = window.$(selectModelsRef.current).selectize({
+                    maxItems: 1
+                });
+            }, 100);
+        }).catch((error) => {
+        });
     }, []);
+
+    const deploymentCreation = function () {
+        document.getElementById('error-div').classList.add('d-none');
+        document.getElementById('next-btn').classList.add('disabled');
+        window.$("#loading-btn").html('<div class="spinner-border spinner-border-sm text-white me-1" role="status"></div>');
+
+        if (document.getElementById("deployment-name").value === '') {
+            document.getElementById('error-msg').innerHTML = 'Deployment name is required.';
+            document.getElementById('error-div').classList.remove('d-none');
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i className="fe-check-circle me-1"></i>');
+            return;
+        }
+
+        let selectedModel = window.selectSecondaryModels[0].selectize.getValue();
+        let deploymentType = window.$("input[name=deploymenttype]:checked").val();
+
+        if (selectedModel !== '' && deploymentType === 'single_model') {
+            document.getElementById('error-msg').innerHTML = 'Single Model selected with a model. Please select Champion-Challenger type.';
+            document.getElementById('error-div').classList.remove('d-none');
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i className="fe-check-circle me-1"></i>');
+            return;
+        }
+
+        if (selectedModel === '' && deploymentType !== 'single_model') {
+            document.getElementById('error-msg').innerHTML = 'Champion-Challenger and Secondary Model not selected.';
+            document.getElementById('error-div').classList.remove('d-none');
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i className="fe-check-circle me-1"></i>');
+            return;
+        }
+
+        let data = {
+            project_id: parseInt(projectId),
+            name: document.getElementById("deployment-name").value,
+            primary_model_id: parseInt(modelId),
+            secondary_model_id: parseInt(selectedModel),
+            type: deploymentType,
+            is_running: window.$("input[name=deployment-action]:checked").val()
+        };
+
+        axios.post(`/deployments`, data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            window.location.href = `/${projectId}/deployments`;
+        }).catch((error) => {
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i className="fe-check-circle me-1"></i>');
+        });
+
+    }
 
     return (
         <div className="row">
@@ -16,93 +96,62 @@ function CreateDeployment() {
                             <div className="col-xl-6">
                                 {/* DEPLOYMENT NAME */}
                                 <div className="mb-3">
-                                    <label htmlFor="modelname" className="form-label">Deployment Name</label>
-                                    <input type="text" id="modelname" className="form-control" placeholder="Enter deployment name" />
+                                    <label htmlFor="deployment-name" className="form-label">Deployment Name:</label>
+                                    <input type="text" id="deployment-name" className="form-control" placeholder="Enter deployment name" />
                                 </div>
-                                {/* CHAMPION-CHALLENGER / FALLOUT */}
+                                {/* CHAMPION-CHALLENGER / CHAMPION */}
                                 <div className="mb-3">
-                                    <label className="form-label">Project Type</label><br />
+                                    <label className="form-label">Deployment Type:</label><br />
                                     <div className="form-check form-check-inline">
-                                        <input type="radio" id="customRadio1" name="deploymenttype" className="form-check-input" defaultChecked />
+                                        <input type="radio" id="customRadio1" name="deploymenttype" className="form-check-input" value='champion_challenger' />
                                         <label className="form-check-label" htmlFor="customRadio1">Champion-Challenger</label>
                                     </div>
                                     <div className="form-check form-check-inline">
-                                        <input type="radio" id="customRadio2" name="deploymenttype" className="form-check-input" />
-                                        <label className="form-check-label" htmlFor="customRadio2">Fallout</label>
+                                        <input type="radio" id="customRadio2" name="deploymenttype" className="form-check-input" value='single_model' defaultChecked />
+                                        <label className="form-check-label" htmlFor="customRadio2">Single Model</label>
+                                    </div>
+                                </div>
+                                <div className="mb-2">
+                                    <div id='error-div' className="mt-4 d-none">
+                                        <label id="error-msg" className="text-danger"></label>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-xl-6">
                                 <div className="mb-3">
-                                    <label htmlFor="models-select" className="form-label">Select Model(s)</label>
-                                    <select id="models-select" ref={selectModelsRef} className="form-control select2-multiple" data-toggle="select2" data-width="100%" multiple="multiple" data-placeholder="Choose models...">
-                                        <optgroup label="Alaskan/Hawaiian Time Zone">
-                                            <option value="AK">Alaska</option>
-                                            <option value="HI">Hawaii</option>
-                                        </optgroup>
-                                        <optgroup label="Pacific Time Zone">
-                                            <option value="CA">California</option>
-                                            <option value="NV">Nevada</option>
-                                            <option value="OR">Oregon</option>
-                                            <option value="WA">Washington</option>
-                                        </optgroup>
-                                        <optgroup label="Mountain Time Zone">
-                                            <option value="AZ">Arizona</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="MT">Montana</option>
-                                            <option value="NE">Nebraska</option>
-                                            <option value="NM">New Mexico</option>
-                                            <option value="ND">North Dakota</option>
-                                            <option value="UT">Utah</option>
-                                            <option value="WY">Wyoming</option>
-                                        </optgroup>
-                                        <optgroup label="Central Time Zone">
-                                            <option value="AL">Alabama</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                            <option value="LA">Louisiana</option>
-                                            <option value="MN">Minnesota</option>
-                                            <option value="MS">Mississippi</option>
-                                            <option value="MO">Missouri</option>
-                                            <option value="OK">Oklahoma</option>
-                                            <option value="SD">South Dakota</option>
-                                            <option value="TX">Texas</option>
-                                            <option value="TN">Tennessee</option>
-                                            <option value="WI">Wisconsin</option>
-                                        </optgroup>
-                                        <optgroup label="Eastern Time Zone">
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="ME">Maine</option>
-                                            <option value="MD">Maryland</option>
-                                            <option value="MA">Massachusetts</option>
-                                            <option value="MI">Michigan</option>
-                                            <option value="NH">New Hampshire</option>
-                                            <option value="NJ">New Jersey</option>
-                                            <option value="NY">New York</option>
-                                            <option value="NC">North Carolina</option>
-                                            <option value="OH">Ohio</option>
-                                            <option value="PA">Pennsylvania</option>
-                                            <option value="RI">Rhode Island</option>
-                                            <option value="SC">South Carolina</option>
-                                            <option value="VT">Vermont</option>
-                                            <option value="VA">Virginia</option>
-                                            <option value="WV">West Virginia</option>
-                                        </optgroup>
+                                    <label htmlFor="models-select" className="form-label">Select Secondary Model:</label>
+                                    <select id="models-select" ref={selectModelsRef}>
+                                        {models !== null ?
+                                            models.map((model, index) => {
+                                                return (
+                                                    <option key={index} value={model.id}>{model.name}</option>
+                                                );
+                                            })
+                                            : null}
                                     </select>
+                                </div>
+                                {/* ENABLE/DISABLE DEPLOYMENT */}
+                                <div className="mb-3">
+                                    <label className="form-label">Run Deployment (After Creation):</label><br />
+                                    <div className="form-check form-check-inline">
+                                        <input type="radio" id="customRadio1" name="deployment-action" className="form-check-input" defaultChecked />
+                                        <label className="form-check-label" htmlFor="customRadio1">Enable</label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input type="radio" id="customRadio2" name="deployment-action" className="form-check-input" />
+                                        <label className="form-check-label" htmlFor="customRadio2">Disable</label>
+                                    </div>
                                 </div>
                                 {/* CREATE / CANCEL */}
                                 <div className="row float-end">
                                     <div className="col-12 text-center">
                                         <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
-                                        <button type="button" className="btn btn-success waves-effect waves-light m-1"><i className="fe-check-circle me-1"></i>Create</button>
+                                        <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={deploymentCreation}>
+                                            <div id="loading-btn" className="d-inline">
+                                                <i className="fe-check-circle me-1"></i>
+                                            </div>
+                                            Create
+                                        </button>
                                     </div>
                                 </div>
                             </div>
