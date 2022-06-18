@@ -268,3 +268,21 @@ def get_cleaned_dataset_cleaning_rules(
     )
 
     return Response(rules, media_type="application/json")
+
+
+@router.post('/shadow_data',
+             responses=UnauthenticatedException.get_example_response())
+@catch_app_exceptions
+def create_raw_dataset_from_shadow_data(
+        *,
+        raw_dataset_in: RawDatasetCreate,
+        db: Session = Depends(get_session),
+        user_data=Depends(get_current_user_data)):
+    """
+    Creates a raw dataset from shadow data.
+    """
+    return dataset_service.create_shadow_data(
+        user_id=user_data.user_id,
+        raw_dataset_in=raw_dataset_in,
+        db=db,
+    )

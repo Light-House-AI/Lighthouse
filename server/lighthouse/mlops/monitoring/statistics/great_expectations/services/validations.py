@@ -1,4 +1,4 @@
-from services.constants import *
+from .constants import *
 
 import json
 import os

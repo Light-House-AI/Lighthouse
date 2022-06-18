@@ -33,16 +33,26 @@ def get_data_cleaning_suggestions(datasets_paths: List[str],
     return json.dumps(rules, cls=NumpyEncoder)
 
 
-def create_cleaned_dataset(raw_datasets_file_paths: List[str],
+def create_cleaned_dataset(raw_dataset_dataframe: pd.DataFrame,
                            cleaned_dataset_file_path: str, rules: Dict,
                            predicted_column: str):
     """
     Returns cleaned dataset.
     """
-    df = create_merged_data_frame(raw_datasets_file_paths)
-    cleaned_df = clean_train(df, predicted_column, rules)
+    cleaned_df = clean_train(raw_dataset_dataframe, predicted_column, rules)
     cleaned_df.to_csv(cleaned_dataset_file_path, index=False)
     return True
+
+
+def create_save_merged_dataframe(datasets_paths: List[str], file_path: str):
+    """
+    Creates and save a merged data frame.
+
+    @return merged data frame.
+    """
+    df = pd.concat((pd.read_csv(f) for f in datasets_paths), ignore_index=True)
+    df.to_csv(file_path, index=False)
+    return df
 
 
 def create_merged_data_frame(raw_datasets_file_paths: List[str]):

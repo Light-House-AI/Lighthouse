@@ -1,17 +1,19 @@
 import os
 import shutil
 
+_context_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
 
 def delete_suite_expectations_file(suite_name: str):
     """
     An automatically created json file is created when the expectations suite is initialized
     """
-    file_path = f"./expectations/{suite_name}.json"
+    file_path = os.path.join(_context_path, f"expectations\\{suite_name}.json")
     os.remove(file_path)
 
 
 def delete_uncommitted_folder():
-    folder_path = "./uncommitted/"
+    folder_path = os.path.join(_context_path, f"uncommitted")
     shutil.rmtree(folder_path)
 
 
@@ -24,5 +26,5 @@ def delete_csv_data_file(datafile_name: str):
 
 
 def delete_yml_checkpoint_file(datafile_name: str):
-    file_path = f"./checkpoints/{datafile_name}"
+    file_path = os.path.join(_context_path, f"checkpoints\\{datafile_name}")
     os.remove(file_path)

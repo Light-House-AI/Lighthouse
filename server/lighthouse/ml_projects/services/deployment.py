@@ -2,9 +2,12 @@
 
 import requests
 from typing import Dict
-from sqlalchemy.orm import Session
 
-from lighthouse.mlops.monitoring import log_prediction
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
+
+from lighthouse.config import config
+from lighthouse.mlops.monitoring import service as monitoring_service
 from lighthouse.ml_projects.schemas import DeploymentCreate
 
 from lighthouse.ml_projects.exceptions import (
@@ -16,6 +19,7 @@ from lighthouse.ml_projects.db import (
     Model,
     Deployment,
     Project,
+    Notification,
 )
 
 from lighthouse.mlops.serving import (
@@ -69,9 +73,14 @@ def get_deployment(user_id: int, deployment_id: int, db: Session):
     """
     Gets a deployment.
     """
-    deployment = db.query(Deployment).filter(
-        Deployment.id == deployment_id).join(
-            Project, Project.user_id == user_id).first()
+    deployment = db.query(Deployment). \
+        filter(Deployment.id == deployment_id). \
+        join(Project, Project.user_id == user_id). \
+        outerjoin(Model, or_(Model.id == Deployment.primary_model_id,
+                             Model.id == Deployment.secondary_model_id)). \
+        options(joinedload(Deployment.primary_model)). \
+        options(joinedload(Deployment.secondary_model)). \
+        first()
 
     if not deployment:
         raise NotFoundException("Deployment not found!")
@@ -222,14 +231,18 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     }
 
     # Save the request to the database.
-    log_prediction(
+    monitoring_service.log_prediction(
         deployment_id=deployment_id,
+        project_id=deployment.project_id,
         input_params=input_data,
         primary_model_prediction=deployment_response[
             "primary_model_prediction"],
         secondary_model_prediction=deployment_response[
             "secondary_model_prediction"],
     )
+
+    # Check for statistics monitoring
+    _notify_for_monitoring(deployment, user_id, db)
 
     # Return the predictions.
     deployment_response["predictions"] = deployment_response.pop(
@@ -238,3 +251,29 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     deployment_response.pop("secondary_model_prediction")
 
     return deployment_response
+
+
+def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
+    """
+    Notifies the monitoring service about a deployment.
+    """
+    if deployment.has_monitoring_notification:
+        return
+
+    num_input_data = monitoring_service.get_count_input_data(
+        deployment_id=deployment.id)
+
+    print("num_input_data:", num_input_data)
+    if num_input_data < config.MONITORING_NUM_ROWS_NOTIFY:
+        return
+
+    notification = Notification(
+        user_id=user_id,
+        title="Deployment monitoring",
+        body="Deployment \"" + deployment.name +
+        "\" may have some data drift.",
+    )
+
+    db.add(notification)
+    deployment.has_monitoring_notification = True
+    db.commit()

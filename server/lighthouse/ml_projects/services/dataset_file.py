@@ -1,10 +1,34 @@
 """Dataset file service"""
 
+import csv
 import os
 import shutil
-from typing import BinaryIO
+from time import time
+from typing import BinaryIO, List
 from azure.storage.blob import BlobClient
 from lighthouse.config import config
+
+
+def save_dicts_as_raw_dataset_file(dataset_id: int, dict_data: List[dict]):
+    """
+    Saves a list of dict as a raw dataset file.
+    """
+    file_path = get_raw_dataset_local_path(dataset_id)
+    _save_dicts_to_csv(file_path, dict_data)
+    return file_path
+
+
+def _save_dicts_to_csv(file_path: str, dict_data: List[dict]):
+    """
+    Saves a list of dict data to csv file.
+    """
+    if len(dict_data) == 0:
+        return
+
+    with open(file_path, 'w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=dict_data[0].keys())
+        writer.writeheader()
+        writer.writerows(dict_data)
 
 
 def save_raw_dataset_to_local_disk(dataset_id: int, file: BinaryIO):
@@ -162,7 +186,16 @@ def get_raw_dataset_local_path(dataset_id: int):
     """
     Returns the local path of a raw dataset.
     """
-    return config.RAW_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"
+    return config.RAW_DATASETS_TEMP_DIR + f"\\{dataset_id}.csv"
+
+
+def get_temporary_dataset_local_path():
+    """
+    Returns the local path of a temporary raw dataset.
+    """
+    filename = f"{int(time() * 1000)}.csv"
+    filepath = config.RAW_DATASETS_TEMP_DIR + f"\\{filename}"
+    return filepath, filename
 
 
 def get_cleaned_dataset_blob_name(dataset_id: int):
@@ -176,7 +209,7 @@ def get_cleaned_dataset_local_path(dataset_id: int):
     """
     Returns the local path of a cleaned dataset.
     """
-    return config.CLEANED_DATASETS_TEMP_DIR + f"/{dataset_id}.csv"
+    return config.CLEANED_DATASETS_TEMP_DIR + f"\\{dataset_id}.csv"
 
 
 def create_directories():
@@ -188,3 +221,10 @@ def create_directories():
 
     if not os.path.exists(config.CLEANED_DATASETS_TEMP_DIR):
         os.makedirs(config.CLEANED_DATASETS_TEMP_DIR)
+
+
+def delete_file(filepath: str):
+    """
+    Deletes a file.
+    """
+    os.remove(filepath)
