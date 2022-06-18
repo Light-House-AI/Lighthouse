@@ -8,6 +8,8 @@ from sqlalchemy import or_
 
 from lighthouse.config import config
 from lighthouse.mlops.monitoring import service as monitoring_service
+from lighthouse.ml_projects.services import dataset_file as dataset_file_service
+
 from lighthouse.ml_projects.schemas import DeploymentCreate
 
 from lighthouse.ml_projects.exceptions import (
@@ -277,3 +279,47 @@ def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
     db.add(notification)
     deployment.has_monitoring_notification = True
     db.commit()
+
+
+def get_monitoring_data(user_id: int, deployment_id: int, db: Session):
+    """
+    Gets the monitoring data for a deployment.
+    """
+
+    # Get the deployment.
+    deployment = db.query(Deployment). \
+        filter(Deployment.id == deployment_id). \
+        join(Project, Project.user_id == user_id). \
+        join(Model, Model.id == Deployment.primary_model_id). \
+        options(joinedload(Deployment.primary_model)). \
+        options(joinedload(Deployment.project)). \
+        first()
+
+    if not deployment:
+        raise NotFoundException("Deployment not found!")
+
+    # Get input data
+    deployment_input_data = monitoring_service.get_deployment_input_data(
+        deployment_id=deployment.id,
+        predicted_column_name=deployment.project.predicted_column,
+    )
+
+    # Save input data to temporary file
+    temp_dataset_file_path, temp_dataset_filename = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    dataset_file_service._save_dicts_to_csv(
+        temp_dataset_file_path,
+        deployment_input_data,
+    )
+
+    # Get monitoring results
+    result = monitoring_service.get_deployment_monitoring_data(
+        dataset_id=deployment.primary_model.dataset_id,
+        dataset_file_name=temp_dataset_filename,
+    )
+
+    # Delete temporary file
+    dataset_file_service.delete_file(temp_dataset_file_path)
+
+    return result
