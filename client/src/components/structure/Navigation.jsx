@@ -3,6 +3,7 @@ import axios from "axios";
 
 function Navigation() {
     const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
+    const [notifications, setNotifications] = useState(null);
     const [location] = useState(window.location.pathname);
 
     useEffect(() => {
@@ -19,6 +20,14 @@ function Navigation() {
                 return Promise.reject(error);
             }
         );
+
+        axios.get('/users/notifications', {
+            headers: {
+                'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`
+            }
+        }).then((response) => {
+            setNotifications(response.data);
+        })
     }, []);
 
     function openFullscreen() {
@@ -70,80 +79,47 @@ function Navigation() {
                     <li className="dropdown notification-list topbar-dropdown">
                         <button className="nav-link dropdown-toggle waves-effect waves-light button-no-style" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                             <i className="fe-bell noti-icon"></i>
-                            <span className="badge bg-danger rounded-circle noti-icon-badge">9</span>
+                            {notifications !== null && notifications.length > 0 ?
+                                <span className="badge bg-danger rounded-circle noti-icon-badge">
+                                    {notifications !== null ? notifications.length : 0}
+                                </span> : null}
                         </button>
                         <div className="dropdown-menu dropdown-menu-end dropdown-lg">
                             <div className="dropdown-item noti-title">
                                 <h5 className="m-0">
                                     <span className="float-end">
-                                        <button className="text-dark button-no-style">
+                                        {/* <button className="text-dark button-no-style">
                                             <small>Clear All</small>
-                                        </button>
+                                        </button> */}
                                     </span>Notification
                                 </h5>
                             </div>
 
                             <div className="noti-scroll" data-simplebar>
-                                <a href="/" className="dropdown-item notify-item active">
-                                    <div className="notify-icon">
-                                        <img src="../assets/images/users/user-1.jpg" className="img-fluid rounded-circle" alt="" /> </div>
-                                    <p className="notify-details">Cristina Pride</p>
-                                    <p className="text-muted mb-0 user-msg">
-                                        <small>Hi, How are you? What about our next meeting</small>
-                                    </p>
-                                </a>
-
-                                <a href="/" className="dropdown-item notify-item">
-                                    <div className="notify-icon bg-primary">
-                                        <i className="mdi mdi-comment-account-outline"></i>
-                                    </div>
-                                    <p className="notify-details">Caleb Flakelar commented on Admin
-                                        <small className="text-muted">1 min ago</small>
-                                    </p>
-                                </a>
-
-                                <a href="/" className="dropdown-item notify-item">
-                                    <div className="notify-icon">
-                                        <img src="../assets/images/users/user-4.jpg" className="img-fluid rounded-circle" alt="" /> </div>
-                                    <p className="notify-details">Karen Robinson</p>
-                                    <p className="text-muted mb-0 user-msg">
-                                        <small>Wow ! this admin looks good and awesome design</small>
-                                    </p>
-                                </a>
-
-                                <a href="/" className="dropdown-item notify-item">
-                                    <div className="notify-icon bg-warning">
-                                        <i className="mdi mdi-account-plus"></i>
-                                    </div>
-                                    <p className="notify-details">New user registered.
-                                        <small className="text-muted">5 hours ago</small>
-                                    </p>
-                                </a>
-
-                                <a href="/" className="dropdown-item notify-item">
-                                    <div className="notify-icon bg-info">
-                                        <i className="mdi mdi-comment-account-outline"></i>
-                                    </div>
-                                    <p className="notify-details">Caleb Flakelar commented on Admin
-                                        <small className="text-muted">4 days ago</small>
-                                    </p>
-                                </a>
-
-                                <a href="/" className="dropdown-item notify-item">
-                                    <div className="notify-icon bg-secondary">
-                                        <i className="mdi mdi-heart"></i>
-                                    </div>
-                                    <p className="notify-details">Carlos Crouch liked
-                                        <b>Admin</b>
-                                        <small className="text-muted">13 days ago</small>
-                                    </p>
-                                </a>
+                                {notifications !== null ?
+                                    notifications.map((notification, index) => {
+                                        return (
+                                            <a href="/" className="dropdown-item notify-item">
+                                                <div className="notify-icon bg-primary">
+                                                    <i class="mdi mdi-comment-account-outline"></i>
+                                                </div>
+                                                <p className="notify-details">{notification.title}</p>
+                                                <p className="text-muted mb-0 user-msg">
+                                                    <small>{notification.body}.</small>
+                                                </p>
+                                            </a>
+                                        );
+                                    })
+                                    :
+                                    <div className="dropdown-item notify-item text-center">
+                                        <small>No notification found.</small>
+                                    </div>}
                             </div>
 
-                            <a href="/" className="dropdown-item text-center text-primary notify-item notify-all">
+                            {/* <a href="/" className="dropdown-item text-center text-primary notify-item notify-all">
                                 View all
                                 <i className="fe-arrow-right"></i>
-                            </a>
+                            </a> */}
 
                         </div>
                     </li>
@@ -203,7 +179,7 @@ function Navigation() {
                     </li>
                 </ul>
             </div>
-        </div>
+        </div >
     );
 }
 
