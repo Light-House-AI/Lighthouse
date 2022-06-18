@@ -1,7 +1,9 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, validator, constr
+
 from lighthouse.ml_projects.db import DeploymentType
+from .model import Model
 
 
 class DeploymentBase(BaseModel):
@@ -48,3 +50,8 @@ class DeploymentInDBBase(DeploymentBase):
 # properties to return to the client
 class Deployment(DeploymentInDBBase):
     ...
+
+
+class DeploymentWithRelationships(DeploymentInDBBase):
+    primary_model: Optional[Model]
+    secondary_model: Optional[Model]

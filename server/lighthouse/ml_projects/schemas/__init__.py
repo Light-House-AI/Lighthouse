@@ -4,7 +4,12 @@ from .auth import TokenData, AccessToken, Login
 from .user import User, UserCreate
 from .notification import Notification
 from .model import Model, ModelCreate, ModelParameters
-from .deployment import Deployment, DeploymentCreate
+
+from .deployment import (
+    Deployment,
+    DeploymentCreate,
+    DeploymentWithRelationships,
+)
 
 from .raw_dataset import (
     RawDataset,

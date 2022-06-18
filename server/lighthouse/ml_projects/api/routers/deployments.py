@@ -5,7 +5,12 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import deployment as deployment_service
-from lighthouse.ml_projects.schemas import Deployment, DeploymentCreate
+
+from lighthouse.ml_projects.schemas import (
+    Deployment,
+    DeploymentCreate,
+    DeploymentWithRelationships,
+)
 
 from lighthouse.ml_projects.api import (
     get_session,
@@ -76,7 +81,7 @@ def create_deployment(*,
                 **UnauthenticatedException.get_example_response(),
                 **NotFoundException.get_example_response(),
             },
-            response_model=Deployment)
+            response_model=DeploymentWithRelationships)
 @catch_app_exceptions
 def get_deployment(*,
                    deployment_id: int,

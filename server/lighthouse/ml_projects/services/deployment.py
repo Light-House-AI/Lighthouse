@@ -2,10 +2,12 @@
 
 import requests
 from typing import Dict
-from sqlalchemy.orm import Session
+
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
 
 from lighthouse.config import config
-from lighthouse.mlops.monitoring.logging import service as monitoring_service
+from lighthouse.mlops.monitoring import service as monitoring_service
 from lighthouse.ml_projects.schemas import DeploymentCreate
 
 from lighthouse.ml_projects.exceptions import (
@@ -71,9 +73,14 @@ def get_deployment(user_id: int, deployment_id: int, db: Session):
     """
     Gets a deployment.
     """
-    deployment = db.query(Deployment).filter(
-        Deployment.id == deployment_id).join(
-            Project, Project.user_id == user_id).first()
+    deployment = db.query(Deployment). \
+        filter(Deployment.id == deployment_id). \
+        join(Project, Project.user_id == user_id). \
+        outerjoin(Model, or_(Model.id == Deployment.primary_model_id,
+                             Model.id == Deployment.secondary_model_id)). \
+        options(joinedload(Deployment.primary_model)). \
+        options(joinedload(Deployment.secondary_model)). \
+        first()
 
     if not deployment:
         raise NotFoundException("Deployment not found!")
