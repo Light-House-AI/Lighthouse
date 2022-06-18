@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useParams } from 'react-router-dom';
 
 function SideBar(props) {
+    const { projectid } = useParams();
     const [userDetails] = useState(JSON.parse(localStorage.getItem("user")));
     const [projectDetails] = useState(props.projectDetails);
 
@@ -38,6 +40,9 @@ function SideBar(props) {
                             <div className="collapse" id="datasets">
                                 <ul className="nav-second-level">
                                     <li>
+                                        <a href={`/${projectid}/datasets`}>All Datasets</a>
+                                    </li>
+                                    <li>
                                         <a href="#rawdata" data-bs-toggle="collapse">
                                             <span className="badge bg-success rounded-pill">{projectDetails.raw_datasets.length}</span> Raw Datasets <span className="menu-arrow"></span>
                                         </a>
@@ -46,6 +51,7 @@ function SideBar(props) {
                                                 {projectDetails.raw_datasets.map((record, index) => {
                                                     return (
                                                         <li key={index}>
+                                                            {/* `/${record.project_id}/datasets/raw/${record.id}/view` */}
                                                             <a href={`/${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
                                                         </li>
                                                     );
@@ -62,7 +68,8 @@ function SideBar(props) {
                                                 {projectDetails.cleaned_datasets.map((record, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <a href={`/${record.project_id}/datasets/raw/${record.id}/view`}>{record.name}</a>
+                                                            {/* `/${record.project_id}/datasets/cleaned/${record.id}/view` */}
+                                                            <a href={`/${record.project_id}/datasets/cleaned/${record.id}/view`}>{record.name}</a>
                                                         </li>
                                                     );
                                                 })}
@@ -82,9 +89,13 @@ function SideBar(props) {
                             </a>
                             <div className="collapse" id="models">
                                 <ul className="nav-second-level">
+                                    <li>
+                                        <a href={`/${projectid}/models`}>All Models</a>
+                                    </li>
                                     {projectDetails.models.map((record, index) => {
                                         return (
                                             <li key={index}>
+                                                {/* `/${record.project_id}/models/${record.id}/view` */}
                                                 <a href={`/${record.project_id}/models/${record.id}/view`}>{record.name}</a>
                                             </li>
                                         );
@@ -102,9 +113,13 @@ function SideBar(props) {
                             </a>
                             <div className="collapse" id="deployments">
                                 <ul className="nav-second-level">
+                                    <li>
+                                        <a href={`/${projectid}/deployments`}>All Deployments</a>
+                                    </li>
                                     {projectDetails.deployments.map((record, index) => {
                                         return (
                                             <li key={index}>
+                                                {/* `/${record.project_id}/deployments/${record.id}/view` */}
                                                 <a href={`/${record.project_id}/deployments/${record.id}/view`}>{record.name}</a>
                                             </li>
                                         );
