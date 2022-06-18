@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from services.model_helpers import get_environment_variables
 from services.route_helpers import *
-from model_creator import NetworkGenerator
+from model_creator.network_generator import NetworkGenerator
 
 app = FastAPI()
 
