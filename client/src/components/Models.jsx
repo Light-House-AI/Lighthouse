@@ -37,7 +37,6 @@ function Models(props) {
                     'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
                 }
             }).then((response) => {
-                console.log(response.data);
                 setModels(response.data);
                 setTimeout(() => {
                     window.$(tableRef.current).footable();

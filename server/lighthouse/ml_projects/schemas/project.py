@@ -37,10 +37,10 @@ class ProjectInDBBase(ProjectBase):
 
 # properties to return to the client
 class Project(ProjectInDBBase):
-    num_models: int
-    num_deployments: int
-    num_raw_datasets: int
-    num_cleaned_datasets: int
+    num_models: Optional[int]
+    num_deployments: Optional[int]
+    num_raw_datasets: Optional[int]
+    num_cleaned_datasets: Optional[int]
 
 
 class ProjectWithRelationships(ProjectInDBBase):
