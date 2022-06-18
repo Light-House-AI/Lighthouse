@@ -39,3 +39,26 @@ class DeploymentInput(Document):
         # choose db connection alias
         'db_alias': config.MONITORING_MONGO_ALIAS
     }
+
+
+class ExpectationsSuite(DynamicEmbeddedDocument):
+    """
+    Class to store the expectations suite for a dataset.
+    """
+    ...
+
+
+class DatasetExpectationsSuite(Document):
+    """
+    Class to store the expectations suite for a dataset.
+    """
+    dataset_id = IntField(required=True)
+    expectations_suite = EmbeddedDocumentField(ExpectationsSuite)
+
+    meta = {
+        # create index on dataset_id
+        'indexes': ['dataset_id'],
+
+        # choose db connection alias
+        'db_alias': config.MONITORING_MONGO_ALIAS
+    }

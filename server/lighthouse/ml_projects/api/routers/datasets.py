@@ -270,10 +270,8 @@ def get_cleaned_dataset_cleaning_rules(
     return Response(rules, media_type="application/json")
 
 
-@router.post(
-    '/shadow_data',
-    responses=UnauthenticatedException.get_example_response(),
-)  # response_model=RawDataset
+@router.post('/shadow_data',
+             responses=UnauthenticatedException.get_example_response())
 @catch_app_exceptions
 def create_raw_dataset_from_shadow_data(
         *,

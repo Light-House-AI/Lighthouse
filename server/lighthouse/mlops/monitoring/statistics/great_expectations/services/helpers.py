@@ -1,6 +1,6 @@
-from services.statistics import *
-from services.validations import *
-from services.cleanup import *
+from .statistics import *
+from .validations import *
+from .cleanup import *
 
 
 def generate_data_statistics(dataset_name: str, expectation_suite_name: str):

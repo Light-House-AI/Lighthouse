@@ -9,7 +9,7 @@ from lighthouse.ml_projects.schemas.project import ProjectCreate
 from lighthouse.ml_projects.exceptions import NotFoundException
 from lighthouse.ml_projects.mongo import ProjectDataColumns
 
-from lighthouse.mlops.monitoring.logging import service as monitoring_service
+from lighthouse.mlops.monitoring import service as monitoring_service
 
 
 def get_user_projects(user_id: int,
