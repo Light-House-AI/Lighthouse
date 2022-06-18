@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nn-generator
+  namespace: lighthouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nn-generator
+  template:
+    metadata:
+      labels:
+        app: nn-generator
+    spec:
+      containers:
+        - name: nn-generator
+          image: ghcr.io/light-house-ai/nn-generator:latest
+          resources:
+            limits:
+              memory: "300Mi"
+              cpu: "200m"
+          env:
+            - name: BROKER_URL
+              value: "celery-redis:6379/0"
+            - name: BACKEND_URL
+              value: "celery-redis:6379/0"
+            - name: LOG_LEVEL
+              value: "WARN"
+            - name: WEBHOOK_URL
+              value: "http://lighthouse-server/api/v1/models/{model_id}/training_status/"
+            - name: WEBHOOK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: lighthouse-workers-secret
+                  key: webhook-token
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nn-generator
+  namespace: lighthouse
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nn-generator
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 70
