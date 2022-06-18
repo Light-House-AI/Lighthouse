@@ -1,4 +1,3 @@
-from sys import prefix
 from fastapi.routing import APIRouter
 from lighthouse.config import config
 

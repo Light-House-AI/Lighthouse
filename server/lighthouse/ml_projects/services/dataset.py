@@ -5,15 +5,18 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session, joinedload
 
 from lighthouse.ml_projects.schemas import RawDatasetCreate, CleanedDatasetCreate
-from lighthouse.ml_projects.exceptions import NotFoundException
+from lighthouse.ml_projects.exceptions import NotFoundException, BadRequestException
+
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.automl.data_cleaning import service as data_cleaning_service
+from lighthouse.mlops.monitoring import service as monitoring_service
 
 from lighthouse.ml_projects.mongo import DatasetCleaningRules, ProjectDataColumns
 
 from lighthouse.ml_projects.db import (
     CleanedDataset,
     RawDataset,
+    RawDatasetCreationMethod,
     Project,
     CleanedDatasetSource,
 )
@@ -204,18 +207,26 @@ def create_cleaned_dataset(user_id: int,
     db.add_all(sources)
     db.commit()
 
-    # Download datasets
+    # Download and merge datasets
     raw_datasets_file_paths = [
         dataset_file_service.download_raw_dataset(dataset.id)
         for dataset in raw_datasets
     ]
+
+    merged_dataset_filepath, merged_dataset_filename = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    print(raw_datasets_file_paths)
+
+    merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
+        raw_datasets_file_paths, merged_dataset_filepath)
 
     # Clean datasets
     cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
         cleaned_dataset.id)
 
     data_cleaning_service.create_cleaned_dataset(
-        raw_datasets_file_paths=raw_datasets_file_paths,
+        raw_dataset_dataframe=merged_dataset_df,
         cleaned_dataset_file_path=cleaned_dataset_file_path,
         rules=rules,
         predicted_column=project.predicted_column)
@@ -228,7 +239,15 @@ def create_cleaned_dataset(user_id: int,
         dataset_id=cleaned_dataset.id,
         rules=rules,
     )
-    cleaning_rules.save()
+    cleaning_rules.save(merged_dataset_filename)
+
+    # Save dataset expectations suite
+    monitoring_service.save_dataset_expectations_suite(
+        cleaned_dataset.id,
+        merged_dataset_filename,
+    )
+
+    dataset_file_service.delete_file(merged_dataset_filepath)
 
     return cleaned_dataset
 
@@ -269,3 +288,43 @@ def get_cleaned_dataset_cleaning_rules(user_id: int, dataset_id: int,
         raise NotFoundException("Cleaning rules not found.")
 
     return cleaning_rules.to_json()
+
+
+def create_shadow_data(user_id: int, raw_dataset_in: RawDatasetCreate,
+                       db: Session) -> None:
+    """
+    Create dataset from shadow data.
+    """
+
+    project = db.query(Project).filter(
+        Project.id == raw_dataset_in.project_id,
+        Project.user_id == user_id,
+    ).first()
+
+    if not project:
+        raise NotFoundException("Project not found.")
+
+    # Get data
+    shadow_data = monitoring_service.get_project_labeled_input_data(
+        project_id=project.id,
+        predicted_column_name=project.predicted_column,
+    )
+
+    # Check if there is data
+    if len(shadow_data) == 0:
+        raise BadRequestException("No labeled input data found.")
+
+    # Create dataset record
+    raw_dataset_in.creation_method = RawDatasetCreationMethod.capture
+    dataset = RawDataset(**raw_dataset_in.dict())
+    db.add(dataset)
+    db.commit()
+
+    # Upload dataset
+    dataset_file_service.save_dicts_as_raw_dataset_file(
+        dataset.id,
+        shadow_data,
+    )
+    dataset_file_service.upload_raw_dataset(dataset.id)
+
+    return dataset

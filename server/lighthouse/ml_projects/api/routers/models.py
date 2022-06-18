@@ -103,4 +103,4 @@ def update_model_training_status(*,
         model_params=model_params,
     )
 
-    return {"message": "Model status updated."}
+    return {"status": "success"}
