@@ -103,7 +103,7 @@ class NetworkGenerator:
             
     def __network_generator(self, config, reporter):
         network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
-        np.nan_to_num(y_pred = network.predict(self.X_test))
+        y_pred =  np.nan_to_num(network.predict(self.X_test))
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:
