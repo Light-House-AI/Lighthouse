@@ -20,9 +20,6 @@ function Models(props) {
             arrow: 'true'
         });
 
-
-        window.$(tableRef.current).footable();
-
         axios.get(`/datasets/cleaned/`, {
             params: {
                 project_id: projectId
@@ -32,19 +29,21 @@ function Models(props) {
             }
         }).then((response) => {
             setCleanedDatasets(response.data);
-        }).catch((error) => {
-        });
-
-        axios.get('/models', {
-            params: {
-                project_id: projectId
-            },
-            headers: {
-                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
-            }
-        }).then((response) => {
-            console.log(response.data);
-            setModels(response.data);
+            axios.get('/models', {
+                params: {
+                    project_id: projectId
+                },
+                headers: {
+                    'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+                }
+            }).then((response) => {
+                console.log(response.data);
+                setModels(response.data);
+                setTimeout(() => {
+                    window.$(tableRef.current).footable();
+                }, 100)
+            }).catch((error) => {
+            });
         }).catch((error) => {
         });
     }, []);
@@ -85,19 +84,16 @@ function Models(props) {
         window.$("#modal-structure #modal-btn").on('click', function () {
             let datasetsId = window.selectizeModal[0].selectize.getValue();
             if (datasetsId !== '' && datasetsId !== null && datasetsId !== [] && datasetsId !== undefined) {
-                if (Array.isArray(datasetsId))
-                    window.location.href = `/${projectId}/datasets/${datasetsId.join('-')}/clean`;
-                else
-                    window.location.href = `/${projectId}/datasets/${datasetsId}/clean`;
+                window.location.href = `/${projectId}/models/${datasetsId}/create`;
             }
         });
 
         document.getElementById('modal-trigger').click();
     }
 
-    const findDatasetName = function () {
+    const findDatasetName = function (dataset_id) {
         for (let i = 0; i < cleanedDatasets.length; i++) {
-            if (cleanedDatasets[i].id === this.dataset_id) {
+            if (cleanedDatasets[i].id === dataset_id) {
                 return cleanedDatasets[i].name;
             }
         }

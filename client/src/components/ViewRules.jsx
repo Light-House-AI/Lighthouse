@@ -33,7 +33,7 @@ function ViewRules(props) {
                     {/* DROP COLUMN */}
                     <div className="mb-2">
                         <div className="form-check form-switch">
-                            <input className="form-check-input" type="checkbox" role="switch" defaultChecked={false} disabled />
+                            <input className="form-check-input" type="checkbox" role="switch" defaultChecked={rules.fill_method === 'column' ? true : false} disabled />
                             <label className="form-check-label">Drop column?</label>
                         </div>
                     </div>
