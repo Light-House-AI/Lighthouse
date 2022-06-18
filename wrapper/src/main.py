@@ -1,8 +1,10 @@
+from typing import List
 import uvicorn
 from fastapi import FastAPI
 
 from services.model_helpers import get_environment_variables
 from services.route_helpers import *
+from model_creator import NetworkGenerator
 
 app = FastAPI()
 
@@ -17,9 +19,10 @@ def root():
     return greeting_fn()
 
 
-@ app.get("/predict")
-def predict():
-    prediction = predict_for_deployment_type(environment_variables_dict)
+@ app.post("/predict")
+def predict(models_feature_list: List[float]):
+    prediction = predict_for_deployment_type(
+        environment_variables_dict, models_feature_list)
     return prediction
 
 
