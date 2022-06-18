@@ -6,7 +6,7 @@ from .neural_network import NeuralNetwork
 from .fc_layer import FCLayer
 from .activation_layer import ActivationLayer
 from .activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from .loss_functions import mse, mse_derivative
+from .loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
 
@@ -80,6 +80,7 @@ class NetworkGenerator:
         for i in range(layers_before_middle, number_of_layers - 1, 1):
             hidden_layer_sizes[index] = ceil(2*(hidden_layer_sizes[i] + self.output_layer_size)/3)
             index += 1
+        #print("HIDDEN LAYERS SIZES: ",hidden_layer_sizes)
         return hidden_layer_sizes
 
     def __create_network(self, middle_layer_size, number_of_layers, alpha, batch_size):
@@ -89,24 +90,24 @@ class NetworkGenerator:
         hidden_layer_sizes.append(self.output_layer_size)
         for i in range(len(hidden_layer_sizes) - 1):
             network.add(FCLayer(hidden_layer_sizes[i], hidden_layer_sizes[i + 1]))
-            if i < len(hidden_layer_sizes) - 1:
+            if i < len(hidden_layer_sizes) - 2:
                 network.add(ActivationLayer(self.activation_function, self.activation_function_derivative))
         if self.type == "Classification":
             network.add(ActivationLayer(sigmoid, sigmoid_derivative))
             network.use(mse, mse_derivative)
         else: 
             network.add(ActivationLayer(identity, identity_derivative))
-            network.use(mse, mse_derivative)
+            network.use(mae, mae_derivative)
         network.fit(self.X_train, self.y_train, epochs=1000, learning_rate=alpha, batch_size=batch_size)
-        return network, hidden_layer_sizes
+        return network
             
     def __network_generator(self, config, reporter):
-        network, hidden_layer_sizes = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
-        y_pred = network.predict(self.X_test)
+        network = self.__create_network(config["middle_layer_size"], config["number_of_layers"], config["alpha"], config["batch_size"])
+        np.nan_to_num(y_pred = network.predict(self.X_test))
         if self.type == "Classification":
             reporter(config, mean_accuracy = accuracy_score(self.y_test, y_pred.round()), network=network)
         else:
-            reporter(config, mean_loss = mean_squared_log_error(self.y_test, y_pred), network=network, hidden_layer_sizes = hidden_layer_sizes)
+            reporter(config, mean_loss = mean_squared_log_error(self.y_test, y_pred), network=network)
         
     def __train_network(self):
         scheduler = AsyncHyperBandScheduler()
