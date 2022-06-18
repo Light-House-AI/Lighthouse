@@ -128,7 +128,8 @@ a {
     }
 }
 
-.recommendation {
+.recommendation,
+.prediction {
     .form-control {
 
         &:disabled {
@@ -144,4 +145,8 @@ a {
 
 .view-dataset .pagination {
     margin-top: 1rem !important;
+}
+
+.min-width-predict {
+    min-width: 100px;
 }
