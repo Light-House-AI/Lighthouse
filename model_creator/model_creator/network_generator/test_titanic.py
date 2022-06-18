@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
 import time
 
-data = pd.read_csv('../../../datasets/cleaned_datasets/titanic_final.csv')
+data = pd.read_csv('../../datasets/cleaned_datasets/titanic_final.csv')
 
 hyperparameters = {
     # Obligatory
