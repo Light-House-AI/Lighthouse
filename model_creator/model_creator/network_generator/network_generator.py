@@ -111,6 +111,7 @@ class NetworkGenerator:
         
     def __train_network(self):
         scheduler = AsyncHyperBandScheduler()
+        shutdown()
         init()
         if self.type == "Classification":
             res = tune.run(
@@ -143,6 +144,7 @@ class NetworkGenerator:
                 "alpha": tune.grid_search(self.learning_rate),
                 "batch_size": tune.grid_search(self.batch_size),
             },
+            verbose=1
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_loss"], item[1]["time_this_iter_s"]))}
         shutdown()
