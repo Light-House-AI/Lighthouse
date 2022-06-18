@@ -47,9 +47,8 @@ function CreateModel(props) {
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
             },
         }).then((response) => {
-            window.location.href = `/${projectId}/deployments/${response.data.id}/create`;
+            window.location.href = `/${projectId}/models`;
         }).catch((error) => {
-            console.log(error);
             if (isPipeline)
                 window.$("#loading-btn").html('<i class="fe-arrow-right me-1"></i>');
             else

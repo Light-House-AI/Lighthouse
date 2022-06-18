@@ -99,9 +99,9 @@ function Navigation() {
                                 {notifications !== null ?
                                     notifications.map((notification, index) => {
                                         return (
-                                            <a href="/" className="dropdown-item notify-item">
+                                            <a href="/" className="dropdown-item notify-item" key={index}>
                                                 <div className="notify-icon bg-primary">
-                                                    <i class="mdi mdi-comment-account-outline"></i>
+                                                    <i className="mdi mdi-comment-account-outline"></i>
                                                 </div>
                                                 <p className="notify-details">{notification.title}</p>
                                                 <p className="text-muted mb-0 user-msg">
