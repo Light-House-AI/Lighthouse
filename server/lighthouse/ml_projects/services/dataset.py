@@ -239,7 +239,7 @@ def create_cleaned_dataset(user_id: int,
         dataset_id=cleaned_dataset.id,
         rules=rules,
     )
-    cleaning_rules.save(merged_dataset_filename)
+    cleaning_rules.save()
 
     # Save dataset expectations suite
     monitoring_service.save_dataset_expectations_suite(
@@ -305,7 +305,7 @@ def create_shadow_data(user_id: int, raw_dataset_in: RawDatasetCreate,
         raise NotFoundException("Project not found.")
 
     # Get data
-    shadow_data = monitoring_service.get_project_labeled_input_data(
+    shadow_data = monitoring_service.get_project_labeled_shadow_data(
         project_id=project.id,
         predicted_column_name=project.predicted_column,
     )

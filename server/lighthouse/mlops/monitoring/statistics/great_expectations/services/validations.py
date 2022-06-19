@@ -7,9 +7,11 @@ from ruamel.yaml import YAML
 import great_expectations as ge
 from great_expectations.core.expectation_suite import expectationSuiteSchema
 
+_context_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 def save_expectation_suite_as_json_file(suite_object, suite_name):
-    file_path = f"./expectations/{suite_name}.json"
+    file_path = os.path.join(_context_path, f"expectations\\{suite_name}.json")
+    
     jsonString = json.dumps(
         expectationSuiteSchema.dump(suite_object),
         indent=2,
@@ -21,7 +23,7 @@ def save_expectation_suite_as_json_file(suite_object, suite_name):
 
 
 def validate_data(suite_name, new_dataset_name):
-    context = ge.get_context()
+    context = ge.DataContext(context_root_dir=_context_path)
     yaml = YAML()
     yaml_config = f"""
             name: {CHECKPOINT_NAME}
@@ -37,7 +39,7 @@ def validate_data(suite_name, new_dataset_name):
                     index: -1
               expectation_suite_name: {suite_name}
             """
-    _ = context.test_yaml_config(yaml_config=yaml_config)
+    context.test_yaml_config(yaml_config=yaml_config)
     context.add_checkpoint(**yaml.load(yaml_config))
     context.run_checkpoint(checkpoint_name=CHECKPOINT_NAME)
 

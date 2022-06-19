@@ -103,7 +103,7 @@ class Config(BaseSettings):
     GHCR_PASSWORD: str = ""
 
     # Monitoring rows threshold.
-    MONITORING_NUM_ROWS_NOTIFY: int = 100
+    MONITORING_NUM_ROWS_NOTIFY: int = 10
 
 
 config = Config(_env_file=ENV_FILE_PATH)

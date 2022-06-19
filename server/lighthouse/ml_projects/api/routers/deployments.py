@@ -2,6 +2,7 @@
 
 from typing import List, Dict
 from fastapi import APIRouter, Depends, Query, Request
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from lighthouse.ml_projects.services import deployment as deployment_service
@@ -164,3 +165,25 @@ def stop_deployment(*,
         deployment_id=deployment_id,
         db=db,
     )
+
+
+@router.get('/{deployment_id}/monitoring',
+            responses={
+                **UnauthenticatedException.get_example_response(),
+                **NotFoundException.get_example_response(),
+            })
+@catch_app_exceptions
+def get_deployment_monitoring_data(*,
+                                   deployment_id: int,
+                                   db: Session = Depends(get_session),
+                                   user_data=Depends(get_current_user_data)):
+    """
+    Get the monitoring data for a deployment.
+    """
+    html_content = deployment_service.get_monitoring_data(
+        user_id=user_data.user_id,
+        deployment_id=deployment_id,
+        db=db,
+    )
+
+    return HTMLResponse(content=html_content, status_code=200)

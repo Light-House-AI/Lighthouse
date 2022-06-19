@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 from .network_generator import NetworkGenerator, to_categorical
+from .save_load_model import import_model, export_model
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
-from .save_load_model import import_model, export_model
 import time
 
-data = pd.read_csv('../../datasets/cleaned_datasets/titanic_final.csv')
+data = pd.read_csv('../datasets/cleaned_datasets/titanic_final.csv')     
 
 hyperparameters = {
     # Obligatory
@@ -44,12 +44,12 @@ X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
 X_test = np.asarray(X_test)
 y_test = np.asarray(y_test)
-y_train = to_categorical(y_train)
-y_test = to_categorical(y_test)
+# y_train = to_categorical(y_train)
+# y_test = to_categorical(y_test)
 
 
 y_pred = network.predict(X_test)
-print(config, accuracy_score(y_test, y_pred.round()))
+print(config, accuracy_score(y_test, y_pred))
 
 export_model("titanic_model.pkl", network)
 

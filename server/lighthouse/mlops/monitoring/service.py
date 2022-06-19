@@ -23,29 +23,30 @@ def log_prediction(deployment_id: int,
     deployment_input.save()
 
 
-def get_project_input_data(project_id: int,
-                           predicted_column_name: str,
-                           skip: int = 0,
-                           limit: int = 100) -> list:
+def get_shadow_data(project_id: int,
+                    predicted_column_name: str,
+                    skip: int = 0,
+                    limit: int = 100) -> list:
     """
-    Get unlabeled data for project.
+    Get shadow data for project.
     """
     input_data = DeploymentInput.objects(
-        project_id=project_id).limit(limit).skip(skip)
+        project_id=project_id).skip(skip).limit(limit)
 
     input_data_dict = [json.loads(row.to_json()) for row in input_data]
 
     return [{
         "id": row["_id"]["$oid"],
-        predicted_column_name: row["primary_model_prediction"],
+        "predicted_column_name": predicted_column_name,
+        "predicted_column_value": row["primary_model_prediction"],
         "input_data": row["input_data"],
     } for row in input_data_dict]
 
 
-def get_project_labeled_input_data(project_id: int,
-                                   predicted_column_name: str) -> list:
+def get_project_labeled_shadow_data(project_id: int,
+                                    predicted_column_name: str) -> list:
     """
-    Get labeled data for project.
+    Get labeled shadow data for project.
     """
     input_data = DeploymentInput.objects(
         project_id=project_id,
@@ -58,6 +59,23 @@ def get_project_labeled_input_data(project_id: int,
         **row["input_data"],
         predicted_column_name: row["label"],
     } for row in input_data_dict]
+
+
+def get_deployment_input_data(deployment_id: int,
+                              predicted_column_name: str) -> list:
+    """
+    Return deployment input data.
+    """
+    input_data = DeploymentInput.objects(deployment_id=deployment_id)
+    input_data_dict = [json.loads(row.to_json()) for row in input_data]
+
+    formatted_input_data = [{
+        predicted_column_name:
+        row["primary_model_prediction"],
+        **row["input_data"],
+    } for row in input_data_dict]
+
+    return formatted_input_data
 
 
 def label_input_data(project_id, labeled_data: List[Dict[str, str]]) -> None:
@@ -82,8 +100,10 @@ def save_dataset_expectations_suite(dataset_id: int,
     """
     Save dataset expectations suite.
     """
-    expectations_suite, _ = generate_data_statistics(dataset_filename,
-                                                     str(dataset_id))
+    expectations_suite, _ = generate_data_statistics(
+        dataset_filename,
+        get_expectations_suite_name(dataset_id),
+    )
 
     dataset_expectations_suite = DatasetExpectationsSuite(
         dataset_id=dataset_id,
@@ -94,16 +114,23 @@ def save_dataset_expectations_suite(dataset_id: int,
     return True
 
 
-def get_deployment_monitoring_data(deployment_id: int,
-                                   predicted_column_name: str) -> list:
+def get_deployment_monitoring_data(dataset_id: int, dataset_file_name: str):
     """
     Get deployment monitoring data.
     """
-    input_data_dict = DeploymentInput.objects(
-        deployment_id=deployment_id).to_json()
 
-    formatted_input_data = [{
-        predicted_column_name:
-        row["primary_model_prediction"],
-        **row["input_data"],
-    } for row in input_data_dict]
+    expectations_suite = DatasetExpectationsSuite.objects(
+        dataset_id=dataset_id).first().expectations_suite
+
+    return validate_original_data_with_new(
+        dataset_file_name,
+        expectations_suite,
+        get_expectations_suite_name(dataset_id),
+    )
+
+
+def get_expectations_suite_name(dataset_id: int) -> str:
+    """
+    Get expectations suite name.
+    """
+    return "dataset-" + str(dataset_id)

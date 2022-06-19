@@ -145,17 +145,18 @@ def get_shadow_data(
     """
     Get shadow data for a project.
     """
-    project = db.query(Project.id).filter(Project.user_id == user_id,
-                                          Project.id == project_id).first()
+    project = db.query(Project).filter(Project.user_id == user_id,
+                                       Project.id == project_id).first()
 
     if not project:
         raise NotFoundException("Project not found.")
 
-    shadow_data = monitoring_service.get_project_input_data(
-        project_id, skip, limit)
-
-    json_str = '[' + ','.join([data.to_json() for data in shadow_data]) + ']'
-    return json_str
+    return monitoring_service.get_shadow_data(
+        project_id,
+        project.predicted_column,
+        skip,
+        limit,
+    )
 
 
 def label_shadow_data(user_id: int, project_id: int,

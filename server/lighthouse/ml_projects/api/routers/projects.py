@@ -118,15 +118,13 @@ def get_shadow_data(*,
     """
     Returns shadow data for a project.
     """
-    shadow_data = project_service.get_shadow_data(
+    return project_service.get_shadow_data(
         user_id=user_data.user_id,
         project_id=project_id,
         skip=skip,
         limit=limit,
         db=db,
     )
-
-    return Response(shadow_data, media_type="application/json")
 
 
 @router.patch('/{project_id}/shadow_data',
