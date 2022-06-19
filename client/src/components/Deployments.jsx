@@ -169,8 +169,8 @@ function Deployments(props) {
                                                 <td><span className="badge bg-soft-danger text-danger p-1">Disabled</span></td>
                                             }
                                             {deployment.is_running ?
-                                                <td><button className="btn btn-outline-success btn-sm rounded-pill">View</button></td> :
-                                                <td><button className="btn btn-outline-success btn-sm rounded-pill disabled">View</button></td>
+                                                <td><a href={`/${projectId}/deployments/${deployment.id}/monitor`} className="btn btn-outline-success btn-sm rounded-pill">View</a></td> :
+                                                <td><a href={`/${projectId}/deployments/${deployment.id}/monitor`} className="btn btn-outline-success btn-sm rounded-pill disabled" disabled>View</a></td>
                                             }
                                             {deployment.is_running ?
                                                 <td><button className="btn btn-outline-danger btn-sm rounded-pill" deploymentid={deployment.id} onClick={disableDeployment}>Disable</button></td> :

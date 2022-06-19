@@ -20,6 +20,7 @@ import RulesDataPage from './pages/RulesDataPage';
 import ViewModelPage from './pages/ViewModelPage';
 import ViewDeploymentPage from './pages/ViewDeploymentPage';
 import PredictPage from './pages/PredictPage';
+import ViewMonitorPage from './pages/ViewMonitorPage';
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
         <Route path="/:projectid/deployments/:modelid/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/deployments/:deploymentid/predict" element={<PredictPage />} />
         <Route path="/:projectid/deployments/:deploymentid/view" element={<ViewDeploymentPage />} />
+        <Route path="/:projectid/deployments/:deploymentid/monitor" element={<ViewMonitorPage />} />
       </Routes>
     </BrowserRouter>
   );
