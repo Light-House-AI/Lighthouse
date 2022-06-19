@@ -1,11 +1,12 @@
 from .data_cleaning import *
 
+
 def data_statistics(df, output_column):
     df_jsons = []
     for col in df.columns[df.columns != output_column]:
         col_json = {}
         col_json.update({"column_name": col})
-        
+
         # Original datatype
         if df[col].dtype == 'object':
             col_json.update({"original_datatype": "object"})
@@ -15,7 +16,7 @@ def data_statistics(df, output_column):
             col_json.update({"original_datatype": "float64"})
         elif df[col].dtype == 'uint8':
             col_json.update({'original_datatype': 'uint8'})
-            
+
         # Correcting datatype
         detect_correct_datatype(df, col)
 
@@ -39,9 +40,9 @@ def data_statistics(df, output_column):
             col_json.update({'min': None, 'max': None, 'mean': None})
             col_json.update({'unique_count': len(df[col].unique(
             )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
-            
+
         df_jsons.append(col_json)
-    
+
     return df_jsons
 
 
@@ -164,7 +165,7 @@ def clean_train(df, output_column, operations):
             drop_missing_values(df, col)
 
         # Convert Nominal/Ordinal
-        if df[col].dtype == 'object':
+        if not is_numeric:
             if col_json['is_nominal']:
                 df = convert_nominal_categories(df, [col])
             else:
@@ -227,7 +228,7 @@ def clean_test(df, operations, raw_df, output_column):
             knn_impute_test(raw_df, col, is_numeric, df, output_column)
 
         # Convert Nominal/Ordinal
-        if df[col].dtype == 'object':
+        if not is_numeric:
             if col_json['is_nominal']:
                 df = convert_nominal_categories(df, [col])
             else:
