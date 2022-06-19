@@ -16,7 +16,9 @@ def data_statistics(df, output_column):
             col_json.update({"original_datatype": "float64"})
         elif df[col].dtype == 'uint8':
             col_json.update({'original_datatype': 'uint8'})
-
+        elif df[col].dtype == 'bool':
+            col_json.update({'datatype': 'uint8'})
+            
         # Correcting datatype
         detect_correct_datatype(df, col)
 
@@ -61,6 +63,8 @@ def data_cleaning_suggestions(df, output_column):
         elif df[col].dtype == 'float64':
             col_json.update({"datatype": "float64"})
         elif df[col].dtype == 'uint8':
+            col_json.update({'datatype': 'uint8'})
+        elif df[col].dtype == 'bool':
             col_json.update({'datatype': 'uint8'})
 
         # Detect Numeric or Categorical
