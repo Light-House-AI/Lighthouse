@@ -2,7 +2,7 @@
 
 import dramatiq
 from typing import Dict
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from dramatiq.brokers.redis import RedisBroker
 
 from lighthouse.config import config
@@ -46,10 +46,10 @@ def get_model(user_id: int, model_id: int, db: Session):
     """
     Returns a model.
     """
-    model = db.query(Model).join(Project).filter(
+    model = db.query(Model).join(Project).join(CleanedDataset).filter(
         Model.id == model_id,
         Project.user_id == user_id,
-    ).first()
+    ).options(joinedload(Model.dataset)).first()
 
     if not model:
         raise NotFoundException("Model not found")

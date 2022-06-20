@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, conlist, constr
+from .cleaned_dataset import CleanedDataset
 
 
 class ModelBase(BaseModel):
@@ -42,6 +43,10 @@ class ModelInDBBase(ModelBase):
 # properties to return to the client
 class Model(ModelInDBBase):
     ...
+
+
+class ModelWithDataset(ModelInDBBase):
+    dataset: Optional[CleanedDataset]
 
 
 class ModelParameters(BaseModel):
