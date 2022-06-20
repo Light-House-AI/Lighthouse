@@ -152,7 +152,11 @@ class NetworkGenerator:
         print(best_result)
         config = best_result["config"]
         network = best_result["network"]
-        return network, config
+        if self.type == "Classification":
+            return network, config, best_result["mean_accuracy"]
+        else:
+            return network, config, best_result["mean_loss"]
+        #return network, config
     
 def to_categorical(y, num_classes=None, dtype="float32"):
     y = np.array(y, dtype="int")
