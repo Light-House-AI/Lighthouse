@@ -3,7 +3,13 @@
 from .auth import TokenData, AccessToken, Login
 from .user import User, UserCreate
 from .notification import Notification
-from .model import Model, ModelCreate, ModelParameters
+
+from .model import (
+    Model,
+    ModelCreate,
+    ModelParameters,
+    ModelWithDataset,
+)
 
 from .deployment import (
     Deployment,
