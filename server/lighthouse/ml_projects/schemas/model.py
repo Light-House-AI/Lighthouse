@@ -32,9 +32,7 @@ class ModelInDBBase(ModelBase):
     maximum_neurons_per_layer: Optional[int]
     learning_rate: Optional[float]
     batch_size: Optional[int]
-
-    accuracy_score: Optional[float]
-    mean_squared_log_error: Optional[float]
+    score: Optional[float]
 
     class Config:
         orm_mode = True
