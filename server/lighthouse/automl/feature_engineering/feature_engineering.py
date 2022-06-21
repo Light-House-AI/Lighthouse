@@ -10,7 +10,7 @@ class FeatureEngineering:
         data: pandas dataframe
         cleaning_rules: json array of cleaning rules
         target_column: "column_name"
-        problem_type: "Classification" or "Regression"
+        problem_type: "classification" or "regression"
         '''
         self.data = data
         self.data_columns = data.columns
@@ -39,7 +39,7 @@ class FeatureEngineering:
             if any(self.data.columns == column['column_name']):
                 processed_features.append(column['column_name'])
                 if column['is_numeric']:
-                    if self.problem_type == 'Classification':
+                    if self.problem_type == 'classification':
                         #ANOVA
                         F, P = f_classif(self.data[[column['column_name'],self.target_column]], target)
                         if P[0] > 0.05:
@@ -50,7 +50,7 @@ class FeatureEngineering:
                         if abs(corr) < 0.05:
                             to_drop.append(column['column_name'])
                 else:
-                    if self.problem_type == 'Classification':
+                    if self.problem_type == 'classification':
                         #Chi-Squared
                         F, P = chi2(self.data[[column['column_name'],self.target_column]], target)
                         if P[0] > 0.05:
@@ -63,7 +63,7 @@ class FeatureEngineering:
         data_copy = self.data.copy()
         data_copy.drop(processed_features, axis = 1, inplace = True)
         for column in data_copy.columns:
-            if self.problem_type == 'Classification':
+            if self.problem_type == 'classification':
                 #Chi-Squared
                 F, P = chi2(self.data[[column,self.target_column]], target)
                 if P[0] > 0.05:

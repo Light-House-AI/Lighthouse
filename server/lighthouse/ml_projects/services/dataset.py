@@ -10,8 +10,13 @@ from lighthouse.ml_projects.exceptions import NotFoundException, BadRequestExcep
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.automl.data_cleaning import service as data_cleaning_service
 from lighthouse.mlops.monitoring import service as monitoring_service
+from lighthouse.automl.feature_engineering import FeatureEngineering
 
-from lighthouse.ml_projects.mongo import DatasetCleaningRules, ProjectDataColumns
+from lighthouse.ml_projects.mongo import (
+    DatasetCleaningRules,
+    ProjectDataColumns,
+    DatasetFeatureRules,
+)
 
 from lighthouse.ml_projects.db import (
     CleanedDataset,
@@ -192,7 +197,7 @@ def create_cleaned_dataset(user_id: int,
 
     # Get data
     cleaned_dataset_metadata = cleaned_dataset_in.dict()
-    rules = cleaned_dataset_metadata.pop("rules")
+    cleaning_rules = cleaned_dataset_metadata.pop("rules")
     raw_datasets_ids = cleaned_dataset_metadata.pop('sources')
 
     # Create cleaned dataset record
@@ -231,21 +236,41 @@ def create_cleaned_dataset(user_id: int,
     cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
         cleaned_dataset.id)
 
-    data_cleaning_service.create_save_cleaned_dataset(
-        raw_dataset_dataframe=merged_dataset_df,
-        cleaned_dataset_file_path=cleaned_dataset_file_path,
-        rules=rules,
-        predicted_column=project.predicted_column)
-
-    # Upload cleaned data
-    dataset_file_service.upload_cleaned_dataset(cleaned_dataset.id)
+    cleaned_df = data_cleaning_service.clean_train(
+        df=merged_dataset_df,
+        output_column=project.predicted_column,
+        operations=cleaning_rules,
+    )
 
     # Save cleaning rules
-    cleaning_rules = DatasetCleaningRules(
+    DatasetCleaningRules(
         dataset_id=cleaned_dataset.id,
-        rules=rules,
+        rules=cleaning_rules,
+    ).save()
+
+    # Feature engineering
+    feature_engineering_service = FeatureEngineering(
+        cleaned_df,
+        cleaning_rules,
+        project.predicted_column,
+        project.type,
     )
-    cleaning_rules.save()
+
+    features_df, features_rules = feature_engineering_service.run()
+
+    # Save features
+    DatasetFeatureRules(
+        dataset_id=cleaned_dataset.id,
+        rules=features_rules,
+    ).save()
+
+    # Upload cleaned data
+    data_cleaning_service.save_dataframe(
+        features_df,
+        cleaned_dataset_file_path,
+    )
+
+    dataset_file_service.upload_cleaned_dataset(cleaned_dataset.id)
 
     # Save dataset expectations suite
     monitoring_service.save_dataset_expectations_suite(

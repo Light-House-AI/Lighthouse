@@ -86,6 +86,13 @@ def create_merged_data_frame(datasets_paths: List[str]):
     return df
 
 
+def save_dataframe(dataframe: pd.DataFrame, file_path: str):
+    """
+    Saves a dataframe.
+    """
+    dataframe.to_csv(file_path, index=False)
+
+
 def get_dataset_columns(file_path: str):
     """
     Returns dataset columns.

@@ -1,2 +1,3 @@
-from .cleaning_rules import CleaningRules, DatasetCleaningRules
+from .cleaning_rules import DatasetCleaningRules
 from .project_data_columns import ProjectDataColumns
+from .feature_engineering_rules import DatasetFeatureRules
