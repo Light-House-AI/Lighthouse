@@ -204,10 +204,9 @@ def clean_test(df, operations, raw_df, output_column):
             df[col][outliers] = col_json['mode']
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
-            outliers = pd.array(
-                list(set(df[col].unique()) - set(col_json['unique_values'])))
+            outliers = [val for val in df[col].unique() if val not in col_json['unique_values']]
             try:
-                df = correct_category_levenshtein(df, col, outliers.to_numpy())
+                df = correct_category_levenshtein(df, col, outliers)
             except:
                 df[col][outliers] = col_json['mode']
 
