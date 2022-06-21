@@ -245,5 +245,4 @@ def clean_test(df, operations, raw_df, output_column):
         if is_numeric:
             normalize_column_test(df, col, raw_df)
 
-    print(len(df.columns))
     return df

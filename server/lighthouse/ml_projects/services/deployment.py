@@ -340,7 +340,6 @@ def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
     num_input_data = monitoring_service.get_count_input_data(
         deployment_id=deployment.id)
 
-    print("num_input_data:", num_input_data)
     if num_input_data < config.MONITORING_NUM_ROWS_NOTIFY:
         return
 
