@@ -185,7 +185,7 @@ function ColumnRules(props) {
                         <input type="text" className="form-control" value={uniqueCount} disabled name="unique_count" onChange={restructureRule} />
                     </div>
                     {/* UNIQUE VALUES */}
-                    <div className="mb-2" title={statistics.unique_values != null ? "Original: " + statistics.unique_values.split(',').splice(0, statistics.unique_count > 30 ? 30 : statistics.unique_count).toString() : null} data-plugin="tippy">
+                    <div className="mb-2" title={statistics.unique_values != null ? "Original: " + statistics.unique_values.splice(0, statistics.unique_count > 30 ? 30 : statistics.unique_count).toString() : null} data-plugin="tippy">
                         <label className="form-label">Unique Values:</label>
                         <input type="text" className="form-control" defaultValue={recommendation.unique_values} disabled={is_numeric || dropColumn} name="unique_values" onChange={restructureRule} />
                     </div>

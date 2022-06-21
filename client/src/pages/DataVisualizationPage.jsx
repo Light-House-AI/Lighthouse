@@ -7,11 +7,11 @@ import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
 import PageTitle from "../components/structure/PageTitle";
 
-import CleanData from "../components/CleanData";
+import ApexChart from "../components/ApexChart";
 
-function CleanDataPage() {
+function DataVisualizationPage() {
     const { projectid } = useParams();
-    const { datasetsid } = useParams();
+    const { datasetid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
 
     useEffect(() => {
@@ -32,12 +32,12 @@ function CleanDataPage() {
                 <SideBar projectDetails={projectDetails} /> : null}
             {projectDetails !== null ?
                 <div className="content-page">
-                    <title>Create New Clean Dataset - {projectDetails.name} | Lighthouse AI</title>
+                    <title>Visualize ABC - {projectDetails.name} | Lighthouse AI</title>
                     <div className="content">
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"New Clean Dataset"} execution={"Create"} projectid={projectid} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"ABC"} execution={"Visaulize"} projectid={projectid} />
                             <div className="mb-2">
-                                <CleanData datasetIds={datasetsid.split('-')} projectid={projectid} />
+                                <ApexChart />
                             </div>
                             <Footer />
                         </div>
@@ -47,4 +47,4 @@ function CleanDataPage() {
     );
 }
 
-export default CleanDataPage;
+export default DataVisualizationPage;

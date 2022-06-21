@@ -21,13 +21,17 @@ function Navigation() {
             }
         );
 
-        axios.get('/users/notifications', {
-            headers: {
-                'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`
-            }
-        }).then((response) => {
-            setNotifications(response.data);
-        })
+        window.notificationsIntervalId = window.setInterval(() => {
+            axios.get('/users/notifications', {
+                headers: {
+                    'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`
+                }
+            }).then((response) => {
+                setNotifications(response.data);
+            });
+        }, 5000);
+
+
     }, []);
 
     function openFullscreen() {
