@@ -109,11 +109,11 @@ function Datasets(props) {
                 <div className="row mt-1">
                     <div id="col-name-1" className="col-12 d-none">
                         <label className="form-label">Column Name (1st):</label>
-                        <input id="col-name-1-input" type="text" className="form-control" />
+                        <input id="col-name-1-input" type="text" className="form-control" defaultValue='' />
                     </div>
                     <div id="col-name-2" className="col-12 d-none">
                         <label className="form-label">Column Name (2nd):</label>
-                        <input id="col-name-2-input" type="text" className="form-control" />
+                        <input id="col-name-2-input" type="text" className="form-control" defaultValue='' />
                     </div>
                 </div>
             </div>;
