@@ -103,12 +103,8 @@ def get_deployment(*,
                  **UnauthenticatedException.get_example_response(),
                  **BadRequestException.get_example_response(),
                  **NotFoundException.get_example_response(),
-<<<<<<< Updated upstream
-             })
-=======
              },
              response_model=Dict[str, str])
->>>>>>> Stashed changes
 @catch_app_exceptions
 def get_prediction(*,
                    deployment_id: int,

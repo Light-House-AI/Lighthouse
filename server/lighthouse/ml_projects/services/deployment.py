@@ -287,35 +287,29 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     )
 
     # Get the predictions from the deployed model.
-    # print(features_data.columns)
     request_data = _features_to_numpy_string(features_data)
-
-    # TODO: uncomment temporary url
-    # url = _get_deployment_predict_url(deployment_id)
-    url = "http://localhost:8080/predict"
-
+    url = _get_deployment_predict_url(deployment_id)
     deployment_response = requests.post(url, data=request_data).json()
 
     # Save the request to the database.
+    primary_prediction = deployment_response.get("primary_prediction")
+    secondary_prediction = deployment_response.get("secondary_prediction")
+
     monitoring_service.log_prediction(
         deployment_id=deployment_id,
         project_id=deployment.project_id,
         input_params=input_data,
-        primary_model_prediction=deployment_response["primary_prediction"],
-        secondary_model_prediction=deployment_response["secondary_prediction"],
+        primary_model_prediction=primary_prediction,
+        secondary_model_prediction=secondary_prediction,
     )
 
     # Check for statistics monitoring
     _notify_for_monitoring(deployment, user_id, db)
 
-<<<<<<< Updated upstream
-    return deployment_response["primary_prediction"]
-=======
     return {
         "primary_prediction": primary_prediction,
         "secondary_prediction": secondary_prediction
     }
->>>>>>> Stashed changes
 
 
 def _features_to_numpy_string(features: pd.DataFrame):
@@ -334,7 +328,7 @@ def _get_deployment_predict_url(deployment_id: int):
     Gets the deployment url.
     """
     return config.DOMAIN_URL + "/" + _get_k8s_deployment_name(
-        deployment_id) + "/" + "/predict"
+        deployment_id) + "/predict"
 
 
 def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
@@ -347,7 +341,6 @@ def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
     num_input_data = monitoring_service.get_count_input_data(
         deployment_id=deployment.id)
 
-    print("num_input_data:", num_input_data)
     if num_input_data < config.MONITORING_NUM_ROWS_NOTIFY:
         return
 

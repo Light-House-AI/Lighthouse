@@ -202,7 +202,6 @@ def convert_nominal_categories_test(df, column, unique_values):
             df.loc[df[column] == unique, column + '_' + str(unique)] = 1
 
     remove_columns(df, [column])
-    print(len(df.columns))
     return df
 
 
