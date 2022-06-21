@@ -156,7 +156,7 @@ def clean_train(df, output_column, operations):
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
             outliers = pd.array(
-                list(set(col_json['unique_values']) - set(df[col].unique())))
+                list(set(df[col].unique().tolist()) - set(col_json['unique_values'])))                
             try:
                 df = correct_category_levenshtein(df, col, outliers.to_numpy())
                 df = drop_rows_condition(df, df[col].isin(outliers))
@@ -207,12 +207,12 @@ def clean_test(df, operations, raw_df, output_column):
         if is_numeric:
             outliers = detect_outlier_numeric(
                 df, col, col_json['min'], col_json['max'])
-            df[col][outliers] = col_json['mean']
+            df.loc[outliers, col] = col_json['mean']
 
         elif df[col].dtype != 'object':
             outliers = detect_outlier_categorical(
                 df, col, col_json['unique_values'])
-            df[col][outliers] = col_json['mode']
+            df.loc[outliers, col] = col_json['mode']
 
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
@@ -245,4 +245,5 @@ def clean_test(df, operations, raw_df, output_column):
         if is_numeric:
             normalize_column_test(df, col, raw_df)
 
+    print(len(df.columns))
     return df

@@ -121,8 +121,8 @@ def remove_outlier_categorical(df, column, unique_values):
     Removes rows from a dataframe based on a condition
     """
     inconsistent_categories = pd.array(
-        list(set(df[column].unique()) - set(unique_values)))
-    return df[(~df[column].isin(inconsistent_categories)) | df[column].isna()]
+        [val for val in df[column].unique() if val not in unique_values])
+    return df[~(df[column].isin(inconsistent_categories)) | df[column].isna()]
 
 
 def detect_outlier_categorical(df, column, unique_values):
@@ -198,9 +198,11 @@ def convert_nominal_categories_test(df, column, unique_values):
 
     df[column_names_unique] = 0
     for unique in df[column].unique():
-        df[column + '_' + str(unique)] = 1
+        if column + '_' + str(unique) in df.columns:
+            df.loc[df[column] == unique, column + '_' + str(unique)] = 1
 
     remove_columns(df, [column])
+    print(len(df.columns))
     return df
 
 
