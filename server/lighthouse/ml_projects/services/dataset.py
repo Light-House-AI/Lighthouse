@@ -133,11 +133,19 @@ def get_raw_dataset_cleaning_rules_recommendations(user_id: int,
     ]
 
     predicted_column = datasets[0].project.predicted_column
+    dataframe = data_cleaning_service.create_merged_data_frame(datasets_paths)
 
     rules = data_cleaning_service.get_data_cleaning_suggestions(
-        datasets_paths, predicted_column)
+        dataframe,
+        predicted_column,
+    )
 
-    return rules
+    statistics = data_cleaning_service.get_dataset_statistics(
+        dataframe,
+        predicted_column,
+    )
+
+    return '{"rules": ' + rules + ', "statistics": ' + statistics + '}'
 
 
 def get_cleaned_datasets(user_id: int,
@@ -216,8 +224,6 @@ def create_cleaned_dataset(user_id: int,
     merged_dataset_filepath, merged_dataset_filename = dataset_file_service.get_temporary_dataset_local_path(
     )
 
-    print(raw_datasets_file_paths)
-
     merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
         raw_datasets_file_paths, merged_dataset_filepath)
 
@@ -225,7 +231,7 @@ def create_cleaned_dataset(user_id: int,
     cleaned_dataset_file_path = dataset_file_service.get_cleaned_dataset_local_path(
         cleaned_dataset.id)
 
-    data_cleaning_service.create_cleaned_dataset(
+    data_cleaning_service.create_save_cleaned_dataset(
         raw_dataset_dataframe=merged_dataset_df,
         cleaned_dataset_file_path=cleaned_dataset_file_path,
         rules=rules,

@@ -3,7 +3,11 @@ import numpy as np
 
 import json
 from typing import Dict, List
-from .pipeline import clean_train, data_cleaning_suggestions
+from .pipeline import (
+    clean_train,
+    data_cleaning_suggestions,
+    data_statistics,
+)
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -23,45 +27,50 @@ def get_rows(file_path: str, skip: int = 0, limit: int = 100):
     return df.to_json(orient='records')
 
 
-def get_data_cleaning_suggestions(datasets_paths: List[str],
+def get_dataset_statistics(dataframe: pd.DataFrame, predicted_column: str):
+    """
+    Returns dataset statistics.
+    """
+    stats = data_statistics(dataframe, predicted_column)
+    return json.dumps(stats, cls=NumpyEncoder)
+
+
+def get_data_cleaning_suggestions(dataframe: pd.DataFrame,
                                   predicted_column: str):
     """
     Returns data cleaning suggestions.
     """
-    df = create_merged_data_frame(datasets_paths)
-    rules = data_cleaning_suggestions(df, predicted_column)
+    rules = data_cleaning_suggestions(dataframe, predicted_column)
     return json.dumps(rules, cls=NumpyEncoder)
 
 
-def create_cleaned_dataset(raw_dataset_dataframe: pd.DataFrame,
-                           cleaned_dataset_file_path: str, rules: Dict,
-                           predicted_column: str):
+def create_save_cleaned_dataset(raw_dataset_dataframe: pd.DataFrame,
+                                cleaned_dataset_file_path: str, rules: Dict,
+                                predicted_column: str):
     """
+    Creates and save a cleaned dataset.
     Returns cleaned dataset.
     """
     cleaned_df = clean_train(raw_dataset_dataframe, predicted_column, rules)
     cleaned_df.to_csv(cleaned_dataset_file_path, index=False)
-    return True
+    return cleaned_df
 
 
 def create_save_merged_dataframe(datasets_paths: List[str], file_path: str):
     """
     Creates and save a merged data frame.
-
-    @return merged data frame.
+    Returns the merged data frame.
     """
-    df = pd.concat((pd.read_csv(f) for f in datasets_paths), ignore_index=True)
+    df = create_merged_data_frame(datasets_paths)
     df.to_csv(file_path, index=False)
     return df
 
 
-def create_merged_data_frame(raw_datasets_file_paths: List[str]):
+def create_merged_data_frame(datasets_paths: List[str]):
     """
     Returns merged data frame.
     """
-    df = pd.concat((pd.read_csv(f) for f in raw_datasets_file_paths),
-                   ignore_index=True)
-
+    df = pd.concat((pd.read_csv(f) for f in datasets_paths), ignore_index=True)
     return df
 
 
