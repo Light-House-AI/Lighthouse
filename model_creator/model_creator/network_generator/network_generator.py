@@ -125,7 +125,8 @@ class NetworkGenerator:
                 "middle_layer_size": tune.grid_search(self.maximum_neurons_per_layer),
                 "alpha": tune.grid_search(self.learning_rate),
                 "batch_size": tune.grid_search(self.batch_size),
-            }
+            },
+            verbose=1
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_accuracy"], -item[1]["time_this_iter_s"]), reverse=True)}
                 
