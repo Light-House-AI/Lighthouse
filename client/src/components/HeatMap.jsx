@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 
-function ApexChart(props) {
+function HeatMap(props) {
     const [plotType] = useState(props.plotType)
-    const [columns] = useState(props.columns)
-    const [visualizationDetails] = useState(props.visualizationDetails)
+    const [data] = useState(props.visualizationDetails)
 
     useEffect(() => {
-        var colors = ['#1abc9c', "#f672a7", "#6c757d"];
+        var colors = ['#1abc9c'];
         var options = {
-            stroke: {
-                width: 5,
-                curve: 'smooth'
-            },
             colors: colors,
+            series: [],
             chart: {
                 height: 320,
                 type: plotType,
@@ -25,12 +21,24 @@ function ApexChart(props) {
                     opacity: 1
                 },
             },
+            dataLabels: {
+                enabled: false
+            },
             title: {
                 text: `${window.capitalizeFirstLetter(plotType)} Chart`,
                 align: 'left',
                 style: {
                     fontSize: "14px",
                     color: '#fff'
+                }
+            },
+            xaxis: {
+                categories: Object.keys(data)
+            },
+            plotOptions: {
+                heatmap: {
+                    min: -1,
+                    max: 1
                 }
             },
             fill: {
@@ -76,22 +84,17 @@ function ApexChart(props) {
                     },
                 }
             }]
+        };
+
+        for (let i = 0; i < Object.keys(data).length; i++) {
+            debugger
+            options.series.push({
+                name: Object.keys(data)[i],
+                data: Object.values(data[Object.keys(data)[i]])
+            })
         }
 
-        if (columns.length === 2) {
-            options.series = [{
-                name: columns[0],
-                data: visualizationDetails[columns[0]].data
-            }, {
-                name: columns[1],
-                data: visualizationDetails[columns[1]].data
-            }]
-        } else {
-            options.series = [{
-                name: columns[0],
-                data: visualizationDetails[columns[0]].data
-            }]
-        }
+        console.log(options.series);
 
         var chart = new window.ApexCharts(
             document.querySelector("#apex-chart"),
@@ -107,4 +110,4 @@ function ApexChart(props) {
     );
 }
 
-export default ApexChart;
+export default HeatMap;
