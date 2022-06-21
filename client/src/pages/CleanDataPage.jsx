@@ -13,7 +13,6 @@ function CleanDataPage() {
     const { projectid } = useParams();
     const { datasetsid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
-    const [datasetDetails, setDatasetDetails] = useState(null);
 
     useEffect(() => {
         axios.get(`/projects/${projectid}/`, {
@@ -24,15 +23,6 @@ function CleanDataPage() {
         }).then((response) => {
             setProjectDetails(response.data);
         });
-
-        axios.get(`/datasets/raw/${datasetsid}/`, {
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
-            }
-        }).then((response) => {
-            setDatasetDetails(response.data);
-        });
     }, []);
 
     return (
@@ -40,7 +30,7 @@ function CleanDataPage() {
             <Navigation />
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
-            {projectDetails !== null && datasetDetails !== null ?
+            {projectDetails !== null ?
                 <div className="content-page">
                     <title>Create New Clean Dataset - {projectDetails.name} | Lighthouse AI</title>
                     <div className="content">

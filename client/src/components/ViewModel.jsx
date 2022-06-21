@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 function ViewModel(props) {
     const [modelDetails] = useState(props.modelDetails);
     const [type] = useState(props.type);
+    const selectDataset = useRef(null);
+
+    useEffect(() => {
+        window.selectSecondaryModels = window.$(selectDataset.current).selectize({
+            maxItems: 1
+        });
+    }, []);
 
     return (
         <div className="row">
@@ -12,9 +19,21 @@ function ViewModel(props) {
                         <div className="row">
                             <div className="col-xl-6">
                                 {/* MODEL NAME */}
-                                <div className="mb-2">
-                                    <label htmlFor="modelname" className="form-label">Model Name:</label>
-                                    <input type="text" id="model-name" className="form-control" value={window.capitalizeFirstLetter(modelDetails.name)} disabled />
+                                <div className="row">
+                                    <div className="col-6">
+                                        <div className="mb-2">
+                                            <label htmlFor="modelname" className="form-label">Model Name:</label>
+                                            <input type="text" id="model-name" className="form-control" value={window.capitalizeFirstLetter(modelDetails.name)} disabled />
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <div className="mb-2">
+                                            <label htmlFor="models-select" className="form-label">Cleaned Dataset Name:</label>
+                                            <select id="models-select" ref={selectDataset} disabled>
+                                                <option>{modelDetails.dataset.name}</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 {/* NUMBER OF LAYERS */}
                                 <div className="mb-2">
@@ -46,11 +65,11 @@ function ViewModel(props) {
                                 {type === 'classification' ?
                                     <div className="mb-2">
                                         <label className="form-label mb-0">Metric (Accuracy):</label><br />
-                                        <input type="text" className="form-control" id='model-batch' value={modelDetails.accuracy_score === null ? `null` : modelDetails.accuracy_score} disabled />
+                                        <input type="text" className="form-control" id='model-batch' value={modelDetails.score === null ? `-` : `${modelDetails.score * 100}%`} disabled />
                                     </div> :
                                     <div className="mb-2">
-                                        <label className="form-label mb-0">Metric (MSE):</label><br />
-                                        <input type="text" className="form-control" id='model-batch' value={modelDetails.mean_squared_log_error === null ? `null` : modelDetails.mean_squared_log_error} disabled />
+                                        <label className="form-label mb-0">Metric (MSLE):</label><br />
+                                        <input type="text" className="form-control" id='model-batch' value={modelDetails.score === null ? `-` : modelDetails.score} disabled />
                                     </div>}
                             </div>
                         </div>

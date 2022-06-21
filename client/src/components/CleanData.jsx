@@ -11,7 +11,7 @@ function CleanData(props) {
 
     useEffect(() => {
 
-        axios.get('/datasets/raw/recommendations/', {
+        axios.get('/datasets/raw/recommendations', {
             params: {
                 datasets_ids: datasetIds
             },
@@ -61,7 +61,7 @@ function CleanData(props) {
             sources: datasetIds.map(id => parseInt(id)),
             rules: all_rules
         };
-        axios.post('/datasets/cleaned/', data, {
+        axios.post('/datasets/cleaned', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('tokenType') + " " + localStorage.getItem('accessToken')

@@ -20,7 +20,7 @@ function Models(props) {
             arrow: 'true'
         });
 
-        axios.get(`/datasets/cleaned/`, {
+        axios.get(`/datasets/cleaned`, {
             params: {
                 project_id: projectId
             },
@@ -137,9 +137,16 @@ function Models(props) {
                                                 <td><span className="badge bg-soft-success text-success p-1">Completed</span></td> :
                                                 <td><span className="badge bg-soft-warning text-warning p-1">In progress</span></td>
                                             }
-                                            {type === 'classification' ?
-                                                <td>{model.accuracy_score}</td> :
-                                                <td>{model.mean_squared_log_error}</td>
+                                            {type === 'classification' && model.is_trained ?
+                                                <td>{model.score !== null ? model.score * 100 : ''}%</td> :
+                                                null
+                                            }
+                                            {type !== 'classification' && model.is_trained ?
+                                                <td>{model.score}</td> :
+                                                null
+                                            }
+                                            {!model.is_trained ?
+                                                <td>-</td> : null
                                             }
                                             <td>{findDatasetName(model.dataset_id)}</td>
                                             <td>{model.number_of_layers}</td>

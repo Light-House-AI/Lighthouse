@@ -13,7 +13,7 @@ function ModelsPage() {
     const [projectDetails, setProjectDetails] = useState(null);
 
     useEffect(() => {
-        axios.get(`/projects/${projectid}/`, {
+        axios.get(`/projects/${projectid}`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
