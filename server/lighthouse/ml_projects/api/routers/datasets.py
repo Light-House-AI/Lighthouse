@@ -56,7 +56,7 @@ def get_raw_datasets(*,
                 **UnauthenticatedException.get_example_response(),
                 **NotFoundException.get_example_response(),
             },
-            response_model=List[Dict])
+            response_model=Dict[str, List[Dict]])
 @catch_app_exceptions
 def get_raw_dataset_cleaning_rules_recommendations(
         *,
@@ -66,13 +66,13 @@ def get_raw_dataset_cleaning_rules_recommendations(
     """
     Returns raw dataset cleaning rules recommendations.
     """
-    recommendations = dataset_service.get_raw_dataset_cleaning_rules_recommendations(
+    result = dataset_service.get_raw_dataset_cleaning_rules_recommendations(
         user_id=user_data.user_id,
         datasets_ids=datasets_ids,
         db=db,
     )
 
-    return Response(recommendations, media_type="application/json")
+    return Response(result, media_type="application/json")
 
 
 @router.get('/raw/{dataset_id}',
