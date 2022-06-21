@@ -14,7 +14,7 @@ from lighthouse.ml_projects.api import (
 router = APIRouter(prefix="/auth")
 
 
-@router.post("/login/",
+@router.post('/login',
              responses=BadRequestException.get_example_response(),
              response_model=AccessToken)
 @catch_app_exceptions

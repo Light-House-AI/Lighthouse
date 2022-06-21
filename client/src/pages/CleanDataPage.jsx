@@ -38,7 +38,8 @@ function CleanDataPage() {
     return (
         <div id='wrapper'>
             <Navigation />
-            <SideBar />
+            {projectDetails !== null ?
+                <SideBar projectDetails={projectDetails} /> : null}
             {projectDetails !== null && datasetDetails !== null ?
                 <div className="content-page">
                     <title>Create New Clean Dataset - {projectDetails.name} | Lighthouse AI</title>

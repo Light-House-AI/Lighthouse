@@ -15,14 +15,14 @@ function ColumnRules(props) {
     useEffect(() => {
         setRule({ ...rule, unique_values: rule.unique_values === '' ? null : rule.unique_values.split(',') });
 
-        window.$(columnType.current).selectize({
+        window.selectType = window.$(columnType.current).selectize({
             maxItems: 1,
             onChange: function (value) {
                 setRule({ ...rule, [window.$(this)[0].$input[0].name]: value });
             }
         });
 
-        window.$(columnFill.current).selectize({
+        window.selectFill = window.$(columnFill.current).selectize({
             maxItems: 1,
             onChange: function (value) {
                 setRule({ ...rule, [window.$(this)[0].$input[0].name]: value });
@@ -36,6 +36,22 @@ function ColumnRules(props) {
             arrow: 'true'
         });
     }, []);
+
+    useEffect(() => {
+        if (window.selectType !== undefined && window.selectType !== null) {
+            if (dropColumn)
+                window.selectType[0].selectize.disable();
+            else
+                window.selectType[0].selectize.enable();
+        }
+
+        if (window.selectFill !== undefined && window.selectFill !== null) {
+            if (dropColumn)
+                window.selectFill[0].selectize.disable();
+            else
+                window.selectFill[0].selectize.enable();
+        }
+    }, [dropColumn])
 
     const toggleDropColumn = function () {
         if (!dropColumn)

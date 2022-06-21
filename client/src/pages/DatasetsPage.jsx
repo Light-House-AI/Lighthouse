@@ -25,13 +25,14 @@ function DatasetsPage() {
     return (
         <div id='wrapper'>
             <Navigation />
-            <SideBar />
+            {projectDetails !== null ?
+                <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
                 {projectDetails !== null ?
                     <div className="content">
                         <title>Datasets - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={null} execution={null} projectid={"asdasd"} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={null} execution={null} projectid={projectid} />
                             <div className="mb-2">
                                 <Datasets projectId={projectid} />
                             </div>

@@ -1,12 +1,30 @@
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, conlist, constr
 
 
 class ModelBase(BaseModel):
     project_id: Optional[int]
     dataset_id: Optional[int]
-    name: Optional[str]
+    name: Optional[constr(min_length=1, strip_whitespace=True)]
+
+
+# properties to receive on Model creation
+class ModelCreate(ModelBase):
+    project_id: int
+    dataset_id: int
+    name: constr(min_length=1, strip_whitespace=True)
+
+    # parameters
+    number_of_layers: Optional[conlist(int, min_items=1)]
+    maximum_neurons_per_layer: Optional[conlist(int, min_items=1)]
+    learning_rate: Optional[conlist(float, min_items=1)]
+    batch_size: Optional[conlist(int, min_items=1)]
+
+
+class ModelInDBBase(ModelBase):
+    id: Optional[int] = None
+    created_at: Optional[datetime] = None
     is_trained: Optional[bool] = False
 
     number_of_layers: Optional[int]
@@ -16,24 +34,6 @@ class ModelBase(BaseModel):
 
     accuracy_score: Optional[float]
     mean_squared_log_error: Optional[float]
-
-
-# properties to receive on Model creation
-class ModelCreate(ModelBase):
-    project_id: int
-    dataset_id: int
-    name: str
-
-    # parameters
-    number_of_layers: Optional[List[int]]
-    maximum_neurons_per_layer: Optional[List[int]]
-    learning_rate: Optional[List[float]]
-    batch_size: Optional[List[int]]
-
-
-class ModelInDBBase(ModelBase):
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
 
     class Config:
         orm_mode = True

@@ -1,1 +1,1 @@
-great-expectations
+great-expectations==0.15.7

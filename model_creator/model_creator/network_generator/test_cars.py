@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from .network_generator import NetworkGenerator
+from .save_load_model import import_model, export_model
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import mean_squared_log_error
-from .save_load_model import import_model, export_model
 import time
 
 data = pd.read_csv('../../datasets/cleaned_datasets/cars_final.csv')
@@ -14,10 +14,10 @@ hyperparameters = {
     "predicted": "price", # "Price"
     # Optional
     # Each element in the list is a trial
-    "number_of_layers": [5, 6, 7, 8, 9],
+    "number_of_layers": [2, 3, 4, 5],
     "maximum_neurons_per_layer": [32, 16, 8], # Number of neurons in the middle layer
     "learning_rate": [0.001, 0.01, 0.1],
-    "batch_size": [1, 4, 8], # [1] is for stochastic Gradient Descent else is mini-batch
+    "batch_size": [8, 16, 32], # [1] is for stochastic Gradient Descent else is mini-batch
 }
 
 start = time.time()

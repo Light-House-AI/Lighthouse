@@ -2,9 +2,12 @@ from fastapi import FastAPI
 
 from lighthouse.config import config
 from lighthouse.logger import logger
+
 from lighthouse.ml_projects.mongo import connect_to_mongo
 from lighthouse.ml_projects.services.dataset_file import create_directories
 from lighthouse.ml_projects.services.dramatiq import init_dramatiq
+from lighthouse.ml_projects.services.deployment import init_serving_module
+
 from lighthouse.ml_projects.db.database import (
     get_session_factory,
     get_engine,
@@ -22,13 +25,16 @@ def startup(app: FastAPI):
 
         # setup database
         _setup_db(app)
-        check_db_connection(app.state.db_session_factory, logger)
+        check_db_connection(app.state.db_session_factory())
 
         # setup mongo
         _setup_mongo(app)
 
         # init dramatiq
         init_dramatiq()
+
+        # init serving module
+        _init_serving_module(app)
 
     return _startup
 
@@ -106,5 +112,17 @@ def _shutdown_mongo(app: FastAPI):
 
     app.state.ml_projects_mongo_client.close()
     logger.info("ML-Projects MongoDB connection closed.")
+
+    return True
+
+
+def _init_serving_module(app: FastAPI):
+    """
+    Initializes the serving module.
+    """
+
+    session = app.state.db_session_factory()
+    app.state.serving_config = init_serving_module(session)
+    logger.info("Serving module initialized.")
 
     return True

@@ -22,7 +22,7 @@ from lighthouse.ml_projects.exceptions import (
 router = APIRouter(prefix="/users")
 
 
-@router.get("/me/",
+@router.get('/me',
             response_model=User,
             responses={
                 **UnauthenticatedException.get_example_response(),
@@ -37,7 +37,7 @@ def get_user(db: Session = Depends(get_session),
     return user_service.get_user_by_id(user_id=user_data.user_id, db=db)
 
 
-@router.post("/signup/",
+@router.post('/signup',
              response_model=User,
              status_code=201,
              responses=BadRequestException.get_example_response())
@@ -49,7 +49,7 @@ def signup(*, db: Session = Depends(get_session), user_in: UserCreate):
     return user_service.signup(user_in=user_in, db=db)
 
 
-@router.get("/notifications/",
+@router.get('/notifications',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[Notification])
 @catch_app_exceptions

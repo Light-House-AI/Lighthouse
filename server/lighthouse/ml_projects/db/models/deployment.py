@@ -29,9 +29,18 @@ class Deployment(Base):
     name = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     is_running = Column(Boolean, nullable=False, default=False)
-    type = Column(Enum(DeploymentType),
-                  nullable=False,
-                  default=DeploymentType.single_model)
+
+    type = Column(
+        Enum(DeploymentType),
+        nullable=False,
+        default=DeploymentType.single_model,
+    )
+
+    has_monitoring_notification = Column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
 
     # relationships
     project = relationship("Project", back_populates="deployments")
@@ -46,10 +55,10 @@ class Deployment(Base):
 
     # methods
     def __repr__(self):
-        return "<Deployment(id={}, project_id={}, primary_model_id={}, secondary_model_id={}, name={}, created_at={}, is_running={}, deployment_type={})>".format(
+        return "<Deployment(id={}, project_id={}, primary_model_id={}, secondary_model_id={}, name={}, created_at={}, is_running={}, type={})>".format(
             self.id, self.project_id, self.primary_model_id,
             self.secondary_model_id, self.name, self.created_at,
-            self.is_running, self.deployment_type)
+            self.is_running, self.type)
 
     def __str__(self):
         return self.__repr__()
