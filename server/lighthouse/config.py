@@ -18,6 +18,9 @@ class Config(BaseSettings):
     # The logging level.
     LOG_LEVEL: str = 'INFO'
 
+    # Domain URL.
+    DOMAIN_URL: str = 'http://localhost:8000'
+
     # The database URL.
     SQLALCHEMY_DATABASE_URI: str = 'sqlite:///:memory:'
 

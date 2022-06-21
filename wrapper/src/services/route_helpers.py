@@ -37,8 +37,8 @@ def predict_for_deployment_type(environment_variables_dict, models_feature_list)
             return {"primary_prediction":  float(prediction)}
 
 
-def predict_fn(azure_blob_name: str, models_feature_list: List[float]):
-    model_features_list = np.array([models_feature_list])
+def predict_fn(azure_blob_name: str, models_feature_list: List[List[float]]):
+    model_features_list = np.array(models_feature_list)
     loaded_model = load_pkl_model(azure_blob_name)
     prediction = loaded_model.predict(model_features_list)
     return prediction[0]
