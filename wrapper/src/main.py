@@ -20,7 +20,7 @@ def root():
 
 
 @ app.post("/predict")
-def predict(models_feature_list: List[float]):
+def predict(models_feature_list: List[List[float]]):
     prediction = predict_for_deployment_type(
         environment_variables_dict, models_feature_list)
     return prediction
