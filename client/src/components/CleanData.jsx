@@ -36,9 +36,16 @@ function CleanData(props) {
 
     const updateRules = function () {
         document.getElementById('error-div').classList.add('d-none');
+
+        document.getElementById('next-btn').classList.add('disabled');
+        window.$("#loading-btn").html('<div class="spinner-border spinner-border-sm text-white me-1" role="status"></div>');
+
         if (document.getElementById('dataset-name').value === '') {
             document.getElementById('error-msg').innerHTML = 'Please enter a name for the dataset';
             document.getElementById('error-div').classList.remove('d-none');
+
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i class="fe-check-circle me-1"></i>');
             return;
         }
 
@@ -62,7 +69,8 @@ function CleanData(props) {
         }).then((response) => {
             window.location.href = `/${projectId}/models/${response.data.id}/create`;
         }).catch((error) => {
-
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i class="fe-check-circle me-1"></i>');
         });
     }
 
@@ -85,7 +93,12 @@ function CleanData(props) {
                     </div>
                     <div className="col-3 text-center d-flex justify-content-end">
                         <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
-                        <button type="button" className="btn btn-success waves-effect waves-light m-1" onClick={updateRules}><i className="fe-check-circle me-1"></i>Create</button>
+                        <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={updateRules}>
+                            <div id="loading-btn" className="d-inline">
+                                <i className="fe-check-circle me-1"></i>
+                            </div>
+                            Create
+                        </button>
                     </div>
                 </div>
             </div>
