@@ -127,10 +127,10 @@ def remove_outlier_categorical(df, column, unique_values):
 
 def detect_outlier_categorical(df, column, unique_values):
     """
-    Removes rows from a dataframe based on a condition
+    Detect rows from a dataframe based on a condition
     """
     inconsistent_categories = pd.array(
-        list(set(df[column].unique()) - set(unique_values)))
+        [val for val in df[column].unique() if val not in unique_values])
     return df[column].isin(inconsistent_categories)
 
 
@@ -207,6 +207,10 @@ def convert_nominal_categories_test(df, column, unique_values):
 def convert_ordinal_category(df, column, order):
     df[column].replace(to_replace=df[column].unique(),
                        value=order, inplace=True)
+    
+def convert_ordinal_category_test(df, column, unique_values, order):
+    df[column].replace(to_replace=unique_values,
+                       value=order, inplace=True)
 
 
 def fill_missing_values(df, column, value):
@@ -262,35 +266,7 @@ def knn_impute(df, column, is_numeric):
         knn_classifier.fit(x_train, y_train)
         y_predict = knn_classifier.predict(x_predict)
         df.loc[df[column].isna(), column] = y_predict
-
-
-def knn_impute_test(raw_df, column, is_numeric, shadow_df, output_column, shadow_clone_df):
-    x_predict = shadow_clone_df[shadow_clone_df.columns[shadow_clone_df.columns != column]].copy(
-    )
-    x_predict = x_predict[x_predict.columns[x_predict.dtypes != 'object']]
-
-    x_train = raw_df.copy()
-
-    y_train = x_train[column]
-    x_train = x_train[x_predict.columns]
-    x_train = x_train[x_train.columns[x_train.dtypes != 'object']]
-
-    if x_predict.shape[0] == 0:
-        return
-
-    if is_numeric:
-        # REGRESSION
-        knn_regressor = KNeighborsRegressor()
-        knn_regressor.fit(x_train, y_train)
-        y_predict = knn_regressor.predict(x_predict)
-        shadow_df.loc[shadow_df[column].isna(), column] = y_predict
-    else:
-        # CLASSIFICATION
-        knn_classifier = KNeighborsClassifier()
-        knn_classifier.fit(x_train, y_train)
-        y_predict = knn_classifier.predict(x_predict)
-        shadow_df.loc[shadow_df[column].isna(), column] = y_predict
-
+        
 
 def pearson_score(df, column, output_column):
     df_temp = df.copy()

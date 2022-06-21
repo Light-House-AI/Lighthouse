@@ -159,6 +159,7 @@ def clean_train(df, output_column, operations):
                 list(set(col_json['unique_values']) - set(df[col].unique())))
             try:
                 df = correct_category_levenshtein(df, col, outliers.to_numpy())
+                df = drop_rows_condition(df, df[col].isin(outliers))
             except:
                 df = drop_rows_condition(df, df[col].isin(outliers))
 
@@ -187,7 +188,6 @@ def clean_train(df, output_column, operations):
 
 
 def clean_test(df, operations, raw_df, output_column):
-    shadow_df_clone = df.copy()
     for col_json in operations:
         # Column name
         col = col_json['column_name']
@@ -208,38 +208,29 @@ def clean_test(df, operations, raw_df, output_column):
             outliers = detect_outlier_numeric(
                 df, col, col_json['min'], col_json['max'])
             df[col][outliers] = col_json['mean']
+
         elif df[col].dtype != 'object':
             outliers = detect_outlier_categorical(
                 df, col, col_json['unique_values'])
             df[col][outliers] = col_json['mode']
+
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
             outliers = [val for val in df[col].unique(
             ) if val not in col_json['unique_values']]
             try:
                 df = correct_category_levenshtein(df, col, outliers)
+                df[col].replace(to_replace=outliers, value=[col_json['mode']
+                                for i in range(0, len(outliers))], inplace=True)
             except:
                 df[col].replace(to_replace=outliers, value=[col_json['mode']
                                 for i in range(0, len(outliers))], inplace=True)
 
         # Fill missing data
-        if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
-            p_score = col_json['p_score']
-            if p_score >= -0.5 and p_score <= 0.5:
-                if not is_numeric:
-                    df[col].fillna(col_json['mode'], inplace=True)
-                else:
-                    df[col].fillna(col_json['mean'], inplace=True)
-            else:
-                knn_impute_test(raw_df, col, is_numeric, df, output_column, shadow_df_clone)
-        elif col_json['fill_method'] == 'average':
-            if not is_numeric:
-                df[col].fillna(col_json['mode'], inplace=True)
-            else:
-                df[col].fillna(col_json['mean'], inplace=True)
-        elif col_json['fill_method'] == 'knn':
-            knn_impute_test(raw_df, col, is_numeric, df,
-                            output_column, shadow_df_clone)
+        if not is_numeric:
+            df[col].fillna(col_json['mode'], inplace=True)
+        else:
+            df[col].fillna(col_json['mean'], inplace=True)
 
         # Convert Nominal/Ordinal
         if not is_numeric:
@@ -247,7 +238,8 @@ def clean_test(df, operations, raw_df, output_column):
                 df = convert_nominal_categories_test(
                     df, col, col_json['unique_values'])
             else:
-                convert_ordinal_category(df, col, col_json['ordinal_order'])
+                convert_ordinal_category_test(
+                    df, col, col_json['unique_values'], col_json['ordinal_order'])
 
         # Normalizing data
         if is_numeric:
