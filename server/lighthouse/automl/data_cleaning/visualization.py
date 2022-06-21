@@ -21,7 +21,7 @@ def get_columns_visualization(df, columns):
 
         json_array.update({col: json})
         
-    json_array.update({'data': df[columns]})
+    json_array.update({'data': df[columns].values.tolist()})
     
     return json_array
 
