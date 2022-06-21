@@ -18,7 +18,7 @@ function CreateDeployment(props) {
         }).then((response) => {
             let models = [];
             for (let i = 0; i < response.data.length; i++) {
-                if (response.data[i].id !== parseInt(modelId)) {
+                if (response.data[i].id !== parseInt(modelId) && response.data[i].is_trained) {
                     models.push(response.data[i]);
                 }
             }

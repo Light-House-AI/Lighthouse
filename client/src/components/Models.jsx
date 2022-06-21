@@ -138,7 +138,7 @@ function Models(props) {
                                                 <td><span className="badge bg-soft-warning text-warning p-1">In progress</span></td>
                                             }
                                             {type === 'classification' && model.is_trained ?
-                                                <td>{model.score !== null ? model.score * 100 : ''}%</td> :
+                                                <td>{model.score !== null ? (model.score * 100).toFixed(2) : ''}%</td> :
                                                 null
                                             }
                                             {type !== 'classification' && model.is_trained ?
