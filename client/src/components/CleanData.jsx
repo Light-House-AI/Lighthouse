@@ -11,7 +11,7 @@ function CleanData(props) {
     const [columnsRef, setColumnsRef] = useState(null);
 
     useEffect(() => {
-
+        document.getElementById('loader').classList.remove('d-none');
         axios.get('/datasets/raw/recommendations', {
             params: {
                 datasets_ids: datasetIds
@@ -28,6 +28,11 @@ function CleanData(props) {
                 refs.push(React.createRef());
             }
             setColumnsRef(refs);
+            document.getElementById('loader').classList.remove('opacity-100');
+            document.getElementById('loader').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('d-none');
+            }, 1000);
         }).catch((error) => {
         });
     }, []);
@@ -94,7 +99,7 @@ function CleanData(props) {
                         </div>
                     </div>
                     <div className="col-3 text-center d-flex justify-content-end">
-                        <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
+                        <a href={`/${projectId}/datasets`} className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</a>
                         <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={updateRules}>
                             <div id="loading-btn" className="d-inline">
                                 <i className="fe-check-circle me-1"></i>

@@ -104,7 +104,7 @@ def get_deployment(*,
                  **BadRequestException.get_example_response(),
                  **NotFoundException.get_example_response(),
              },
-             response_model=str)
+             response_model=Dict[str, str])
 @catch_app_exceptions
 def get_prediction(*,
                    deployment_id: int,

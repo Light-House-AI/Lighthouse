@@ -145,7 +145,7 @@ function CreateDeployment(props) {
                                 {/* CREATE / CANCEL */}
                                 <div className="row float-end">
                                     <div className="col-12 text-center">
-                                        <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
+                                        <a href={`/${projectId}/deployments`} className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</a>
                                         <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={deploymentCreation}>
                                             <div id="loading-btn" className="d-inline">
                                                 <i className="fe-check-circle me-1"></i>

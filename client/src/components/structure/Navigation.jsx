@@ -21,7 +21,7 @@ function Navigation() {
             }
         );
 
-        window.notificationsIntervalId = window.setInterval(() => {
+        window.getNotifications = function() {
             axios.get('/users/notifications', {
                 headers: {
                     'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`
@@ -29,7 +29,9 @@ function Navigation() {
             }).then((response) => {
                 setNotifications(response.data);
             });
-        }, 5000);
+        }
+        window.getNotifications();
+        window.notificationsIntervalId = window.setInterval(window.getNotifications, 5000);
 
 
     }, []);

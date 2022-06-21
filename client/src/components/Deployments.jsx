@@ -182,7 +182,7 @@ function Deployments(props) {
                                                 <td><a href={`/${projectId}/deployments/${deployment.id}/predict`} className="btn btn-outline-primary btn-sm rounded-pill disabled" disabled>Predict</a></td>
                                             }
                                             <td>{findModelName(deployment.primary_model_id)}</td>
-                                            <td>{deployment.type === 'champion_challenger' ? deployment.secondary_model_id : 'No secondary model'}</td>
+                                            <td>{deployment.type === 'champion_challenger' ? findModelName(deployment.secondary_model_id) : 'No secondary model'}</td>
                                         </tr>
                                     )
                                 })
