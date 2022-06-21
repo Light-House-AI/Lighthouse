@@ -127,6 +127,11 @@ def mark_model_as_trained(model_id: int, model_params: ModelParameters,
     model.learning_rate = model_params.alpha
     model.batch_size = model_params.batch_size
 
+    if model_params.mean_accuracy:
+        model.score = model_params.mean_accuracy
+    elif model_params.mean_loss:
+        model.score = model_params.mean_loss
+
     # Create notification
     notification = Notification(
         user_id=model.project.user_id,
