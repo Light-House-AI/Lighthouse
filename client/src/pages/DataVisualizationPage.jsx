@@ -37,7 +37,7 @@ function DataVisualizationPage() {
                         <div className="container-fluid scroll">
                             <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"ABC"} execution={"Visaulize"} projectid={projectid} />
                             <div className="mb-2">
-                                <ApexChart />
+                                <ApexChart plotType={`Line Chart`} columns={['Age', 'Fare']} />
                             </div>
                             <Footer />
                         </div>

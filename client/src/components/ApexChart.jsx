@@ -1,14 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-function ApexChart() {
+function ApexChart(props) {
+    const [plotType] = useState(props.plotType)
+    const [columns] = useState(props.columns)
 
     useEffect(() => {
         var colors = ['#f672a7'];
-        var dataColors = window.$("#apex-line-2").data('colors');
-        if (dataColors) {
-            colors = dataColors.split(",");
-        }
         var options = {
+            stroke: {
+                width: 5,
+                curve: 'smooth'
+            },
+            series: [{
+                name: columns[0],
+                data: [4, 3, 10, 9, 29, 19, 22, 9, 12, 7, 19, 5, 13, 9, 17, 2, 7, 5]
+            }],
+            xaxis: {
+                type: 'datetime',
+                categories: ['1/11/2000', '2/11/2000', '3/11/2000', '4/11/2000', '5/11/2000', '6/11/2000', '7/11/2000', '8/11/2000', '9/11/2000', '10/11/2000', '11/11/2000', '12/11/2000', '1/11/2001', '2/11/2001', '3/11/2001', '4/11/2001', '5/11/2001', '6/11/2001'],
+            },
+            yaxis: {
+                min: -10,
+                max: 40,
+                title: {
+                    text: columns[1],
+                },
+            },
             chart: {
                 height: 380,
                 type: 'line',
@@ -21,24 +38,12 @@ function ApexChart() {
                     opacity: 1
                 },
             },
-            stroke: {
-                width: 5,
-                curve: 'smooth'
-            },
-            series: [{
-                name: 'Likes',
-                data: [4, 3, 10, 9, 29, 19, 22, 9, 12, 7, 19, 5, 13, 9, 17, 2, 7, 5]
-            }],
-            xaxis: {
-                type: 'datetime',
-                categories: ['1/11/2000', '2/11/2000', '3/11/2000', '4/11/2000', '5/11/2000', '6/11/2000', '7/11/2000', '8/11/2000', '9/11/2000', '10/11/2000', '11/11/2000', '12/11/2000', '1/11/2001', '2/11/2001', '3/11/2001', '4/11/2001', '5/11/2001', '6/11/2001'],
-            },
             title: {
-                text: 'Social Media',
+                text: plotType,
                 align: 'left',
                 style: {
                     fontSize: "14px",
-                    color: '#666'
+                    color: '#fff'
                 }
             },
             fill: {
@@ -64,13 +69,6 @@ function ApexChart() {
                     size: 7,
                 }
             },
-            yaxis: {
-                min: -10,
-                max: 40,
-                title: {
-                    text: 'Engagement',
-                },
-            },
             grid: {
                 row: {
                     colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
@@ -94,7 +92,7 @@ function ApexChart() {
         }
 
         var chart = new window.ApexCharts(
-            document.querySelector("#hi"),
+            document.querySelector("#apex-chart"),
             options
         );
 
@@ -102,7 +100,7 @@ function ApexChart() {
     }, [])
 
     return (
-        <div id="hi">
+        <div id="apex-chart">
         </div>
     );
 }
