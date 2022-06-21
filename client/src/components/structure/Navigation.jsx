@@ -31,7 +31,6 @@ function Navigation() {
             });
         }, 5000);
 
-        clearInterval(window.notificationsIntervalId);
 
     }, []);
 
