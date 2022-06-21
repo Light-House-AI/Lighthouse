@@ -7,6 +7,7 @@ from mongoengine import (
     EmbeddedDocumentField,
     DateTimeField,
     StringField,
+    DynamicField,
     IntField,
 )
 
@@ -26,9 +27,9 @@ class DeploymentInput(Document):
     project_id = IntField(required=True)
 
     created_at = DateTimeField(required=True, default=datetime.utcnow)
-    primary_model_prediction = StringField(required=True)
-    secondary_model_prediction = StringField()
-    label = StringField()
+    primary_model_prediction = DynamicField(required=True)
+    secondary_model_prediction = DynamicField()
+    label = DynamicField()
 
     input_data = EmbeddedDocumentField(InputData)
 

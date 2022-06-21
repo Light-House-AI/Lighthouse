@@ -103,7 +103,8 @@ def get_deployment(*,
                  **UnauthenticatedException.get_example_response(),
                  **BadRequestException.get_example_response(),
                  **NotFoundException.get_example_response(),
-             })
+             },
+             response_model=str)
 @catch_app_exceptions
 def get_prediction(*,
                    deployment_id: int,
