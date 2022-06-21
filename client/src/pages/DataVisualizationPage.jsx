@@ -12,10 +12,14 @@ import ApexChart from "../components/ApexChart";
 function DataVisualizationPage() {
     const { projectid } = useParams();
     const { datasetid } = useParams();
+    const { type } = useParams();
+
     const [projectDetails, setProjectDetails] = useState(null);
+    const [datasetDetails, setDatasetDetails] = useState(null);
+    const [visualization, setVisualization] = useState(null);
 
     useEffect(() => {
-        axios.get(`/projects/${projectid}/`, {
+        axios.get(`/projects/${projectid}`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
@@ -23,6 +27,16 @@ function DataVisualizationPage() {
         }).then((response) => {
             setProjectDetails(response.data);
         });
+
+        axios.get(`/datasets/raw/${datasetid}`, {
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setDatasetDetails(response.data);
+        });
+
     }, []);
 
     return (
