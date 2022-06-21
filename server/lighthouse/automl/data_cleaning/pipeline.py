@@ -5,7 +5,7 @@ def data_statistics(df, output_column):
     df_jsons = []
     for col in df.columns[df.columns != output_column]:
         drop_missing_values(df, col)
-        
+
         col_json = {}
         col_json.update({"column_name": col})
 
@@ -20,7 +20,7 @@ def data_statistics(df, output_column):
             col_json.update({'original_datatype': 'uint8'})
         elif df[col].dtype == 'bool':
             col_json.update({'datatype': 'uint8'})
-            
+
         # Correcting datatype
         detect_correct_datatype(df, col)
 
@@ -28,9 +28,9 @@ def data_statistics(df, output_column):
         is_numeric = False
         if df[col].dtype != 'object':
             is_numeric, _ = is_numeric_or_categorical(df, col)
-        
+
         col_json.update({'is_numeric': is_numeric})
-        
+
         # Get Statistics (min, max, mean, mode, unique_count, unique_values)
         if is_numeric:
             col_json.update(
@@ -101,7 +101,7 @@ def data_cleaning_suggestions(df, output_column):
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
             col_json.update(
-                {'unique_count': None, 'unique_values': None, 'mode': None})
+                {'unique_count': len(df[col].unique()), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
         elif df[col].dtype != 'object':
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
@@ -118,7 +118,7 @@ def data_cleaning_suggestions(df, output_column):
         col_json.update({'fill_method': method})
         col_json.update({'p_score': p_score})
 
-        if method != 'column' and not is_numeric:
+        if method != 'column':
             col_json.update({'unique_count': len(
                 df[col].unique()), 'unique_values': df[col].unique().tolist()})
 
@@ -156,7 +156,7 @@ def clean_train(df, output_column, operations):
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
             outliers = pd.array(
-                list(set(df[col].unique()) - set(col_json['unique_values'])))
+                list(set(col_json['unique_values']) - set(df[col].unique())))
             try:
                 df = correct_category_levenshtein(df, col, outliers.to_numpy())
             except:
@@ -213,7 +213,8 @@ def clean_test(df, operations, raw_df, output_column):
             df[col][outliers] = col_json['mode']
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
-            outliers = [val for val in df[col].unique() if val not in col_json['unique_values']]
+            outliers = [val for val in df[col].unique(
+            ) if val not in col_json['unique_values']]
             try:
                 df = correct_category_levenshtein(df, col, outliers)
             except:
