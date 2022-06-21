@@ -308,7 +308,14 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     # Check for statistics monitoring
     _notify_for_monitoring(deployment, user_id, db)
 
+<<<<<<< Updated upstream
     return deployment_response["primary_prediction"]
+=======
+    return {
+        "primary_prediction": primary_prediction,
+        "secondary_prediction": secondary_prediction
+    }
+>>>>>>> Stashed changes
 
 
 def _features_to_numpy_string(features: pd.DataFrame):

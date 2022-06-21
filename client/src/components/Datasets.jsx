@@ -124,18 +124,15 @@ function Datasets(props) {
             window.selectizeModal = window.$("#modal-structure #select-visualization-type").selectize({
                 maxItems: 1,
                 onChange: function (value) {
-                    if (value === 'scatter') {
+                    if (value === 'scatter' || value === 'line') {
                         window.$("#col-name-1").removeClass('d-none');
                         window.$("#col-name-2").removeClass('d-none');
-                    } else if (value === 'box') {
+                    } else if (value === 'boxPlot') {
                         window.$("#col-name-1").removeClass('d-none');
                         window.$("#col-name-2").addClass('d-none');
                     } else if (value === 'heatmap') {
                         window.$("#col-name-1").addClass('d-none');
                         window.$("#col-name-2").addClass('d-none');
-                    } else if (value === 'pie') {
-                        window.$("#col-name-1").removeClass('d-none');
-                        window.$("#col-name-2").removeClass('d-none');
                     }
                 }
             });

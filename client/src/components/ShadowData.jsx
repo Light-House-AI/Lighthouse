@@ -106,9 +106,10 @@ function ShadowData(props) {
 
         let labeledData = [];
         for (let i = 0; i < selectedRows.length; i++) {
+            debugger;
             labeledData.push({
                 id: selectedRows[i].attributes._id.value,
-                label: window.$(selectedRows[0]).parent().parent().find('.form-control.form-control-sm').val()
+                label: window.$(selectedRows[i]).parent().parent().find('.form-control.form-control-sm').val()
             });
         }
 
@@ -151,7 +152,7 @@ function ShadowData(props) {
                     </div>
                 </div>
                 <div className="col-3 text-center d-flex justify-content-end">
-                    <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
+                    <a href={`/${projectId}/datasets`} className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</a>
                     <button type="button" className="btn btn-success waves-effect waves-light m-1" onClick={createShadowData}><i className="fe-check-circle me-1"></i>Create</button>
                 </div>
             </div>

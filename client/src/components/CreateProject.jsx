@@ -135,7 +135,7 @@ function CreateProject() {
                                 {/* CREATE / CANCEL / ERROR */}
                                 <div className="row float-end">
                                     <div className="col-12 text-center">
-                                        <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={cancelProject}><i className="fe-x me-1"></i>Cancel</button>
+                                        <a href={`/`} className="btn btn-light waves-effect waves-light m-1" onClick={cancelProject}><i className="fe-x me-1"></i>Cancel</a>
                                         <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={addProject}>
                                             <div id="loading-btn" className="d-inline">
                                                 <i className="fe-arrow-right me-1"></i>

@@ -4,16 +4,31 @@ import axios from "axios";
 function PredictDeployment(props) {
     const [projectDetails] = useState(props.projectDetails);
     const [deploymentDetails] = useState(props.deploymentDetails);
-    const [columns] = useState(props.columns);
+    const [columns, setColumns] = useState(props.columns);
     const selectModelsRef = useRef(null);
 
     useEffect(() => {
+        window.predictionIndex = 1;
         window.activateHorizontalScroll();
+        if (deploymentDetails.type !== 'single_model') {
+            window.predictionIndex = 0;
+            let newColumns = []
+            for (let i = 0; i < columns.length; i++) {
+                newColumns.push(columns[i])
+                if (columns[i] === projectDetails.predicted_column) {
+                    newColumns.push(columns[i]);
+                }
+            }
+            setColumns(newColumns);
+        }
     }, []);
 
     const predictModelDeployment = () => {
         document.getElementById('error-div').classList.add('d-none');
-        document.getElementById('predicted_value').value = "";
+        document.getElementsByClassName('predicted_value')[0].value = "";
+        if (deploymentDetails.type !== 'single_model')
+            document.getElementsByClassName('predicted_value')[1].value = "";
+
 
         let columns_value = {};
         for (let i = 0; i < columns.length; i++) {
@@ -26,7 +41,10 @@ function PredictDeployment(props) {
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
             }
         }).then((response) => {
-            document.getElementById('predicted_value').value = response.data;
+            debugger
+            document.getElementsByClassName('predicted_value')[0].value = response.data.primary_prediction;
+            if (deploymentDetails.type !== 'single_model')
+                document.getElementsByClassName('predicted_value')[1].value = response.data.secondary_prediction;
         }).catch((error) => {
             if (error.response.status === 400 || error.response.status === 404) {
                 document.getElementById('error-message').innerHTML = error.response.data.error;
@@ -39,14 +57,19 @@ function PredictDeployment(props) {
         <div className="card card-width-fixed mx-2 prediction">
             <div className="card-body d-inline">
                 <label className="mb-1">Columns can have empty values.</label>
-                <div className="table-responsive overflow-x-scroll">
+                <div className="table-responsive overflow-x-scroll"> 
                     <table className="table align-middle table-centered table-nowrap table-borderless mb-0">
                         <thead className="table-light">
                             <tr>
                                 {columns !== null ?
                                     columns.map((column, index) => {
+                                        if (projectDetails.predicted_column === column && deploymentDetails.type !== 'single_model')
+                                            window.predictionIndex += 1;
+                                        console.log(window.predictionIndex)
                                         return (
-                                            <th key={index} className={projectDetails.predicted_column === column ? 'text-warning' : ''}>{projectDetails.predicted_column === column ? `PREDICTED ${window.capitalizeFirstLetter(column)}` : window.capitalizeFirstLetter(column)}</th>
+                                            <th key={index} className={projectDetails.predicted_column === column ? 'text-warning' : ''}>
+                                                {projectDetails.predicted_column === column ? `${window.predictionIndex === 1 || window.predictionIndex === undefined ? `Primary` : `Secondary`} ${window.capitalizeFirstLetter(column)}` : window.capitalizeFirstLetter(column)}
+                                            </th>
                                         )
                                     })
                                     : null}
@@ -57,11 +80,11 @@ function PredictDeployment(props) {
                                 {columns !== null ?
                                     columns.map((column, index) => {
                                         return (
-                                            <th key={index}>
+                                            <td key={index}>
                                                 {projectDetails.predicted_column === column ?
-                                                    <input id="predicted_value" type="text" name={column} className="form-control min-width-predict border-warning" disabled /> :
+                                                    <input type="text" name={column} className="form-control min-width-predict border-warning predicted_value" disabled /> :
                                                     <input type="text" name={column} className="form-control min-width-predict" />}
-                                            </th>
+                                            </td>
                                         )
                                     })
                                     : null}
@@ -76,7 +99,7 @@ function PredictDeployment(props) {
                         </div>
                     </div>
                     <div className="col-8 text-center d-flex justify-content-end">
-                        <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
+                        <a href={`/${projectDetails.id}/deployments`} className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</a>
                         <button type="button" className="btn btn-success waves-effect waves-light m-1" onClick={predictModelDeployment}><i className="fe-check-circle me-1"></i>Predict</button>
                     </div>
                 </div>

@@ -82,7 +82,7 @@ function DataVisualizationPage() {
                     <title>Visualize {window.capitalizeFirstLetter(datasetDetails.name)} - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                     <div className="content">
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"ABC"} execution={"Visaulize"} projectid={projectid} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={window.capitalizeFirstLetter(datasetDetails.name)} execution={"Visualize"} projectid={projectid} />
                             <div className="mb-2">
                                 {visualization !== null && type !== 'boxPlot' && type !== 'heatmap' ?
                                     <ApexChart plotType={type} columns={columnName2 !== undefined && columnName2 !== null && columnName2 !== '' ? [columnName1, columnName2] : [columnName1]} visualizationDetails={visualization} /> : null}
