@@ -7,6 +7,7 @@ function CleanData(props) {
     const [datasetIds] = useState(props.datasetIds);
     const [projectId] = useState(props.projectid);
     const [recommendations, setRecommendations] = useState(null);
+    const [statistics, setStatistics] = useState(null);
     const [columnsRef, setColumnsRef] = useState(null);
 
     useEffect(() => {
@@ -20,9 +21,10 @@ function CleanData(props) {
                 'Authorization': localStorage.getItem('tokenType').toString() + " " + localStorage.getItem('accessToken')
             }
         }).then((response) => {
-            setRecommendations(response.data);
+            setRecommendations(response.data.rules);
+            setStatistics(response.data.statistics)
             let refs = [];
-            for (let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.rules.length; i++) {
                 refs.push(React.createRef());
             }
             setColumnsRef(refs);
@@ -108,7 +110,7 @@ function CleanData(props) {
                         recommendations.map((recommendation, index) => {
                             recommendation.unique_values = recommendation.unique_values !== null ? recommendation.unique_values.toString() : '';
                             return (
-                                <ColumnRules childRef={columnsRef[index]} key={`col-${index}`} recommendation={recommendation} statistics={recommendation} />
+                                <ColumnRules childRef={columnsRef[index]} key={`col-${index}`} recommendation={recommendation} statistics={statistics[index]} />
                             );
                         }) : null}
                 </div>
