@@ -6,15 +6,23 @@ from sqlalchemy.orm import Session
 
 from lighthouse.config import config
 from lighthouse.ml_projects.services import model as model_service
-from lighthouse.ml_projects.schemas import ModelCreate, Model, ModelParameters
-from lighthouse.ml_projects.exceptions import UnauthenticatedException
 
+from lighthouse.ml_projects.exceptions import (
+    UnauthenticatedException,
+    NotFoundException,
+)
+
+from lighthouse.ml_projects.schemas import (
+    ModelCreate,
+    Model,
+    ModelParameters,
+    ModelWithDataset,
+)
 from lighthouse.ml_projects.api import (
     get_session,
     get_current_user_data,
     catch_app_exceptions,
 )
-from lighthouse.ml_projects.exceptions.not_found import NotFoundException
 
 router = APIRouter(prefix="/models")
 
@@ -64,7 +72,7 @@ def create_model(*,
                 **UnauthenticatedException.get_example_response(),
                 **NotFoundException.get_example_response()
             },
-            response_model=Model)
+            response_model=ModelWithDataset)
 @catch_app_exceptions
 def get_model(*,
               model_id: str,
