@@ -191,6 +191,19 @@ def convert_nominal_categories(df, columns):
     return pd.get_dummies(df, columns=columns)
 
 
+def convert_nominal_categories_test(df, column, unique_values):
+    column_names_unique = []
+    for unique in unique_values:
+        column_names_unique.append(column + '_' + str(unique))
+
+    df[column_names_unique] = 0
+    for unique in df[column].unique():
+        df[column + '_' + str(unique)] = 1
+
+    remove_columns(df, [column])
+    return df
+
+
 def convert_ordinal_category(df, column, order):
     df[column].replace(to_replace=df[column].unique(),
                        value=order, inplace=True)
@@ -251,17 +264,16 @@ def knn_impute(df, column, is_numeric):
         df.loc[df[column].isna(), column] = y_predict
 
 
-def knn_impute_test(raw_df, column, is_numeric, shadow_df, output_column):
-    x_train = raw_df[~raw_df[column].isna()].copy()
-    x_train = x_train[x_train.columns[x_train.columns != output_column]]
-    x_train.dropna(inplace=True)
+def knn_impute_test(raw_df, column, is_numeric, shadow_df, output_column, shadow_clone_df):
+    x_predict = shadow_clone_df[shadow_clone_df.columns[shadow_clone_df.columns != column]].copy(
+    )
+    x_predict = x_predict[x_predict.columns[x_predict.dtypes != 'object']]
+
+    x_train = raw_df.copy()
 
     y_train = x_train[column]
-    x_train = x_train[x_train.columns[x_train.columns != column]]
+    x_train = x_train[x_predict.columns]
     x_train = x_train[x_train.columns[x_train.dtypes != 'object']]
-
-    x_predict = shadow_df[shadow_df.columns[shadow_df.columns != column]].copy()
-    x_predict = x_predict[x_predict.columns[x_predict.dtypes != 'object']]
 
     if x_predict.shape[0] == 0:
         return

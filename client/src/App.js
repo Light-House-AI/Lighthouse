@@ -20,6 +20,9 @@ import RulesDataPage from './pages/RulesDataPage';
 import ViewModelPage from './pages/ViewModelPage';
 import ViewDeploymentPage from './pages/ViewDeploymentPage';
 import PredictPage from './pages/PredictPage';
+import ViewMonitorPage from './pages/ViewMonitorPage';
+import ShadowDataPage from './pages/ShadowDataPage';
+import DataVisualizationPage from './pages/DataVisualizationPage';
 
 function App() {
 
@@ -39,6 +42,8 @@ function App() {
         <Route path="/:projectid/datasets/:datasettype/:datasetid/view" element={<ViewDatasetPage />} />
         <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
         <Route path="/:projectid/datasets/:datasetid/rules" element={<RulesDataPage />} />
+        <Route path="/:projectid/shadow" element={<ShadowDataPage />} />
+        <Route path="/:projectid/datasets/:datasetid/visualize" element={<DataVisualizationPage />} />
         {/* MODEL */}
         <Route path="/:projectid/models" element={<ModelsPage />} />
         <Route path="/:projectid/models/:datasetcleanedid/create" element={<CreateModelPage />} />
@@ -48,6 +53,7 @@ function App() {
         <Route path="/:projectid/deployments/:modelid/create" element={<CreateDeploymentPage />} />
         <Route path="/:projectid/deployments/:deploymentid/predict" element={<PredictPage />} />
         <Route path="/:projectid/deployments/:deploymentid/view" element={<ViewDeploymentPage />} />
+        <Route path="/:projectid/deployments/:deploymentid/monitor" element={<ViewMonitorPage />} />
       </Routes>
     </BrowserRouter>
   );

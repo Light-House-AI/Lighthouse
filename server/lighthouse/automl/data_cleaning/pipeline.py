@@ -1,13 +1,14 @@
 from .data_cleaning import *
 
+
 def data_statistics(df, output_column):
     df_jsons = []
     for col in df.columns[df.columns != output_column]:
         drop_missing_values(df, col)
-        
+
         col_json = {}
         col_json.update({"column_name": col})
-        
+
         # Original datatype
         if df[col].dtype == 'object':
             col_json.update({"original_datatype": "object"})
@@ -17,7 +18,9 @@ def data_statistics(df, output_column):
             col_json.update({"original_datatype": "float64"})
         elif df[col].dtype == 'uint8':
             col_json.update({'original_datatype': 'uint8'})
-            
+        elif df[col].dtype == 'bool':
+            col_json.update({'datatype': 'uint8'})
+
         # Correcting datatype
         detect_correct_datatype(df, col)
 
@@ -25,9 +28,9 @@ def data_statistics(df, output_column):
         is_numeric = False
         if df[col].dtype != 'object':
             is_numeric, _ = is_numeric_or_categorical(df, col)
-        
+
         col_json.update({'is_numeric': is_numeric})
-        
+
         # Get Statistics (min, max, mean, mode, unique_count, unique_values)
         if is_numeric:
             col_json.update(
@@ -43,9 +46,9 @@ def data_statistics(df, output_column):
             col_json.update({'min': None, 'max': None, 'mean': None})
             col_json.update({'unique_count': len(df[col].unique(
             )), 'unique_values': df[col].unique().tolist(), 'mode': df[col].mode()[0]})
-            
+
         df_jsons.append(col_json)
-    
+
     return df_jsons
 
 
@@ -64,6 +67,8 @@ def data_cleaning_suggestions(df, output_column):
         elif df[col].dtype == 'float64':
             col_json.update({"datatype": "float64"})
         elif df[col].dtype == 'uint8':
+            col_json.update({'datatype': 'uint8'})
+        elif df[col].dtype == 'bool':
             col_json.update({'datatype': 'uint8'})
 
         # Detect Numeric or Categorical
@@ -96,7 +101,7 @@ def data_cleaning_suggestions(df, output_column):
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
             col_json.update(
-                {'unique_count': None, 'unique_values': None, 'mode': None})
+                {'unique_count': len(df[col].unique()), 'unique_values': df[col].unique().tolist(), 'mode': float(df[col].mode()[0])})
         elif df[col].dtype != 'object':
             col_json.update(
                 {'min': df[col].min(), 'max': df[col].max(), 'mean': df[col].mean()})
@@ -113,7 +118,7 @@ def data_cleaning_suggestions(df, output_column):
         col_json.update({'fill_method': method})
         col_json.update({'p_score': p_score})
 
-        if method != 'column' and not is_numeric:
+        if method != 'column':
             col_json.update({'unique_count': len(
                 df[col].unique()), 'unique_values': df[col].unique().tolist()})
 
@@ -151,7 +156,7 @@ def clean_train(df, output_column, operations):
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
             outliers = pd.array(
-                list(set(df[col].unique()) - set(col_json['unique_values'])))
+                list(set(col_json['unique_values']) - set(df[col].unique())))
             try:
                 df = correct_category_levenshtein(df, col, outliers.to_numpy())
             except:
@@ -168,7 +173,7 @@ def clean_train(df, output_column, operations):
             drop_missing_values(df, col)
 
         # Convert Nominal/Ordinal
-        if df[col].dtype == 'object':
+        if not is_numeric:
             if col_json['is_nominal']:
                 df = convert_nominal_categories(df, [col])
             else:
@@ -182,6 +187,7 @@ def clean_train(df, output_column, operations):
 
 
 def clean_test(df, operations, raw_df, output_column):
+    shadow_df_clone = df.copy()
     for col_json in operations:
         # Column name
         col = col_json['column_name']
@@ -208,12 +214,13 @@ def clean_test(df, operations, raw_df, output_column):
             df[col][outliers] = col_json['mode']
         elif df[col].dtype == 'object':
             df[col] = df[col].str.strip()
-            outliers = pd.array(
-                list(set(df[col].unique()) - set(col_json['unique_values'])))
+            outliers = [val for val in df[col].unique(
+            ) if val not in col_json['unique_values']]
             try:
-                df = correct_category_levenshtein(df, col, outliers.to_numpy())
+                df = correct_category_levenshtein(df, col, outliers)
             except:
-                df[col][outliers] = col_json['mode']
+                df[col].replace(to_replace=outliers, value=[col_json['mode']
+                                for i in range(0, len(outliers))], inplace=True)
 
         # Fill missing data
         if col_json['fill_method'] == 'automatic' or col_json['fill_method'] == 'row':
@@ -224,16 +231,21 @@ def clean_test(df, operations, raw_df, output_column):
                 else:
                     df[col].fillna(col_json['mean'], inplace=True)
             else:
-                knn_impute_test(raw_df, col, is_numeric, df, output_column)
+                knn_impute_test(raw_df, col, is_numeric, df, output_column, shadow_df_clone)
         elif col_json['fill_method'] == 'average':
-            fill_average_mode(df, col, is_numeric)
+            if not is_numeric:
+                df[col].fillna(col_json['mode'], inplace=True)
+            else:
+                df[col].fillna(col_json['mean'], inplace=True)
         elif col_json['fill_method'] == 'knn':
-            knn_impute_test(raw_df, col, is_numeric, df, output_column)
+            knn_impute_test(raw_df, col, is_numeric, df,
+                            output_column, shadow_df_clone)
 
         # Convert Nominal/Ordinal
-        if df[col].dtype == 'object':
+        if not is_numeric:
             if col_json['is_nominal']:
-                df = convert_nominal_categories(df, [col])
+                df = convert_nominal_categories_test(
+                    df, col, col_json['unique_values'])
             else:
                 convert_ordinal_category(df, col, col_json['ordinal_order'])
 

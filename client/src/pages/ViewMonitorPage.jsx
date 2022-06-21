@@ -3,23 +3,34 @@ import { useParams } from 'react-router-dom';
 import axios from "axios";
 
 import Navigation from "../components/structure/Navigation";
-import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
+import SideBar from "../components/structure/SideBar";
 import PageTitle from "../components/structure/PageTitle";
-import Models from "../components/Models";
 
-function ModelsPage() {
-    const { projectid } = useParams();
+import ViewMonitor from "../components/ViewMonitor";
+
+function ViewMonitorPage() {
+    const { projectid, deploymentid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
+    const [deploymentDetails, setDeploymentDetails] = useState(null);
 
     useEffect(() => {
-        axios.get(`/projects/${projectid}`, {
+        axios.get(`/projects/${projectid}/`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
             }
         }).then((response) => {
             setProjectDetails(response.data);
+        });
+
+        axios.get(`/deployments/${deploymentid}/`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+            }
+        }).then((response) => {
+            setDeploymentDetails(response.data);
+        }).catch((error) => {
         });
     }, []);
 
@@ -29,13 +40,13 @@ function ModelsPage() {
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
             <div className="content-page">
-                {projectDetails !== null ?
+                {projectDetails !== null && deploymentDetails !== null ?
                     <div className="content">
-                        <title>Models - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
+                        <title>Monitor {window.capitalizeFirstLetter(deploymentDetails.name)} - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                         <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Models"} view={null} execution={null} projectid={projectid} />
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Deployments"} view={window.capitalizeFirstLetter(deploymentDetails.name)} execution={"Monitor"} projectid={projectid} />
                             <div className="mb-2">
-                                <Models projectId={projectid} type={projectDetails.type} />
+                                <ViewMonitor deploymentDetails={deploymentDetails} />
                             </div>
                             <Footer />
                         </div>
@@ -43,6 +54,7 @@ function ModelsPage() {
             </div>
         </div>
     );
+
 }
 
-export default ModelsPage;
+export default ViewMonitorPage;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import axios from "axios";
 
@@ -7,11 +7,10 @@ import SideBar from "../components/structure/SideBar";
 import Footer from "../components/structure/Footer";
 import PageTitle from "../components/structure/PageTitle";
 
-import CleanData from "../components/CleanData";
+import ShadowData from "../components/ShadowData";
 
-function CleanDataPage() {
+function ShadowDataPage() {
     const { projectid } = useParams();
-    const { datasetsid } = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
 
     useEffect(() => {
@@ -30,21 +29,21 @@ function CleanDataPage() {
             <Navigation />
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
-            {projectDetails !== null ?
-                <div className="content-page">
-                    <title>Create New Clean Dataset - {projectDetails.name} | Lighthouse AI</title>
+            <div className="content-page">
+                {projectDetails !== null ?
                     <div className="content">
-                        <div className="container-fluid scroll">
-                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"New Clean Dataset"} execution={"Create"} projectid={projectid} />
+                        <title>Shadow Data - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
+                        <div className="container-fluid scroll position-relative">
+                            <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"Shadow Data"} execution={"View"} projectid={projectid} />
                             <div className="mb-2">
-                                <CleanData datasetIds={datasetsid.split('-')} projectid={projectid} />
+                                <ShadowData projectId={projectid} column={projectDetails.predicted_column} />
                             </div>
-                            <Footer />
+                            <Footer positionBottom={true} />
                         </div>
-                    </div>
-                </div> : null}
+                    </div> : null}
+            </div>
         </div>
     );
 }
 
-export default CleanDataPage;
+export default ShadowDataPage;

@@ -7,11 +7,12 @@ function CleanData(props) {
     const [datasetIds] = useState(props.datasetIds);
     const [projectId] = useState(props.projectid);
     const [recommendations, setRecommendations] = useState(null);
+    const [statistics, setStatistics] = useState(null);
     const [columnsRef, setColumnsRef] = useState(null);
 
     useEffect(() => {
 
-        axios.get('/datasets/raw/recommendations/', {
+        axios.get('/datasets/raw/recommendations', {
             params: {
                 datasets_ids: datasetIds
             },
@@ -20,9 +21,10 @@ function CleanData(props) {
                 'Authorization': localStorage.getItem('tokenType').toString() + " " + localStorage.getItem('accessToken')
             }
         }).then((response) => {
-            setRecommendations(response.data);
+            setRecommendations(response.data.rules);
+            setStatistics(response.data.statistics)
             let refs = [];
-            for (let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.rules.length; i++) {
                 refs.push(React.createRef());
             }
             setColumnsRef(refs);
@@ -36,9 +38,16 @@ function CleanData(props) {
 
     const updateRules = function () {
         document.getElementById('error-div').classList.add('d-none');
+
+        document.getElementById('next-btn').classList.add('disabled');
+        window.$("#loading-btn").html('<div class="spinner-border spinner-border-sm text-white me-1" role="status"></div>');
+
         if (document.getElementById('dataset-name').value === '') {
             document.getElementById('error-msg').innerHTML = 'Please enter a name for the dataset';
             document.getElementById('error-div').classList.remove('d-none');
+
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i class="fe-check-circle me-1"></i>');
             return;
         }
 
@@ -54,7 +63,7 @@ function CleanData(props) {
             sources: datasetIds.map(id => parseInt(id)),
             rules: all_rules
         };
-        axios.post('/datasets/cleaned/', data, {
+        axios.post('/datasets/cleaned', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('tokenType') + " " + localStorage.getItem('accessToken')
@@ -62,7 +71,8 @@ function CleanData(props) {
         }).then((response) => {
             window.location.href = `/${projectId}/models/${response.data.id}/create`;
         }).catch((error) => {
-
+            document.getElementById('next-btn').classList.remove('disabled');
+            window.$("#loading-btn").html('<i class="fe-check-circle me-1"></i>');
         });
     }
 
@@ -85,7 +95,12 @@ function CleanData(props) {
                     </div>
                     <div className="col-3 text-center d-flex justify-content-end">
                         <button type="button" className="btn btn-light waves-effect waves-light m-1"><i className="fe-x me-1"></i>Cancel</button>
-                        <button type="button" className="btn btn-success waves-effect waves-light m-1" onClick={updateRules}><i className="fe-check-circle me-1"></i>Create</button>
+                        <button id="next-btn" type="button" className="btn btn-success waves-effect waves-light m-1" onClick={updateRules}>
+                            <div id="loading-btn" className="d-inline">
+                                <i className="fe-check-circle me-1"></i>
+                            </div>
+                            Create
+                        </button>
                     </div>
                 </div>
             </div>
@@ -95,7 +110,7 @@ function CleanData(props) {
                         recommendations.map((recommendation, index) => {
                             recommendation.unique_values = recommendation.unique_values !== null ? recommendation.unique_values.toString() : '';
                             return (
-                                <ColumnRules childRef={columnsRef[index]} key={`col-${index}`} recommendation={recommendation} statistics={recommendation} />
+                                <ColumnRules childRef={columnsRef[index]} key={`col-${index}`} recommendation={recommendation} statistics={statistics[index]} />
                             );
                         }) : null}
                 </div>
