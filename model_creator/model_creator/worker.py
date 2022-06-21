@@ -35,13 +35,14 @@ def run_train_model_task(model_id: str, dataset_id: str, model_params: Dict):
     model_path = files_service.get_model_local_path(model_id)
 
     logger.info(f'Training model {model_id}')
-    network, network_config = train_model(dataset_path, model_params)
+    network, network_config, accuracy = train_model(dataset_path, model_params)
     export_model(model_path, network)
     logger.info(f'Finished training model {model_id}')
 
     files_service.upload_model(model_id)
     logger.info(f'Uploaded model {model_id}')
 
+    network_config['accuracy'] = accuracy
     notify_finished(model_id, network_config)
     logger.info(f'Notified server that model {model_id} is finished')
 
