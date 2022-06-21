@@ -2,13 +2,14 @@ from kubernetes import client
 
 
 class ClusterIP:
-    def __init__(self, api: client.CoreV1Api(), model_id: str, namespace: str, port: int, target_port: int):
+    def __init__(self, api: client.CoreV1Api(), cluster_ip_class_arguments_dict: dict):
         self.api = api
-        self.model_id = model_id
-        self.name = self.model_id + "-cluster-ip"
-        self.namespace = namespace
-        self.port = port
-        self.target_port = target_port
+        self.project_id = cluster_ip_class_arguments_dict["project_id"]
+        self.name = cluster_ip_class_arguments_dict["project_id"] + \
+            "-cluster-ip"
+        self.namespace = cluster_ip_class_arguments_dict["namespace"]
+        self.port = cluster_ip_class_arguments_dict["port"]
+        self.target_port = cluster_ip_class_arguments_dict["target_port"]
 
     def create_cluster_ip(self):
         try:
@@ -21,7 +22,7 @@ class ClusterIP:
                 ),
                 spec=client.V1ServiceSpec(
                     type="ClusterIP",
-                    selector={"model": self.model_id},
+                    selector={"project": self.project_id},
                     ports=[client.V1ServicePort(
                         port=self.port,
                         target_port=self.target_port

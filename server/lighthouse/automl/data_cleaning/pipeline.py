@@ -1,8 +1,10 @@
-from server.lighthouse.automl.data_cleaning.data_cleaning import *
+from .data_cleaning import *
 
 def data_statistics(df, output_column):
     df_jsons = []
     for col in df.columns[df.columns != output_column]:
+        drop_missing_values(df, col)
+        
         col_json = {}
         col_json.update({"column_name": col})
         
@@ -23,7 +25,9 @@ def data_statistics(df, output_column):
         is_numeric = False
         if df[col].dtype != 'object':
             is_numeric, _ = is_numeric_or_categorical(df, col)
-
+        
+        col_json.update({'is_numeric': is_numeric})
+        
         # Get Statistics (min, max, mean, mode, unique_count, unique_values)
         if is_numeric:
             col_json.update(
