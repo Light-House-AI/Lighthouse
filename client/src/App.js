@@ -21,6 +21,7 @@ import ViewModelPage from './pages/ViewModelPage';
 import ViewDeploymentPage from './pages/ViewDeploymentPage';
 import PredictPage from './pages/PredictPage';
 import ViewMonitorPage from './pages/ViewMonitorPage';
+import ShadowDataPage from './pages/ShadowDataPage';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/:projectid/datasets/:datasettype/:datasetid/view" element={<ViewDatasetPage />} />
         <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
         <Route path="/:projectid/datasets/:datasetid/rules" element={<RulesDataPage />} />
+        <Route path="/:projectid/shadow" element={<ShadowDataPage />} />
         {/* MODEL */}
         <Route path="/:projectid/models" element={<ModelsPage />} />
         <Route path="/:projectid/models/:datasetcleanedid/create" element={<CreateModelPage />} />
