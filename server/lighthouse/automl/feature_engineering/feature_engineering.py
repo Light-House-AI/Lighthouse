@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import json
 from sklearn.feature_selection import chi2
 from sklearn.utils import as_float_array, check_X_y, safe_sqr, safe_mask
 from scipy import special
@@ -14,10 +13,11 @@ class FeatureEngineering:
         problem_type: "Classification" or "Regression"
         '''
         self.data = data
+        self.data_columns = data.columns
         self.cleaning_rules = cleaning_rules
         self.target_column = target_column
         self.problem_type = problem_type
-        self.rules = []
+        self.rules = {"to_drop": [], "strongly_correlated": []}
         
     def __remove_low_variance_features(self):
         self.data.drop(self.data.loc[:, self.data.var() < 0.01], axis = 1, inplace = True)
@@ -96,26 +96,46 @@ class FeatureEngineering:
         return strongly_correlated
 
     def __apply_PCA(self):
-        strongly_correlated = self.__get_strongly_correlated_features()
-        for X, Y in strongly_correlated:
+        strongly_correlated_pairs = self.__get_strongly_correlated_features()
+        for X, Y in strongly_correlated_pairs:
             if X not in self.data.columns or Y not in self.data.columns:
                 continue
             new_name = X + '_' + Y
             pca_input = self.data[[X,Y]]
-            pca_input = featureNormalize(pca_input)
+            pca_input, mu, sigma = featureNormalize(pca_input)
             U = pca(pca_input)
             Z = projectData(pca_input, U)
             Z = pd.DataFrame(Z)
             self.data.drop([X,Y], axis = 1, inplace = True)
             self.data[new_name] = Z
-        
+            diict = {}
+            diict.update({'column_name': new_name})
+            self.rules["strongly_correlated"].append({"pair": [X, Y], "pca": {"mean": mu, "normalization_factor": sigma, "matrix": U}})
+
     def run(self):
         self.__remove_low_variance_features()
         self.__remove_duplicate_features()
         self.__remove_high_correlation_features()
         self.__remove_irrelevant_features()
+        for column in self.data_columns:
+            #compare between dataframes
+            if column not in self.data.columns:
+                self.rules["to_drop"].append(column)
         self.__apply_PCA()
         return self.data, self.rules
+
+def apply_FE_rules(data, rules):
+    data.drop(rules["to_drop"], axis = 1, inplace = True)
+    for pair_object in rules["strongly_correlated"]:
+        X, Y = pair_object["pair"]
+        new_name = X + '_' + Y
+        pca_input = np.asarray(data[[X,Y]]) - np.asarray(pair_object["pca"]["mean"])
+        pca_input /= np.asarray(pair_object["pca"]["normalization_factor"])
+        Z = projectData(pca_input, pair_object["pca"]["matrix"])
+        Z = pd.DataFrame(Z)
+        data.drop([X,Y], axis = 1, inplace = True)
+        data[new_name] = Z
+    return data
 
 # PCA Funtions
 def featureNormalize(X):
@@ -124,7 +144,7 @@ def featureNormalize(X):
     sigma = pow(np.var(Y, axis=0), 0.5)
     normalized_X = Y / sigma
 
-    return normalized_X
+    return normalized_X, mu, sigma
 
 def pca(X):
     cov = np.cov(X, rowvar=False)
