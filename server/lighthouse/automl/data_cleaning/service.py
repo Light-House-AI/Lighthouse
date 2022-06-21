@@ -98,3 +98,10 @@ def get_dataset_columns(file_path: str):
     """
     df = pd.read_csv(file_path)
     return df.columns.to_list()
+
+
+def get_dataframe(file_path: str):
+    """
+    Returns a dataframe.
+    """
+    return pd.read_csv(file_path)

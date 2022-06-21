@@ -162,6 +162,49 @@ def get_raw_dataset_rows(*,
     return Response(rows, media_type="application/json")
 
 
+@router.get('/raw/{dataset_id}/visualizations',
+            responses={
+                **UnauthenticatedException.get_example_response(),
+                **NotFoundException.get_example_response(),
+            })
+@catch_app_exceptions
+def get_raw_dataset_visualizations(*,
+                                   dataset_id: int,
+                                   columns: List[str] = Query(
+                                       [], alias="columns[]"),
+                                   db: Session = Depends(get_session),
+                                   user_data=Depends(get_current_user_data)):
+    """
+    Returns raw dataset visualizations.
+    """
+    return dataset_service.get_raw_dataset_visualization(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        columns=columns,
+        db=db,
+    )
+
+
+@router.get('/raw/{dataset_id}/correlation',
+            responses={
+                **UnauthenticatedException.get_example_response(),
+                **NotFoundException.get_example_response(),
+            })
+@catch_app_exceptions
+def get_raw_dataset_correlation(*,
+                                dataset_id: int,
+                                db: Session = Depends(get_session),
+                                user_data=Depends(get_current_user_data)):
+    """
+    Returns raw dataset features correlation.
+    """
+    return dataset_service.get_raw_dataset_correlation(
+        user_id=user_data.user_id,
+        dataset_id=dataset_id,
+        db=db,
+    )
+
+
 @router.get('/cleaned',
             responses=UnauthenticatedException.get_example_response(),
             response_model=List[CleanedDataset])

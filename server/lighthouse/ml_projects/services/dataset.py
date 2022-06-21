@@ -9,8 +9,9 @@ from lighthouse.ml_projects.exceptions import NotFoundException, BadRequestExcep
 
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.automl.data_cleaning import service as data_cleaning_service
-from lighthouse.mlops.monitoring import service as monitoring_service
+from lighthouse.automl.data_cleaning import visualization as data_visualization_service
 from lighthouse.automl.feature_engineering import FeatureEngineering
+from lighthouse.mlops.monitoring import service as monitoring_service
 
 from lighthouse.ml_projects.mongo import (
     DatasetCleaningRules,
@@ -359,3 +360,38 @@ def create_shadow_data(user_id: int, raw_dataset_in: RawDatasetCreate,
     dataset_file_service.upload_raw_dataset(dataset.id)
 
     return dataset
+
+
+def get_raw_dataset_correlation(user_id: int, dataset_id: int, db: Session):
+    """
+    Returns the correlation between the columns of a raw dataset.
+    """
+    dataset = db.query(RawDataset).join(Project).filter(
+        RawDataset.id == dataset_id, Project.user_id == user_id).first()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # Download dataset
+    file_path = dataset_file_service.download_raw_dataset(dataset_id)
+    df = data_cleaning_service.get_dataframe(file_path)
+
+    return data_visualization_service.get_correlation(df)
+
+
+def get_raw_dataset_visualization(user_id: int, dataset_id: int,
+                                  columns: List[str], db: Session):
+    """
+    Returns the visualization of a raw dataset.
+    """
+    dataset = db.query(RawDataset).join(Project).filter(
+        RawDataset.id == dataset_id, Project.user_id == user_id).first()
+
+    if not dataset:
+        raise NotFoundException("Dataset not found.")
+
+    # Download dataset
+    file_path = dataset_file_service.download_raw_dataset(dataset_id)
+    df = data_cleaning_service.get_dataframe(file_path)
+
+    return data_visualization_service.get_columns_visualization(df, columns)
