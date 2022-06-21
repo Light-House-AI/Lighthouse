@@ -81,7 +81,7 @@ def create_merged_data_frame(datasets_paths: List[str]):
     """
     Returns merged data frame.
     """
-    df = pd.concat((pd.read_csv(f) for f in datasets_paths), ignore_index=True)
+    df = pd.concat((pd.read_csv(f) for f in datasets_paths))
     return df
 
 
