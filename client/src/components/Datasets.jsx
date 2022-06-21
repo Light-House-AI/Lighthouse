@@ -10,6 +10,7 @@ function Datasets(props) {
     const [cleanedDatasets, setCleanedDatasets] = useState(null);
     const [rootCreated, setRootCreated] = useState(false);
     const [reactRoot, setReactRoot] = useState(null);
+
     useEffect(() => {
         window.tippy('[data-plugin="tippy"]', {
             placement: 'left',
@@ -86,6 +87,72 @@ function Datasets(props) {
         document.getElementById('modal-trigger').click();
     }
 
+    const visualizeDataset = (e) => {
+        let datasetId = window.$(e.target).attr('_id');
+
+        var modalBody = reactRoot;
+        if (!rootCreated) {
+            modalBody = ReactDOM.createRoot(window.$("#modal-structure #modal-body")[0])
+            setRootCreated(true);
+            setReactRoot(modalBody);
+        }
+
+        let selectDS =
+            <div className="h-50 my-2">
+                <label className="form-label">Select Visualization:</label><br />
+                <select id="select-visualization-type">
+                    <option value="heatmap">Heatmap</option>
+                    <option value="scatter">Scatter Chart</option>
+                    <option value="line">Gradient Line Chart</option>
+                    <option value="boxPlot">Box Chart</option>
+                </select>
+                <div className="row mt-1">
+                    <div id="col-name-1" className="col-12 d-none">
+                        <label className="form-label">Column Name (1st):</label>
+                        <input id="col-name-1-input" type="text" className="form-control" />
+                    </div>
+                    <div id="col-name-2" className="col-12 d-none">
+                        <label className="form-label">Column Name (2nd):</label>
+                        <input id="col-name-2-input" type="text" className="form-control" />
+                    </div>
+                </div>
+            </div>;
+        modalBody.render(selectDS);
+
+        window.$("#modal-structure #modal-title").text("Visualization");
+        setTimeout(() => {
+            window.selectizeModal = window.$("#modal-structure #select-visualization-type").selectize({
+                maxItems: 1,
+                onChange: function (value) {
+                    if (value === 'scatter') {
+                        window.$("#col-name-1").removeClass('d-none');
+                        window.$("#col-name-2").removeClass('d-none');
+                    } else if (value === 'box') {
+                        window.$("#col-name-1").removeClass('d-none');
+                        window.$("#col-name-2").addClass('d-none');
+                    } else if (value === 'heatmap') {
+                        window.$("#col-name-1").addClass('d-none');
+                        window.$("#col-name-2").addClass('d-none');
+                    } else if (value === 'pie') {
+                        window.$("#col-name-1").removeClass('d-none');
+                        window.$("#col-name-2").removeClass('d-none');
+                    }
+                }
+            });
+        }, 100);
+
+        window.$("#modal-structure #modal-btn").on('click', function () {
+            let type = window.selectizeModal[0].selectize.getValue();
+            let colName1 = window.$("#col-name-1-input").val();
+            let colName2 = window.$("#col-name-2-input").val();
+            localStorage.setItem('col1', colName1);
+            localStorage.setItem('col2', colName2);
+            window.location.href = `/${projectId}/datasets/${datasetId}/visualize/${type}`;
+        });
+
+        document.getElementById('modal-trigger').click();
+    }
+
     return (
         <div className="row">
             <div className="col-12">
@@ -108,6 +175,7 @@ function Datasets(props) {
                                         <th>Name</th>
                                         <th>Created At</th>
                                         <th>Dataset</th>
+                                        <th>Visulization</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -117,6 +185,7 @@ function Datasets(props) {
                                                 <td>{window.capitalizeFirstLetter(dataset.name)}</td>
                                                 <td>{(new Date(dataset.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }))}</td>
                                                 <td><a href={`/${projectId}/datasets/raw/${dataset.id}/view`} className="btn btn-outline-success btn-sm rounded-pill">View Dataset</a></td>
+                                                <td><button type="button" className="btn btn-outline-success btn-sm rounded-pill" onClick={visualizeDataset} _id={dataset.id}>Visualize</button></td>
                                             </tr>
                                         );
                                     })}

@@ -8,11 +8,15 @@ import Footer from "../components/structure/Footer";
 import PageTitle from "../components/structure/PageTitle";
 
 import ApexChart from "../components/ApexChart";
+import BoxPlot from "../components/BoxPlot";
+import HeatMap from "../components/HeatMap";
 
 function DataVisualizationPage() {
     const { projectid } = useParams();
     const { datasetid } = useParams();
     const { type } = useParams();
+    const [columnName1] = useState(localStorage.getItem('col1'));
+    const [columnName2] = useState(localStorage.getItem('col2'));
 
     const [projectDetails, setProjectDetails] = useState(null);
     const [datasetDetails, setDatasetDetails] = useState(null);
@@ -37,6 +41,35 @@ function DataVisualizationPage() {
             setDatasetDetails(response.data);
         });
 
+        let columnsData = [columnName1];
+
+        if (columnName2 !== undefined && columnName2 !== null && columnName2 !== '') {
+            columnsData.push(columnName2);
+        }
+
+        if (type !== 'heatmap') {
+            axios.get(`/datasets/raw/${datasetid}/visualizations`, {
+                params: {
+                    columns: columnsData
+                },
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+                }
+            }).then((response) => {
+                setVisualization(response.data);
+            })
+        } else {
+            axios.get(`/datasets/raw/${datasetid}/correlation`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
+                }
+            }).then((response) => {
+                setVisualization(response.data);
+            })
+        }
+
     }, []);
 
     return (
@@ -44,14 +77,19 @@ function DataVisualizationPage() {
             <Navigation />
             {projectDetails !== null ?
                 <SideBar projectDetails={projectDetails} /> : null}
-            {projectDetails !== null ?
+            {projectDetails !== null && datasetDetails !== null ?
                 <div className="content-page">
-                    <title>Visualize ABC - {projectDetails.name} | Lighthouse AI</title>
+                    <title>Visualize {window.capitalizeFirstLetter(datasetDetails.name)} - {window.capitalizeFirstLetter(projectDetails.name)} | Lighthouse AI</title>
                     <div className="content">
                         <div className="container-fluid scroll">
                             <PageTitle project={window.capitalizeFirstLetter(projectDetails.name)} type={"Datasets"} view={"ABC"} execution={"Visaulize"} projectid={projectid} />
                             <div className="mb-2">
-                                <ApexChart plotType={`Line Chart`} columns={['Age', 'Fare']} />
+                                {visualization !== null && type !== 'boxPlot' && type !== 'heatmap' ?
+                                    <ApexChart plotType={type} columns={columnName2 !== undefined && columnName2 !== null && columnName2 !== '' ? [columnName1, columnName2] : [columnName1]} visualizationDetails={visualization} /> : null}
+                                {visualization !== null && type === 'boxPlot' ?
+                                    <BoxPlot plotType={type} columns={[columnName1]} visualizationDetails={visualization} /> : null}
+                                {visualization !== null && type === 'heatmap' ?
+                                    <HeatMap plotType={type} visualizationDetails={visualization} /> : null}
                             </div>
                             <Footer />
                         </div>
