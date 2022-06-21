@@ -52,3 +52,4 @@ class ModelParameters(BaseModel):
     middle_layer_size: Optional[int]
     alpha: Optional[float]
     batch_size: Optional[int]
+    accuracy: Optional[float]

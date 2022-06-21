@@ -3,7 +3,9 @@ import numpy as np
 
 import json
 from typing import Dict, List
+
 from .pipeline import (
+    clean_test,
     clean_train,
     data_cleaning_suggestions,
     data_statistics,
@@ -17,6 +19,15 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.item()
         else:
             return super(NumpyEncoder, self).default(obj)
+
+
+def get_cleaned_input_data(input_data: Dict, raw_data: pd.DataFrame,
+                           predicted_column: str, rules: List[Dict]):
+    """
+    Returns cleaned input data.
+    """
+    input_data_df = pd.DataFrame([input_data])
+    return clean_test(input_data_df, rules, raw_data, predicted_column)
 
 
 def get_rows(file_path: str, skip: int = 0, limit: int = 100):
@@ -74,9 +85,23 @@ def create_merged_data_frame(datasets_paths: List[str]):
     return df
 
 
+def save_dataframe(dataframe: pd.DataFrame, file_path: str):
+    """
+    Saves a dataframe.
+    """
+    dataframe.to_csv(file_path, index=False)
+
+
 def get_dataset_columns(file_path: str):
     """
     Returns dataset columns.
     """
     df = pd.read_csv(file_path)
     return df.columns.to_list()
+
+
+def get_dataframe(file_path: str):
+    """
+    Returns a dataframe.
+    """
+    return pd.read_csv(file_path)

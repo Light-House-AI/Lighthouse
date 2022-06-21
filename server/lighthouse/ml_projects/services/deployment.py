@@ -1,16 +1,27 @@
 """Deployment service."""
 
+import json
 import requests
-from typing import Dict
+import numpy as np
+import pandas as pd
 
+from typing import Dict
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
 from lighthouse.config import config
 from lighthouse.mlops.monitoring import service as monitoring_service
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
+from lighthouse.automl.data_cleaning import service as data_cleaning_service
+from lighthouse.automl import feature_engineering as feature_engineering_service
 
 from lighthouse.ml_projects.schemas import DeploymentCreate
+
+from lighthouse.ml_projects.mongo import (
+    ProjectDataColumns,
+    DatasetCleaningRules,
+    DatasetFeatureRules,
+)
 
 from lighthouse.ml_projects.exceptions import (
     NotFoundException,
@@ -22,6 +33,8 @@ from lighthouse.ml_projects.db import (
     Deployment,
     Project,
     Notification,
+    CleanedDataset,
+    CleanedDatasetSource,
 )
 
 from lighthouse.mlops.serving import (
@@ -210,9 +223,16 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     """
 
     # Get the deployment.
-    deployment = db.query(Deployment).filter(
-        Deployment.id == deployment_id).join(
-            Project, Project.user_id == user_id).first()
+    deployment = db.query(Deployment). \
+        filter(Deployment.id == deployment_id). \
+        join(Project, Project.user_id == user_id). \
+        join(Model). \
+        join(CleanedDataset). \
+        outerjoin(CleanedDatasetSource). \
+        options(joinedload(Deployment.primary_model, Model.dataset,
+                            CleanedDataset.sources)). \
+        options(joinedload(Deployment.project)). \
+        first()
 
     if not deployment:
         raise NotFoundException("Deployment not found!")
@@ -220,39 +240,94 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     if not deployment.is_running:
         raise BadRequestException("Deployment is not running!")
 
+    # Get deployment info
+    project_id = deployment.project.id
+    dataset_id = deployment.primary_model.dataset_id
+    predicted_column = deployment.project.predicted_column
+
+    # Get datasets
+    raw_datasets_file_paths = [
+        dataset_file_service.download_raw_dataset(dataset.raw_dataset_id)
+        for dataset in deployment.primary_model.dataset.sources
+    ]
+
+    merged_dataset_filepath, _ = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
+        raw_datasets_file_paths, merged_dataset_filepath)
+
+    # Sort columns
+    project_schema = ProjectDataColumns.objects(project_id=project_id).first()
+    ordered_input_data = {}
+    for column in project_schema.columns:
+        if column == predicted_column:
+            continue
+
+        ordered_input_data[column] = input_data.get(column)
+
+    # Clean data
+    cleaning_rules = DatasetCleaningRules.objects(
+        dataset_id=dataset_id).first().rules
+
+    cleaned_data = data_cleaning_service.get_cleaned_input_data(
+        input_data=ordered_input_data,
+        rules=cleaning_rules,
+        raw_data=merged_dataset_df,
+        predicted_column=predicted_column,
+    )
+
+    # Get features
+    features_rules = DatasetFeatureRules.objects(
+        dataset_id=dataset_id).first().rules
+
+    features_data = feature_engineering_service.apply_FE_rules(
+        cleaned_data,
+        features_rules,
+    )
+
     # Get the predictions from the deployed model.
-    url = str(deployment_id) + "/predict"
+    # print(features_data.columns)
+    request_data = _features_to_numpy_string(features_data)
 
-    # TODO: uncomment line below
-    # deployment_response = requests.get(url, json=input_data).json()
+    # TODO: uncomment temporary url
+    # url = _get_deployment_predict_url(deployment_id)
+    url = "http://localhost:8080/predict"
 
-    # TODO: delete the dummy data below
-    deployment_response = {
-        "primary_model_prediction": "primary_prediction",
-        "secondary_model_prediction": "secondary_prediction",
-    }
+    deployment_response = requests.post(url, data=request_data).json()
 
     # Save the request to the database.
     monitoring_service.log_prediction(
         deployment_id=deployment_id,
         project_id=deployment.project_id,
         input_params=input_data,
-        primary_model_prediction=deployment_response[
-            "primary_model_prediction"],
-        secondary_model_prediction=deployment_response[
-            "secondary_model_prediction"],
+        primary_model_prediction=deployment_response["primary_prediction"],
+        secondary_model_prediction=deployment_response["secondary_prediction"],
     )
 
     # Check for statistics monitoring
     _notify_for_monitoring(deployment, user_id, db)
 
-    # Return the predictions.
-    deployment_response["predictions"] = deployment_response.pop(
-        "primary_model_prediction")
+    return deployment_response["primary_prediction"]
 
-    deployment_response.pop("secondary_model_prediction")
 
-    return deployment_response
+def _features_to_numpy_string(features: pd.DataFrame):
+    features_np = features.to_numpy()
+    result = np.array2string(
+        features_np,
+        separator=',',
+        formatter={'float_kind': lambda x: "%.10f" % x},
+    )
+
+    return result
+
+
+def _get_deployment_predict_url(deployment_id: int):
+    """
+    Gets the deployment url.
+    """
+    return config.DOMAIN_URL + "/" + _get_k8s_deployment_name(
+        deployment_id) + "/" + "/predict"
 
 
 def _notify_for_monitoring(deployment: Deployment, user_id: int, db: Session):
