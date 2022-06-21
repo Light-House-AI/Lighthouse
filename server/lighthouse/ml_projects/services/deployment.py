@@ -2,8 +2,10 @@
 
 import json
 import requests
-from typing import Dict
+import numpy as np
+import pandas as pd
 
+from typing import Dict
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
@@ -11,12 +13,14 @@ from lighthouse.config import config
 from lighthouse.mlops.monitoring import service as monitoring_service
 from lighthouse.ml_projects.services import dataset_file as dataset_file_service
 from lighthouse.automl.data_cleaning import service as data_cleaning_service
+from lighthouse.automl import feature_engineering as feature_engineering_service
 
 from lighthouse.ml_projects.schemas import DeploymentCreate
-import numpy as np
+
 from lighthouse.ml_projects.mongo import (
     ProjectDataColumns,
     DatasetCleaningRules,
+    DatasetFeatureRules,
 )
 
 from lighthouse.ml_projects.exceptions import (
@@ -29,6 +33,8 @@ from lighthouse.ml_projects.db import (
     Deployment,
     Project,
     Notification,
+    CleanedDataset,
+    CleanedDatasetSource,
 )
 
 from lighthouse.mlops.serving import (
@@ -221,7 +227,10 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
         filter(Deployment.id == deployment_id). \
         join(Project, Project.user_id == user_id). \
         join(Model). \
-        options(joinedload(Deployment.primary_model)). \
+        join(CleanedDataset). \
+        outerjoin(CleanedDatasetSource). \
+        options(joinedload(Deployment.primary_model, Model.dataset,
+                            CleanedDataset.sources)). \
         options(joinedload(Deployment.project)). \
         first()
 
@@ -233,10 +242,23 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
 
     # Get deployment info
     project_id = deployment.project.id
+    dataset_id = deployment.primary_model.dataset_id
     predicted_column = deployment.project.predicted_column
-    project_schema = ProjectDataColumns.objects(project_id=project_id).first()
+
+    # Get datasets
+    raw_datasets_file_paths = [
+        dataset_file_service.download_raw_dataset(dataset.raw_dataset_id)
+        for dataset in deployment.primary_model.dataset.sources
+    ]
+
+    merged_dataset_filepath, _ = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
+        raw_datasets_file_paths, merged_dataset_filepath)
 
     # Sort columns
+    project_schema = ProjectDataColumns.objects(project_id=project_id).first()
     ordered_input_data = {}
     for column in project_schema.columns:
         if column == predicted_column:
@@ -245,26 +267,33 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
         ordered_input_data[column] = input_data.get(column)
 
     # Clean data
-    dataset_id = deployment.primary_model.dataset_id
-
     cleaning_rules = DatasetCleaningRules.objects(
-        dataset_id=dataset_id).first()
-
-    rules_temp = [json.loads(rule.to_json()) for rule in cleaning_rules.rules]
-    raw_dataset_path = dataset_file_service.download_raw_dataset(dataset_id)
+        dataset_id=dataset_id).first().rules
 
     cleaned_data = data_cleaning_service.get_cleaned_input_data(
-        ordered_input_data,
-        raw_dataset_path,
-        predicted_column,
-        rules_temp,
+        input_data=ordered_input_data,
+        rules=cleaning_rules,
+        raw_data=merged_dataset_df,
+        predicted_column=predicted_column,
     )
 
-    # TODO: Feature selection
+    # Get features
+    features_rules = DatasetFeatureRules.objects(
+        dataset_id=dataset_id).first().rules
+
+    features_data = feature_engineering_service.apply_FE_rules(
+        cleaned_data,
+        features_rules,
+    )
 
     # Get the predictions from the deployed model.
-    request_data = cleaned_data.to_numpy()
-    url = _get_deployment_predict_url(deployment_id)
+    # print(features_data.columns)
+    request_data = _features_to_numpy_string(features_data)
+
+    # TODO: uncomment temporary url
+    # url = _get_deployment_predict_url(deployment_id)
+    url = "http://localhost:8080/predict"
+
     deployment_response = requests.post(url, data=request_data).json()
 
     # Save the request to the database.
@@ -280,6 +309,17 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     _notify_for_monitoring(deployment, user_id, db)
 
     return deployment_response["primary_prediction"]
+
+
+def _features_to_numpy_string(features: pd.DataFrame):
+    features_np = features.to_numpy()
+    result = np.array2string(
+        features_np,
+        separator=',',
+        formatter={'float_kind': lambda x: "%.10f" % x},
+    )
+
+    return result
 
 
 def _get_deployment_predict_url(deployment_id: int):

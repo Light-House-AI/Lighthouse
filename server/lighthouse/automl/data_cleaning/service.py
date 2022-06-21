@@ -21,13 +21,12 @@ class NumpyEncoder(json.JSONEncoder):
             return super(NumpyEncoder, self).default(obj)
 
 
-def get_cleaned_input_data(input_data: Dict, raw_dataset_path: str,
+def get_cleaned_input_data(input_data: Dict, raw_data: pd.DataFrame,
                            predicted_column: str, rules: List[Dict]):
     """
     Returns cleaned input data.
     """
     input_data_df = pd.DataFrame([input_data])
-    raw_data = pd.read_csv(raw_dataset_path)
     return clean_test(input_data_df, rules, raw_data, predicted_column)
 
 
