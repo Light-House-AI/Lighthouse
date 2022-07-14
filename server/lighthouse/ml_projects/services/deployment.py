@@ -306,7 +306,10 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     # Check for statistics monitoring
     _notify_for_monitoring(deployment, user_id, db)
 
-    return primary_prediction
+    return {
+        "primary_prediction": primary_prediction,
+        "secondary_prediction": secondary_prediction
+    }
 
 
 def _features_to_numpy_string(features: pd.DataFrame):

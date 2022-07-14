@@ -43,7 +43,7 @@ function App() {
         <Route path="/:projectid/datasets/:datasetsid/clean" element={<CleanDataPage />} />
         <Route path="/:projectid/datasets/:datasetid/rules" element={<RulesDataPage />} />
         <Route path="/:projectid/shadow" element={<ShadowDataPage />} />
-        <Route path="/:projectid/datasets/:datasetid/visualize" element={<DataVisualizationPage />} />
+        <Route path="/:projectid/datasets/:datasetid/visualize/:type" element={<DataVisualizationPage />} />
         {/* MODEL */}
         <Route path="/:projectid/models" element={<ModelsPage />} />
         <Route path="/:projectid/models/:datasetcleanedid/create" element={<CreateModelPage />} />
