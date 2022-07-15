@@ -1,0 +1,4 @@
+fastapi==0.75.1
+uvicorn==0.17.6
+azure-storage-blob==12.11.0
+git+https://github.com/Light-House-AI/Lighthouse.git@ml-projects#subdirectory=model_creator

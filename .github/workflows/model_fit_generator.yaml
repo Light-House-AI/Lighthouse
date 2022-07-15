@@ -4,12 +4,12 @@ on:
   push:
     branches: [master]
     paths:
-      - model_creator/**
-      - .github/workflows/model_creator.yaml
+      - model_fit_generator/**
+      - .github/workflows/model_fit_generator.yaml
 
 env:
-    APP_NAME: model-creator
-    PACKAGE_NAME: light-house-ai/model-creator
+    APP_NAME: model-fit-generator
+    PACKAGE_NAME: light-house-ai/model_fit_generator
     GHCR_USERNAME: light-house-ai
 
 jobs:

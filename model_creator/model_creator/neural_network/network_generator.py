@@ -2,13 +2,14 @@ import numpy as np
 from math import floor, ceil
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, mean_squared_log_error
-from .neural_network import NeuralNetwork
-from .fc_layer import FCLayer
-from .activation_layer import ActivationLayer
-from .activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from .loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
+
+from model_creator.neural_network.neural_network import NeuralNetwork
+from model_creator.neural_network.fc_layer import FCLayer
+from model_creator.neural_network.activation_layer import ActivationLayer
+from model_creator.neural_network.activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
+from model_creator.neural_network.loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 
 class NetworkGenerator:
     def __init__(self, data, hyperparameters):
@@ -110,6 +111,7 @@ class NetworkGenerator:
         
     def __train_network(self):
         scheduler = AsyncHyperBandScheduler()
+        shutdown()
         init()
         if self.type == "Classification":
             res = tune.run(
@@ -124,7 +126,8 @@ class NetworkGenerator:
                 "middle_layer_size": tune.grid_search(self.maximum_neurons_per_layer),
                 "alpha": tune.grid_search(self.learning_rate),
                 "batch_size": tune.grid_search(self.batch_size),
-            }
+            },
+            verbose=1
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_accuracy"], -item[1]["time_this_iter_s"]), reverse=True)}
                 
@@ -142,6 +145,7 @@ class NetworkGenerator:
                 "alpha": tune.grid_search(self.learning_rate),
                 "batch_size": tune.grid_search(self.batch_size),
             },
+            verbose=1
             )
             results = {k: v for k, v in sorted(res.results.items(), key=lambda item: (item[1]["mean_loss"], item[1]["time_this_iter_s"]))}
         shutdown()
@@ -152,7 +156,11 @@ class NetworkGenerator:
         print(best_result)
         config = best_result["config"]
         network = best_result["network"]
-        return network, config
+        if self.type == "Classification":
+            return network, config, best_result["mean_accuracy"]
+        else:
+            return network, config, best_result["mean_loss"]
+        #return network, config
     
 def to_categorical(y, num_classes=None, dtype="float32"):
     y = np.array(y, dtype="int")
