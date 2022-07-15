@@ -51,7 +51,7 @@ function CreateProject() {
                 name: document.getElementById('dataset-name').value,
                 creation_method: "upload"
             }
-            axios.post('/datasets/raw/', dataset_data, {
+            axios.post('/raw_datasets', dataset_data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": localStorage.getItem("tokenType") + " " + localStorage.getItem("accessToken")
@@ -60,7 +60,7 @@ function CreateProject() {
                 // upload file
                 const formData = new FormData();
                 formData.append('file', inputFile.current.files[0]);
-                axios.post(`/datasets/raw/${res_dataset.data.id}/upload`, formData, {
+                axios.post(`/raw_datasets/${res_dataset.data.id}/upload`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                         "Authorization": localStorage.getItem("tokenType") + " " + localStorage.getItem("accessToken")

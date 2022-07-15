@@ -24,7 +24,7 @@ function ViewDatasetPage() {
             setProjectDetails(response.data);
         });
 
-        axios.get(`/datasets/${datasettype}/${datasetid}/`, {
+        axios.get(`/${datasettype}_datasets/${datasetid}/`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')

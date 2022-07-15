@@ -6,7 +6,7 @@ function ViewDataset(props) {
     const [datasetId] = useState(props.datasetId);
     const [datasetType] = useState(props.datasetType);
     useEffect(() => {
-        axios.get(`/datasets/${datasetType}/${datasetId}/rows?limit=1`, {
+        axios.get(`/${datasetType}_datasets/${datasetId}/rows?limit=1`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
             }
@@ -34,7 +34,7 @@ function ViewDataset(props) {
                 processing: true,
                 ajax: {
                     type: "GET",
-                    url: `${window.baseURL}/datasets/${datasetType}/${datasetId}/rows/`,
+                    url: `${window.baseURL}/${datasetType}_datasets/${datasetId}/rows/`,
                     headers: {
                         'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
                     },

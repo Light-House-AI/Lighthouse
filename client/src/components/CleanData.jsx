@@ -12,7 +12,7 @@ function CleanData(props) {
 
     useEffect(() => {
         document.getElementById('loader').classList.remove('d-none');
-        axios.get('/datasets/raw/recommendations', {
+        axios.get('/raw_datasets/recommendations', {
             params: {
                 datasets_ids: datasetIds
             },
@@ -68,7 +68,7 @@ function CleanData(props) {
             sources: datasetIds.map(id => parseInt(id)),
             rules: all_rules
         };
-        axios.post('/datasets/cleaned', data, {
+        axios.post('/cleaned_datasets', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('tokenType') + " " + localStorage.getItem('accessToken')

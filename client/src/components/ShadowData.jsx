@@ -123,7 +123,7 @@ function ShadowData(props) {
                 project_id: projectId,
                 name: document.getElementById('dataset-name').value,
             }
-            axios.post(`/datasets/shadow_data`, shadowDataDetails, {
+            axios.post(`/raw_datasets/shadow_data`, shadowDataDetails, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')

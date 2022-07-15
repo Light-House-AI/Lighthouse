@@ -10,7 +10,7 @@ function RuleData(props) {
 
     useEffect(() => {
 
-        axios.get(`/datasets/cleaned/${datasetId}/cleaning_rules/`, {
+        axios.get(`/cleaned_datasets/${datasetId}/cleaning_rules`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('tokenType').toString() + " " + localStorage.getItem('accessToken')
