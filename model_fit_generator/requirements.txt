@@ -2,3 +2,4 @@ dramatiq[redis]
 pydantic
 requests
 azure-storage-blob
+git+https://github.com/Light-House-AI/Lighthouse.git@ml-projects#subdirectory=model_creator
