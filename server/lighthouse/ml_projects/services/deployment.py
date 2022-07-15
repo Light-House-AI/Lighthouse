@@ -1,11 +1,10 @@
 """Deployment service."""
 
-import json
 import requests
 import numpy as np
 import pandas as pd
 
-from typing import Dict
+from typing import Dict, List
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
@@ -246,58 +245,32 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     predicted_column = deployment.project.predicted_column
 
     # Get datasets
-    raw_datasets_file_paths = [
-        dataset_file_service.download_raw_dataset(dataset.raw_dataset_id)
-        for dataset in deployment.primary_model.dataset.sources
-    ]
-
-    merged_dataset_filepath, _ = dataset_file_service.get_temporary_dataset_local_path(
-    )
-
-    merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
-        raw_datasets_file_paths, merged_dataset_filepath)
+    merged_dataset_df = _download_and_merge_datasets(
+        deployment.primary_model.dataset.sources)
 
     # Sort columns
-    project_schema = ProjectDataColumns.objects(project_id=project_id).first()
-    ordered_input_data = {}
-    for column in project_schema.columns:
-        if column == predicted_column:
-            continue
-
-        ordered_input_data[column] = input_data.get(column)
+    ordered_input_data = _order_input_data_columns(project_id, input_data)
 
     # Clean data
-    cleaning_rules = DatasetCleaningRules.objects(
-        dataset_id=dataset_id).first().rules
-
-    cleaned_data = data_cleaning_service.get_cleaned_input_data(
-        input_data=ordered_input_data,
-        rules=cleaning_rules,
-        raw_data=merged_dataset_df,
+    cleaned_data = _clean_data(
+        dataset_id=dataset_id,
         predicted_column=predicted_column,
+        input_data=ordered_input_data,
+        raw_data=merged_dataset_df,
     )
 
     # Get features
-    features_rules = DatasetFeatureRules.objects(
-        dataset_id=dataset_id).first().rules
+    features_df = _apply_feature_engineering(dataset_id, cleaned_data)
 
-    features_data = feature_engineering_service.apply_FE_rules(
-        cleaned_data,
-        features_rules,
+    # Get predictions
+    primary_prediction, secondary_prediction = _get_predictions_from_deployment(
+        deployment_id,
+        features_df,
     )
-
-    # Get the predictions from the deployed model.
-    request_data = _features_to_numpy_string(features_data)
-    url = _get_deployment_predict_url(deployment_id)
-    deployment_response = requests.post(url, data=request_data).json()
-
-    # Save the request to the database.
-    primary_prediction = deployment_response.get("primary_prediction")
-    secondary_prediction = deployment_response.get("secondary_prediction")
 
     monitoring_service.log_prediction(
         deployment_id=deployment_id,
-        project_id=deployment.project_id,
+        project_id=project_id,
         input_params=input_data,
         primary_model_prediction=primary_prediction,
         secondary_model_prediction=secondary_prediction,
@@ -312,6 +285,70 @@ def get_prediction(*, user_id: int, deployment_id: int, input_data: dict,
     }
 
 
+def _download_and_merge_datasets(
+        cleaned_dataset_sources: List[CleanedDatasetSource]):
+    """
+    Downloads the datasets and merges them.
+    """
+    raw_datasets_file_paths = [
+        dataset_file_service.download_raw_dataset(dataset.raw_dataset_id)
+        for dataset in cleaned_dataset_sources
+    ]
+
+    merged_dataset_filepath, _ = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    merged_dataset_df = data_cleaning_service.create_save_merged_dataframe(
+        raw_datasets_file_paths, merged_dataset_filepath)
+
+    return merged_dataset_df
+
+
+def _order_input_data_columns(project_id: int, input_data: dict):
+    """
+    Orders the input data columns according to the project schema.
+    """
+    project_schema = ProjectDataColumns.objects(project_id=project_id).first()
+    ordered_input_data = {}
+    for column in project_schema.columns:
+        ordered_input_data[column] = input_data.get(column)
+
+    return ordered_input_data
+
+
+def _clean_data(dataset_id: int, predicted_column: str, input_data: dict,
+                raw_data: pd.DataFrame):
+    """
+    Cleans the data.
+    """
+    cleaning_rules = DatasetCleaningRules.objects(
+        dataset_id=dataset_id).first().rules
+
+    cleaned_data = data_cleaning_service.get_cleaned_input_data(
+        input_data=input_data,
+        rules=cleaning_rules,
+        raw_data=raw_data,
+        predicted_column=predicted_column,
+    )
+
+    return cleaned_data
+
+
+def _apply_feature_engineering(dataset_id: int, cleaned_df: pd.DataFrame):
+    """
+    Applies feature engineering rules.
+    """
+    features_rules = DatasetFeatureRules.objects(
+        dataset_id=dataset_id).first().rules
+
+    features_data = feature_engineering_service.apply_FE_rules(
+        cleaned_df,
+        features_rules,
+    )
+
+    return features_data
+
+
 def _features_to_numpy_string(features: pd.DataFrame):
     features_np = features.to_numpy()
     result = np.array2string(
@@ -321,6 +358,21 @@ def _features_to_numpy_string(features: pd.DataFrame):
     )
 
     return result
+
+
+def _get_predictions_from_deployment(deployment_id: int,
+                                     input_df: pd.DataFrame):
+    """
+    Gets the predictions from the deployment.
+    """
+    request_data = _features_to_numpy_string(input_df)
+    url = _get_deployment_predict_url(deployment_id)
+    deployment_response = requests.post(url, data=request_data).json()
+
+    primary_prediction = deployment_response.get("primary_prediction")
+    secondary_prediction = deployment_response.get("secondary_prediction")
+
+    return primary_prediction, secondary_prediction
 
 
 def _get_deployment_predict_url(deployment_id: int):
@@ -373,19 +425,9 @@ def get_monitoring_data(user_id: int, deployment_id: int, db: Session):
     if not deployment:
         raise NotFoundException("Deployment not found!")
 
-    # Get input data
-    deployment_input_data = monitoring_service.get_deployment_input_data(
-        deployment_id=deployment.id,
-        predicted_column_name=deployment.project.predicted_column,
-    )
-
-    # Save input data to temporary file
-    temp_dataset_file_path, temp_dataset_filename = dataset_file_service.get_temporary_dataset_local_path(
-    )
-
-    dataset_file_service._save_dicts_to_csv(
-        temp_dataset_file_path,
-        deployment_input_data,
+    temp_dataset_file_path, temp_dataset_filename = _save_deployment_input_data_to_file(
+        deployment.id,
+        deployment.project.predicted_column,
     )
 
     # Get monitoring results
@@ -398,3 +440,26 @@ def get_monitoring_data(user_id: int, deployment_id: int, db: Session):
     dataset_file_service.delete_file(temp_dataset_file_path)
 
     return result
+
+
+def _save_deployment_input_data_to_file(deployment_id: int,
+                                        predicted_column: str):
+    """
+    Saves the input data for a deployment to a file.
+    """
+
+    deployment_input_data = monitoring_service.get_deployment_input_data(
+        deployment_id=deployment_id,
+        predicted_column_name=predicted_column,
+    )
+
+    # Save input data to temporary file
+    temp_dataset_file_path, temp_dataset_filename = dataset_file_service.get_temporary_dataset_local_path(
+    )
+
+    dataset_file_service._save_dicts_to_csv(
+        temp_dataset_file_path,
+        deployment_input_data,
+    )
+
+    return temp_dataset_file_path, temp_dataset_filename
