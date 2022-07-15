@@ -36,7 +36,7 @@ class Config(BaseSettings):
 
     # Dataset temporary directory.
     DATASETS_TEMP_DIR: str = os.path.join(os.path.dirname(__file__),
-                                          'tmp/raw_datasets/')
+                                          'tmp/datasets/')
 
     # Models temporary directory.
     MODELS_TEMP_DIR: str = os.path.join(os.path.dirname(__file__),

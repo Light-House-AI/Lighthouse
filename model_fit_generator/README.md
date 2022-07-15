@@ -11,4 +11,4 @@ pip install -r requirements.txt
 ## Run the Model Fit Generator
 
 1. Set environment variables in `.env` file.
-2. Run `dramatiq model_creator.worker -p 1 -t 1`.
+2. Run `dramatiq model_fit_generator.worker -p 1 -t 1`.
