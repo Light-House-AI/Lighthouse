@@ -1,11 +1,12 @@
 # Model Creator
 
-A module that generates the best possible model for a given set of parameters.
+A package that generates the best possible model for a given set of parameters.
 
 ## Installation
 
 ```bash
-pip install -r requirements.txt
+# Install model_creator package using setup.py
+pip install .
 ```
 
 ## Run the Model Creator Tests
