@@ -32,7 +32,7 @@ function DataVisualizationPage() {
             setProjectDetails(response.data);
         });
 
-        axios.get(`/datasets/raw/${datasetid}`, {
+        axios.get(`/raw_datasets/${datasetid}`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')
@@ -48,7 +48,7 @@ function DataVisualizationPage() {
         }
 
         if (type !== 'heatmap') {
-            axios.get(`/datasets/raw/${datasetid}/visualizations`, {
+            axios.get(`/raw_datasets/${datasetid}/visualizations`, {
                 params: {
                     columns: columnsData
                 },
@@ -60,7 +60,7 @@ function DataVisualizationPage() {
                 setVisualization(response.data);
             })
         } else {
-            axios.get(`/datasets/raw/${datasetid}/correlation`, {
+            axios.get(`/raw_datasets/${datasetid}/correlation`, {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')

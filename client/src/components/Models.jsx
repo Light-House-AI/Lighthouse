@@ -20,7 +20,7 @@ function Models(props) {
             arrow: 'true'
         });
 
-        axios.get(`/datasets/cleaned`, {
+        axios.get(`/cleaned_datasets`, {
             params: {
                 project_id: projectId
             },

@@ -25,7 +25,7 @@ function RulesDataPage() {
             setProjectDetails(response.data);
         });
 
-        axios.get(`/datasets/cleaned/${datasetid}/`, {
+        axios.get(`/cleaned_datasets/${datasetid}/`, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken')

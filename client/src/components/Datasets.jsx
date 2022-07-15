@@ -18,7 +18,7 @@ function Datasets(props) {
             arrow: 'true'
         });
 
-        axios.get(`/datasets/raw/`, {
+        axios.get(`/raw_datasets`, {
             params: {
                 project_id: projectId
             },
@@ -30,7 +30,7 @@ function Datasets(props) {
         }).catch((error) => {
         });
 
-        axios.get(`/datasets/cleaned/`, {
+        axios.get(`/cleaned_datasets`, {
             params: {
                 project_id: projectId
             },
