@@ -1,5 +1,6 @@
 import pickle
-from .neural_network import NeuralNetwork
+from model_creator.neural_network.neural_network import NeuralNetwork
+
 
 def import_model(filepath):
     with open(filepath, 'rb') as f:
@@ -7,6 +8,7 @@ def import_model(filepath):
     if not isinstance(res, NeuralNetwork):
         raise TypeError('File does not exist or is corrupted')
     return res
+
 
 def export_model(filepath, network):
     with open(filepath, 'wb') as f:

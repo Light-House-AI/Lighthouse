@@ -2,13 +2,14 @@ import numpy as np
 from math import floor, ceil
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, mean_squared_log_error
-from .neural_network import NeuralNetwork
-from .fc_layer import FCLayer
-from .activation_layer import ActivationLayer
-from .activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
-from .loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 from ray import tune, init, shutdown
 from ray.tune.schedulers import AsyncHyperBandScheduler
+
+from model_creator.neural_network.neural_network import NeuralNetwork
+from model_creator.neural_network.fc_layer import FCLayer
+from model_creator.neural_network.activation_layer import ActivationLayer
+from model_creator.neural_network.activation_functions import sigmoid, sigmoid_derivative, identity, identity_derivative, tanh, tanh_derivative, relu, relu_derivative
+from model_creator.neural_network.loss_functions import mse, mse_derivative, msle, msle_derivative, rmse, rmse_derivative, mae_derivative, mae
 
 class NetworkGenerator:
     def __init__(self, data, hyperparameters):

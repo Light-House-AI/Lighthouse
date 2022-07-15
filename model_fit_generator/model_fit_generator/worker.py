@@ -7,9 +7,9 @@ import dramatiq
 from dramatiq import get_logger
 from dramatiq.brokers.redis import RedisBroker
 
-from model_creator.network_generator import NetworkGenerator, export_model
-from model_creator.config import config
-import model_creator.files_service as files_service
+from model_creator.neural_network import NetworkGenerator, export_model
+from model_fit_generator.config import config
+import model_fit_generator.files_service as files_service
 
 # init dramatiq
 dramatiq.set_broker(RedisBroker(url=config.DRAMATIQ_REDIS_BROKER_URL))

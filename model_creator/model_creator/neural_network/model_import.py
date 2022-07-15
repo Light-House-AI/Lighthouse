@@ -1,9 +1,11 @@
 import numpy as np
-from .network_generator import NetworkGenerator, to_categorical
+
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score
+
+from model_creator.neural_network.network_generator import NetworkGenerator, to_categorical
 
 X, Y = load_wine(return_X_y=True)
 print(X.shape, Y.shape)

@@ -1,0 +1,4 @@
+dramatiq[redis]
+pydantic
+requests
+azure-storage-blob
