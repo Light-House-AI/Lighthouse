@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
-from .network_generator import NetworkGenerator, to_categorical
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, roc_auc_score, mean_squared_log_error
-from .save_load_model import import_model, export_model
+
+from model_creator.neural_network.network_generator import NetworkGenerator, to_categorical
+from model_creator.neural_network.save_load_model import import_model, export_model
 
 df = pd.read_csv('../datasets/supermarket/supermarket_final.csv')
 

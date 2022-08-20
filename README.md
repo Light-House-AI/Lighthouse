@@ -1,10 +1,63 @@
 # Lighthouse-AI
 
-An end-to-end platform for creating and shipping machine learning models to production.
+<p align="center">
+  <img src="docs/logo.png"/>
+</p>
 
-## Getting started
+<p align="center">
+    An end-to-end platform for creating and shipping machine learning models to production.
+</p>
 
-### Docker environment
+---
+
+## Table of Contents
+
+- [About Lighthouse-AI](#about-lighthouse-ai)
+- [Getting Started](#getting-started)
+  - [Production Setup](#production-setup)
+  - [Development Setup with Docker](#development-setup-with-docker)
+  - [Development Setup without Docker](#development-setup-without-docker)
+- [Running](#running)
+- [Screenshots](#screenshots)
+- [Demo Video](#demo-video)
+- [System Architecture](#system-architecture)
+- [Project Structure](#project-structure)
+- [Built with](#built-with)
+- [Contributors](#contributors)
+- [License](#license)
+
+## About Lighthouse-AI
+
+The Lighthouse-AI project is an end-to-end ML pipeline that...
+
+**TODO**
+
+## Getting Started
+
+Lighthouse-AI needs the following services:
+
+- Postgres.
+- Redis.
+- MongoDB.
+- Azure Storage Account.
+- Kubernetes cluster.
+
+Lighthouse-AI could be run in 3 different ways: Production, Development, and Development with Docker.
+
+### Production Setup
+
+External services needed:
+
+- Postgres.
+- MongoDB.
+- Azure Storage Account.
+
+After that you can just apply the Kubernetes manifest found in `deploy/k8s` to your cluster.
+
+### Development Setup with Docker
+
+The only external services needed is an Azure Storage Account.
+You will also need to have a running Kubernetes cluster. Please check [minikube](https://minikube.sigs.k8s.io/docs/start/) for more information on how to setup a local Kubernetes cluster.
 
 Run the following command to setup the environment:
 
@@ -18,30 +71,24 @@ Notes:
 - You can change the environment variables in the `deploy/.env` file.
 - You can comment unwanted services in the `deploy/docker-compose.yml` file.
 
-### Without docker
+### Development Setup without Docker
 
-#### Client
+External services needed:
 
-```bash
-TODO
-```
+- Postgres.
+- MongoDB.
+- Redis.
+- Azure Storage Account.
 
-#### Server
+After that you can go to the following directories and follow the instructions for each service: `server`, `model_fit_creator`, `client`.
 
-Install the required dependencies:
+## Screenshots
 
-```bash
-cd server
-pip install -r requirements.txt
-```
+**TODO**
 
-Add the `.env` file in the `server` directory.
+## Demo Video
 
-Run the server:
-
-```bash
-start.sh # or start.bat for windows
-```
+**TODO**
 
 ## System architecture
 
@@ -90,3 +137,11 @@ start.sh # or start.bat for windows
 └── wrapper         <- ML model wrapper code.
 
 ```
+
+## Built with
+
+**TODO**
+
+## License
+
+**TODO**

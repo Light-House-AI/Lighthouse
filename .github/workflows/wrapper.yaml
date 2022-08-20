@@ -4,11 +4,11 @@ on:
   push:
     branches: [master]
     paths:
-      - wrapper/**
-      - .github/workflows/wrapper.yaml
+      - model_wrapper/**
+      - .github/workflows/model_wrapper.yaml
 
 env:
-    APP_NAME: wrapper
+    APP_NAME: model-wrapper
     PACKAGE_NAME: light-house-ai/model-wrapper
     GHCR_USERNAME: light-house-ai
 
