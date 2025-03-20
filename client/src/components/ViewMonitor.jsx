@@ -4,6 +4,7 @@ import axios from "axios";
 function ViewMonitor(props) {
     const [deploymentDetails] = useState(props.deploymentDetails);
     useEffect(() => {
+        document.getElementById('loader').classList.remove('d-none');
         axios.get(`/deployments/${deploymentDetails.id}/monitoring`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenType') + ' ' + localStorage.getItem('accessToken'),
@@ -17,6 +18,9 @@ function ViewMonitor(props) {
                 let iframeDoc = iframeTag.contentDocument || iframeTag.contentWindow.document;
 
                 if (iframeDoc.readyState === 'complete') {
+                    window.$('#monitor').contents().find('body').find('.modal').remove();
+                    window.$('#monitor').contents().find('body').find('.modal-backdrop').remove();
+                    window.$('#monitor').contents().find('body').removeClass('modal-open');
                     window.$('#monitor').contents().find('body').find('nav').remove();
                     window.$('#monitor').contents().find('body').find('.col-lg-2').remove();
                     window.$('#monitor').contents().find('body').find('#section-1-content-block-3').remove();
@@ -26,6 +30,11 @@ function ViewMonitor(props) {
                     window.$("#monitor").contents().find("head").append("<style>*{color: #fff !important;} body {background-color: #303841;} .alert-secondary { background-color: #37424c !important; border-color: #37424c !important; } ::-webkit-scrollbar { width: 5px; height: 5px; } ::-webkit-scrollbar-track { background-color: rgba(0, 0, 0, 0.0); } ::-webkit-scrollbar-thumb { background-color: #888; border-radius: 10px; cursor: pointer; }</style>");
                     window.$('#deployment-monitor').removeClass('invisible');
                     window.clearInterval(window.iframeId);
+                    document.getElementById('loader').classList.remove('opacity-100');
+                    document.getElementById('loader').classList.add('opacity-0');
+                    setTimeout(() => {
+                        document.getElementById('loader').classList.add('d-none');
+                    }, 1000);
                 }
             }, 500);
         }).catch((error) => {

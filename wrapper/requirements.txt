@@ -1,5 +1,0 @@
-scikit-learn==1.0.2
-ray[tune]==1.13.0
-fastapi==0.75.1
-uvicorn==0.17.6
-azure-storage-blob==12.11.0

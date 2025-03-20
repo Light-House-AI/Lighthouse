@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from ray import method
 from .data_cleaning import *
 
 

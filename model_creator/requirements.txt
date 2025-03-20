@@ -1,11 +1,4 @@
-# network generator
 ray[tune]
 sklearn
 numpy
 pandas
-
-# app
-dramatiq[redis]
-pydantic
-requests
-azure-storage-blob

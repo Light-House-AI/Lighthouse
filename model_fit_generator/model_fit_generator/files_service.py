@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 from azure.storage.blob import BlobClient
-from .config import config
+from model_fit_generator.config import config
 
 
 def create_directories():

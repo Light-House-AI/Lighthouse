@@ -1,6 +1,8 @@
-from .layer import Layer
+from model_creator.neural_network.layer import Layer
+
 
 class ActivationLayer(Layer):
+
     def __init__(self, activation_function, activation_function_derivative):
         self.activation_function = activation_function
         self.activation_function_derivative = activation_function_derivative
